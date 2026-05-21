@@ -1,0 +1,53 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+env/
+.venv
+.env.venv
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+*.egg-info/
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# OS
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Documentation (local reference only)
+/docs/gitignored/
+
+# Config (local overrides)
+/config/*.local.*
+
+# Temporary files
+.tmp/
+temp/
