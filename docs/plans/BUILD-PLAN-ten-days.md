@@ -183,18 +183,22 @@ or (b) thin sent-mail log. Deployed to production.
 
 ## TIER 4 — Weekend, part 3: portal pass (M)
 
-- [ ] **4.1 Portal deliverables + documents pages** — finish the two thin
+- [x] **4.1 Portal deliverables + documents pages** — finish the two thin
   routes; shared documents already flow via RLS.
   > notes:
-- [ ] **4.2 Portal polish** — empty states everywhere, contact block reads
+- [x] **4.2 Portal polish** — empty states everywhere, contact block reads
   brian@ridgelineknows.com (currently hardcoded info@), invoice detail view.
   > notes:
-- [ ] **4.3 Client-user provisioning runbook** — documented steps (dashboard
+- [x] **4.3 Client-user provisioning runbook** — documented steps (dashboard
   user + app_metadata role/client_id SQL from migration 20260105 comments)
   so inviting a portal user is a 5-minute procedure. Automation later.
   > notes:
 
 ---
+
+**Tier 4 executed 2026-07-03 night:** 4.1 portal deliverables/documents were
+ALREADY BUILT. Built: portal invoice detail (line items, RLS-scoped),
+info@→hello@ fix, CLIENT-PORTAL-RUNBOOK.md in docs/setup/. Deployed.
 
 ## TIER 5 — Next week: hygiene that keeps it honest (M total)
 
