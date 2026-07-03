@@ -64,12 +64,14 @@ ADR-001's skeleton plus the BidScovery lessons, tiered so small projects aren't 
 │   ├── research/
 │   ├── portfolio/     # case study + white paper drafts → feeds the marketing site
 │   └── gitignored/    # local-only reference + snapshots/
-├── .claude/           # settings.json, skills/ as needed
+├── .claude/           # settings.json, hooks/session-start.sh, skills/ as needed
 ├── app/ or src/       # stack-specific
-└── scripts/
+└── scripts/           # incl. drift-scan.sh (doc-rot scanner)
 ```
 
 **Mandatory tier**: CLAUDE.md, README.md, project.yaml, STATUS.md, DECISIONS.md. Everything else appears when the project needs it. Code is ground truth; STATUS and DECISIONS are the two authorities; docs reconcile to them.
+
+**Folded in from BidScovery** (owner-approved 2026-07-03): **branch-by-default → PR to `main`**, and **merged ≠ shipped** — after every merge, verify the production deploy reflects `main` HEAD (Vercel has silently skipped one of two back-to-back pushes before); a slimmed per-project **`drift-scan.sh`** (stale status phrases, open TBDs, undocumented surfaces, Last-Updated dates) so the two authorities stay enforceable rather than aspirational; and a **session-start hook** pointing every session at STATUS.md + DECISIONS.md so work begins oriented.
 
 ### 4. Naming policy (the anti-rename-debt rule)
 
@@ -124,6 +126,7 @@ The existing homepage stays. Add public `/work` (portfolio index from manifests 
 - BidScovery folder move and its repo/skill/Stripe renames (owned by its own D67 deferral; may never happen).
 - Consolidating the older roots (`~/Projects/*`, `~/Documents/*`) — migrate-on-commitment applies to them too, later.
 - Automating the portfolio sync beyond a simple script; anything resembling CI for snapshots.
+- Backup story for the untracked layer (`docs/gitignored/`, `staging/` data) — deferred 2026-07-03; owner prefers to first cut down what is kept rather than institutionalize preserving it. Revisit once the workspace is curated. (Committed work is protected by Phase 0 and the push habit regardless.)
 
 ## References
 
