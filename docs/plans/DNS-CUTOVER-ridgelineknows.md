@@ -26,9 +26,17 @@ parking page retires.
 Supabase dashboard → project **RidgelineKnows** → Authentication → URL
 Configuration:
 - Site URL: `https://ridgelineknows.com`
-- Additional redirect URLs: `https://ridgelineknows.com/auth/callback`,
-  `https://ridgeline-core-*.vercel.app/auth/callback` (preview), and the
-  production `*.vercel.app` URL.
+- Redirect URLs (one per line — Supabase rejects bare *.vercel.app wildcards;
+  they must include the team suffix):
+  `https://ridgelineknows.com/auth/callback`
+  `https://www.ridgelineknows.com/auth/callback`
+  `https://ridgeline-core.vercel.app/auth/callback`
+  `https://ridgeline-core-*-devegg-9058s-projects.vercel.app/**`  (previews)
+  `http://localhost:3000/**` and `http://localhost:3005/**`  (keeps local dev
+  working once Site URL changes off the default)
+- Password login works regardless of this list — it gates email links
+  (password recovery, future magic links), so it must be right before the
+  first "forgot password" email, not before the flip.
 
 ## 4. Resend — DEFERRED to BACKLOG.md 2026-07-03 (owner call)
 The form code is live but soft-fails until this exists (by design):
