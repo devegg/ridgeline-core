@@ -463,6 +463,7 @@ section {
 .story__body { font-size: 15.5px; line-height: 1.65; color: var(--ink-muted); margin-top: 14px; }
 .story__outcome { margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--rule); font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--ink); line-height: 1.5; }
 .story__outcome::before { content: "Outcome — "; font-family: var(--mono); font-style: normal; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber-deep); display: block; margin-bottom: 6px; }
+.story__go { margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--rule); font-family: var(--serif); font-style: italic; font-size: 17px; line-height: 1.5; }
 
 /* ============================================================
    Origin

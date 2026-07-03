@@ -4,6 +4,7 @@ import { SiteHeader } from '@/components/home/SiteHeader'
 import { SiteFooter } from '@/components/home/SiteFooter'
 import { MarkdownViewer } from '@/components/documents/MarkdownViewer'
 import { createClient } from '@/lib/supabase/server'
+import { paperMinutes } from '@/lib/paper-preview'
 
 export default async function PaperPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -25,6 +26,16 @@ export default async function PaperPage({ params }: { params: Promise<{ id: stri
           <section className="stories" style={{ paddingTop: 96 }}>
             <div className="container" style={{ maxWidth: 820 }}>
               <div className="eyebrow">Paper</div>
+              <div className="story__meta" style={{ marginTop: 0, marginBottom: 28 }}>
+                <span>
+                  {new Date(paper.created_at).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+                {paperMinutes(paper.content)} minute read
+              </div>
               <MarkdownViewer content={paper.content} />
               <div style={{ marginTop: 48 }}>
                 <Link className="btn-quiet" href="/papers">
