@@ -88,3 +88,8 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 - [ ] **Service-area framing** — copy should say: based in Myrtle Beach, in-person along the SC coast, and clients anywhere (remote beyond the coast; occasional in-person preferred when it can be arranged). Note for all brand work: the "Ridgeline" mountain imagery is the vantage-point metaphor — seeing a business's whole terrain — not a geography claim. Keep it, coast or no coast.
 
 - [ ] **THE NAME section rewrite** — Brian has personal source material for what the name means (one of his songs: permanence over riches, the morning ridgeline as the whole dream, building something nobody handed him). Ask him before drawing on it — the lyrics are Heart Echoes Music material and stay his. Even one grounded line beats a page of positioning copy.
+
+## Email (deferred 2026-07-03 — owner: "I need to set up an email account and I don't want to do that right now")
+
+- [ ] **Resend setup for ridgelineknows.com** — add domain in Resend, DNS records (DKIM/SPF), mint a sending-access key, put it in core/.env.local + `vercel env add RESEND_API_KEY production`. Until then the contact form soft-fails with a polite message. Steps: docs/plans/DNS-CUTOVER-ridgelineknows.md §4.
+- [ ] **hello@ridgelineknows.com mailbox** — create or forward (Squarespace email forwarding is the free 2-minute version). NOTE while deferred: every mailto on the site and the form's fallback message point at hello@ — until the mailbox exists, a visitor who emails it gets a bounce. Matters from the moment the domain flips.

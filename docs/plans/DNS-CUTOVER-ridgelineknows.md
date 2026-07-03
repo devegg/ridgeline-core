@@ -30,7 +30,7 @@ Configuration:
   `https://ridgeline-core-*.vercel.app/auth/callback` (preview), and the
   production `*.vercel.app` URL.
 
-## 4. Resend (5 min) — makes the contact form actually send
+## 4. Resend — DEFERRED to BACKLOG.md 2026-07-03 (owner call)
 The form code is live but soft-fails until this exists (by design):
 1. resend.com/domains → Add domain `ridgelineknows.com` → it shows 3–4 DNS
    records (DKIM TXT, SPF/Return-Path MX+TXT on `send` subdomain) → add them
@@ -41,14 +41,14 @@ The form code is live but soft-fails until this exists (by design):
    locally + `vercel env add RESEND_API_KEY production`.
 3. Test: submit the site form → lands at hello@ridgelineknows.com.
 
-## 5. hello@ mailbox
+## 5. hello@ mailbox — DEFERRED to BACKLOG.md 2026-07-03 (owner call; see bounce note there)
 The email convention (from RFQ Hunter, now standard): **hello@** = the human
 mailbox on every product domain; purpose-named senders (contact@, digest@)
 for systems. Make sure `hello@ridgelineknows.com` actually receives mail —
 Squarespace Domains → Email forwarding → `hello@ → your real inbox` is the
 free 2-minute version.
 
-## 6. Optional, one click
+## 6. DONE 2026-07-03 — repo connected; pushes to master now auto-deploy
 Vercel → ridgeline-core → Settings → Git → Connect `devegg/ridgeline-core`
 (the CLI needed interactive confirmation, so I skipped it). After that,
 every push to master auto-deploys — same as your other projects.
