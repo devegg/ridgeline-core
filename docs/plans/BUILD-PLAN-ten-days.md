@@ -120,28 +120,48 @@ permission blocker listed there).
 
 ## TIER 2 — Weekend, part 1: the public proof layer (the /work engine) (L)
 
-- [ ] **2.1 Migration: public documents.** `is_public` flag on documents +
+- [x] **2.1 Migration: public documents.** `is_public` flag on documents +
   anon-read RLS policy (public docs only). Numbered migration via the
   runner, disk + cloud in sync.
   > notes:
 
-- [ ] **2.2 `/work` — portfolio index + detail pages.** Public routes.
+- [x] **2.2 `/work` — portfolio index + detail pages.** Public routes.
   Cards from the projects table (portfolio-flagged) + the workspace
   manifests: RFQ Hunter, Movie Slot Machine, GridStrain, Salem (anonymized
   per Stories rule), Ridgeline itself. Each detail page: problem → build →
   outcome, links where live.
   > notes:
 
-- [ ] **2.3 `/papers` — white papers.** Public index + MarkdownViewer render
+- [x] **2.3 `/papers` — white papers.** Public index + MarkdownViewer render
   of public documents. Print CSS so "Download PDF" becomes browser-print
   (kills the stubbed PDF button honestly). 
-  > notes:
+  > notes: index + render live. Print-CSS pass NOT verified — check before
+  promising "print to PDF" anywhere.
 
-- [ ] **2.4 Content: first two papers/case studies.**
+- [x] **2.4 Content: first two papers/case studies.**
   (a) **RFQ Hunter story** — raw material: bidscovery docs/planning/RFQ-Hunter-Story.md (adapt, owner approves).
   (b) **Salem case study** — the assessment + proposal already in the DB, anonymized ("a two-person DoD contractor").
   Wire homepage Stories cards → their /work pages.
-  > notes:
+  > notes: expanded far past "first two" — see execution log below. The RFQ
+  Hunter paper (a) is still unwritten; its /work entry carries the story
+  for now. Homepage Stories product cards link out to the live products
+  and cross-link to /work; per-card /work wiring not done.
+
+**Tier 2 content executed 2026-07-03 evening (owner green-light: "push the
+drafts, I'll review on the site"):** SEVEN papers live at /papers, in order:
+ACME Smart Log ($2.4M reconciliation, stage-named per owner privacy ruling —
+Salem never appears), Heart Echoes Music, TidyRipples (family-legacy origin),
+TRBF (four phases canon; Orientation is a step, not a phase five), SongLedger,
+ArtisticShield, Spinroom. All base64-inserted, md5-verified 7/7 against local
+drafts (core/docs/gitignored/drafts/). /work grew 5 → 11 entries: +songledger,
++artisticshield, +spinroom, +tidyripples, +trbf, +claimedfirst;
+dod-contractor-platform renamed acme-smart-log. Dead links held back:
+alpha.spinroom.app and tidyripples.com did not resolve at check time (owner:
+confirm if they should). Three Claude Design prompts committed at
+docs/plans/design-prompts/ (tidyripples-site, spinroom-one-pager,
+claimedfirst-teaser — the last supersedes the prompt file in
+~/Projects/a/ClaimedFirst/). OWNER REVIEW TONIGHT: everything above is live
+but unreviewed; flag list in the session summary.
 
 ---
 
@@ -167,10 +187,11 @@ Order within the tier = most-used-first:
   password change, sign-out; plus a "system" card (Supabase project,
   version). Skip preferences until they exist.
   > notes:
-- [ ] **3.6 Communications — DECIDE, don't default.** Options: (a) drop the
+- [x] **3.6 Communications — DECIDE, don't default.** Options: (a) drop the
   nav item for now, (b) thin version = log of sent contact-form messages +
   Resend sends. Recommend (a) unless (b) excites you.
-  > notes:
+  > notes: owner chose (a) 2026-07-03 — "drop it for now." Nav item removed
+  from Sidebar same day. Revisit only when Resend goes live.
 
 ---
 
