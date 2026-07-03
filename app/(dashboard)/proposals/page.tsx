@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Proposal, ProposalStatus } from '@/lib/types'
 
 const TABS = [
@@ -21,7 +23,8 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
 
   let query = supabase.from('proposals').select('*, client:clients(id, name)').order('created_at', { ascending: false })
   if (current !== 'all') query = query.eq('status', current as ProposalStatus)
-  const { data: proposals } = await query
+  const { data: proposals, error } = await query
+  const loadFailed = queryFailed('proposals', error)
 
   return (
     <div>
@@ -38,7 +41,9 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
       <div style={{ marginTop: 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/proposals" />
 
-        {!proposals?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load proposals" />
+        ) : !proposals?.length ? (
           <EmptyState title="No proposals" body={current === 'all' ? 'Create your first proposal.' : `No ${current} proposals.`} />
         ) : (
           <div className="table-wrap">

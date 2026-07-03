@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Client, ClientStatus } from '@/lib/types'
 
 const TABS = [
@@ -25,7 +27,8 @@ export default async function ClientsPage({
   if (status && status !== 'all') {
     query = query.eq('status', status as ClientStatus)
   }
-  const { data: clients } = await query
+  const { data: clients, error } = await query
+  const loadFailed = queryFailed('clients', error)
 
   const current = status || 'all'
 
@@ -50,7 +53,9 @@ export default async function ClientsPage({
       <div style={{ marginTop: 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/clients" />
 
-        {!clients?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load clients" />
+        ) : !clients?.length ? (
           <EmptyState
             title="No clients yet"
             body={current === 'all' ? 'Add your first client to get started.' : `No ${current} clients.`}

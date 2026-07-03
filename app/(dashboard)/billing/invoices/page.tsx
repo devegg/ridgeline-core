@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Invoice, InvoiceStatus } from '@/lib/types'
 
 const TABS = [
@@ -21,7 +23,8 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
 
   let query = supabase.from('invoices').select('*, client:clients(id, name)').order('created_at', { ascending: false })
   if (current !== 'all') query = query.eq('status', current as InvoiceStatus)
-  const { data: invoices } = await query
+  const { data: invoices, error } = await query
+  const loadFailed = queryFailed('invoices', error)
 
   return (
     <div>
@@ -38,7 +41,9 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
       <div style={{ marginTop: 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/billing/invoices" />
 
-        {!invoices?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load invoices" />
+        ) : !invoices?.length ? (
           <EmptyState title="No invoices" body={current === 'all' ? 'Create your first invoice.' : `No ${current} invoices.`} />
         ) : (
           <div className="table-wrap">

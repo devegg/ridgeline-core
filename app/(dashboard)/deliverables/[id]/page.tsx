@@ -4,18 +4,21 @@ import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { approveDeliverableAction, deliverToClientAction, updateDeliverableStatusAction } from '@/app/actions/deliverables'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Deliverable } from '@/lib/types'
 
 export default async function DeliverableDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: deliverable } = await supabase
+  const { data: deliverable, error } = await supabase
     .from('deliverables')
     .select('*, project:projects(id, name, client:clients(id, name))')
     .eq('id', id)
     .single()
 
+  if (queryFailed('deliverables', error)) return <ErrorState title="Couldn't load this deliverable" />
   if (!deliverable) notFound()
   const d = deliverable as Deliverable & { project: { id: string; name: string; client: { id: string; name: string } | null } | null }
 

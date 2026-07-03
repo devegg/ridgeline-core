@@ -6,6 +6,8 @@ import { ProjectForm } from '@/components/forms/ProjectForm'
 import { MilestoneList } from '@/components/projects/MilestoneList'
 import { archiveProjectAction, closeProjectAction, updateProjectAction } from '@/app/actions/projects'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Project, Milestone, Deliverable } from '@/lib/types'
 
 export default async function ProjectDetailPage({
@@ -19,13 +21,23 @@ export default async function ProjectDetailPage({
   const { mode } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: project }, { data: milestones }, { data: deliverables }, { data: clients }] =
+  const [
+    { data: project, error: projectError },
+    { data: milestones, error: milestonesError },
+    { data: deliverables, error: deliverablesError },
+    { data: clients, error: clientsError },
+  ] =
     await Promise.all([
       supabase.from('projects').select('*, client:clients(id, name)').eq('id', id).single(),
       supabase.from('milestones').select('*').eq('project_id', id).order('sort_order').order('created_at'),
       supabase.from('deliverables').select('*').eq('project_id', id).order('due_date'),
       supabase.from('clients').select('id, name').neq('status', 'archived').order('name'),
     ])
+
+  if (queryFailed('projects', projectError)) return <ErrorState title="Couldn't load this project" />
+  const milestonesFailed = queryFailed('milestones', milestonesError)
+  const deliverablesFailed = queryFailed('deliverables', deliverablesError)
+  queryFailed('clients', clientsError)
 
   if (!project) notFound()
   const p = project as Project & { client: { id: string; name: string } | null }
@@ -82,11 +94,15 @@ export default async function ProjectDetailPage({
           <span className="section-card__label">
             Milestones
             <span style={{ marginLeft: 8, color: 'var(--ink-soft)' }}>
-              ({(milestones as Milestone[]).filter(m => m.completed_at).length}/{milestones?.length ?? 0} done)
+              ({((milestones as Milestone[]) ?? []).filter(m => m.completed_at).length}/{milestones?.length ?? 0} done)
             </span>
           </span>
         </div>
-        <MilestoneList milestones={(milestones as Milestone[]) ?? []} projectId={id} />
+        {milestonesFailed ? (
+          <div className="section-card__error">Milestones failed to load.</div>
+        ) : (
+          <MilestoneList milestones={(milestones as Milestone[]) ?? []} projectId={id} />
+        )}
       </div>
 
       {/* Deliverables */}
@@ -98,7 +114,9 @@ export default async function ProjectDetailPage({
           </Link>
         </div>
         <div className="section-card__body">
-          {!deliverables?.length ? (
+          {deliverablesFailed ? (
+            <div className="section-card__error">Deliverables failed to load.</div>
+          ) : !deliverables?.length ? (
             <div className="section-card__empty">No deliverables linked to this project.</div>
           ) : (
             <table className="data-table">

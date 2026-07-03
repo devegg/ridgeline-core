@@ -1,15 +1,23 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Invoice } from '@/lib/types'
 
 export default async function BillingPage() {
   const supabase = await createClient()
 
-  const [{ data: invoices }, { data: overdue }] = await Promise.all([
+  const [
+    { data: invoices, error: invoicesError },
+    { data: overdue, error: overdueError },
+  ] = await Promise.all([
     supabase.from('invoices').select('*, client:clients(id, name)').order('created_at', { ascending: false }).limit(10),
     supabase.from('invoices').select('id').eq('status', 'overdue'),
   ])
+
+  const invoicesFailed = queryFailed('invoices', invoicesError)
+  const overdueFailed = queryFailed('invoices', overdueError)
 
   const allInvoices = (invoices as (Invoice & { client: { id: string; name: string } | null })[]) ?? []
 
@@ -30,12 +38,18 @@ export default async function BillingPage() {
         <Link href="/billing/rates" className="btn-outline">Rates</Link>
       </div>
 
+      {invoicesFailed && (
+        <div style={{ marginTop: 32 }}>
+          <ErrorState title="Couldn't load invoices" body="The numbers below may be incomplete." />
+        </div>
+      )}
+
       {/* Stats */}
       <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1px', background: 'var(--rule)', border: '1px solid var(--rule)' }}>
         {[
-          { label: 'Outstanding', value: `$${outstanding.toLocaleString()}`, sub: `${(overdue?.length ?? 0)} overdue` },
-          { label: 'Paid this month', value: `$${paidThisMonth.toLocaleString()}`, sub: '' },
-          { label: 'Draft invoices', value: String(draftCount), sub: 'not yet sent' },
+          { label: 'Outstanding', value: invoicesFailed ? '—' : `$${outstanding.toLocaleString()}`, sub: overdueFailed ? 'overdue count unavailable' : `${(overdue?.length ?? 0)} overdue` },
+          { label: 'Paid this month', value: invoicesFailed ? '—' : `$${paidThisMonth.toLocaleString()}`, sub: '' },
+          { label: 'Draft invoices', value: invoicesFailed ? '—' : String(draftCount), sub: 'not yet sent' },
         ].map((stat) => (
           <div key={stat.label} style={{ background: 'var(--paper)', padding: '24px 22px' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-soft)', marginBottom: 8 }}>{stat.label}</div>

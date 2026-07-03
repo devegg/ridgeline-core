@@ -2,13 +2,19 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ProposalForm } from '@/components/forms/ProposalForm'
 import { createProposalAction } from '@/app/actions/proposals'
+import { queryFailed } from '@/lib/supabase/errors'
 
 export default async function NewProposalPage() {
   const supabase = await createClient()
-  const [{ data: clients }, { data: projects }] = await Promise.all([
+  const [
+    { data: clients, error: clientsError },
+    { data: projects, error: projectsError },
+  ] = await Promise.all([
     supabase.from('clients').select('id, name').neq('status', 'archived').order('name'),
     supabase.from('projects').select('id, name').eq('status', 'active').order('name'),
   ])
+  queryFailed('clients', clientsError)
+  queryFailed('projects', projectsError)
 
   return (
     <div>

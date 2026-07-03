@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Lead, LeadStage } from '@/lib/types'
 
 const TABS = [
@@ -34,10 +36,11 @@ export default async function LeadsPage({
   const supabase = await createClient()
 
   // Stage counts for the funnel summary
-  const { data: allLeads } = await supabase
+  const { data: allLeads, error: allLeadsError } = await supabase
     .from('leads')
     .select('id, stage')
     .not('stage', 'in', '(won,lost)')
+  queryFailed('leads', allLeadsError)
 
   const stageCounts = (allLeads ?? []).reduce<Record<string, number>>((acc, l) => {
     acc[l.stage] = (acc[l.stage] ?? 0) + 1
@@ -54,7 +57,8 @@ export default async function LeadsPage({
     query = query.eq('stage', current as LeadStage)
   }
 
-  const { data: leads } = await query
+  const { data: leads, error: leadsError } = await query
+  const loadFailed = queryFailed('leads', leadsError)
   const today = new Date().toISOString().split('T')[0]
 
   return (
@@ -102,7 +106,9 @@ export default async function LeadsPage({
       <div style={{ marginTop: current === 'all' ? 20 : 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/leads" param="stage" />
 
-        {!leads?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load leads" />
+        ) : !leads?.length ? (
           <EmptyState
             title={current === 'all' ? 'No leads yet' : `No ${TABS.find(t => t.value === current)?.label?.toLowerCase()} leads`}
             body={current === 'all' ? 'Add your first lead — a card drop takes under a minute.' : ''}

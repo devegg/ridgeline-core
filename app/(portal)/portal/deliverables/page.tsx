@@ -1,15 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Deliverable } from '@/lib/types'
 
 export default async function PortalDeliverablesPage() {
   const supabase = await createClient()
 
-  const { data: deliverables } = await supabase
+  const { data: deliverables, error } = await supabase
     .from('deliverables')
     .select('*, project:projects(id, name)')
     .eq('status', 'delivered')
     .order('delivered_at', { ascending: false })
+  const loadFailed = queryFailed('deliverables', error)
 
   return (
     <div>
@@ -19,7 +22,9 @@ export default async function PortalDeliverablesPage() {
         <p className="page-description">Items that have been completed and released to you.</p>
       </div>
 
-      {!deliverables?.length ? (
+      {loadFailed ? (
+        <ErrorState title="Couldn't load your deliverables" body="Refresh to try again. If it keeps happening, reach out." />
+      ) : !deliverables?.length ? (
         <EmptyState
           title="Nothing delivered yet"
           body="Completed deliverables will appear here once they have been released by Ridgeline Knows."

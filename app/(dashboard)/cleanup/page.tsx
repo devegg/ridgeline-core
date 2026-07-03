@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import { restoreFromDeleteAction, permanentDeleteAction } from '@/app/actions/cleanup'
 
 export default async function CleanupPage() {
@@ -11,12 +13,12 @@ export default async function CleanupPage() {
   if ((user?.app_metadata?.role as string | undefined) === 'client') redirect('/portal')
 
   const [
-    { data: clients },
-    { data: projects },
-    { data: proposals },
-    { data: assessments },
-    { data: deliverables },
-    { data: invoices },
+    { data: clients, error: clientsError },
+    { data: projects, error: projectsError },
+    { data: proposals, error: proposalsError },
+    { data: assessments, error: assessmentsError },
+    { data: deliverables, error: deliverablesError },
+    { data: invoices, error: invoicesError },
   ] = await Promise.all([
     supabase.from('clients').select('id, name, status, created_at').eq('status', 'scheduled_delete').order('name'),
     supabase.from('projects').select('id, name, status, created_at').eq('status', 'scheduled_delete').order('name'),
@@ -25,6 +27,15 @@ export default async function CleanupPage() {
     supabase.from('deliverables').select('id, title, status, created_at').eq('status', 'scheduled_delete').order('title'),
     supabase.from('invoices').select('id, invoice_number, status, created_at, total').eq('status', 'scheduled_delete').order('created_at'),
   ])
+
+  const anyFailed = [
+    queryFailed('clients', clientsError),
+    queryFailed('projects', projectsError),
+    queryFailed('proposals', proposalsError),
+    queryFailed('assessments', assessmentsError),
+    queryFailed('deliverables', deliverablesError),
+    queryFailed('invoices', invoicesError),
+  ].some(Boolean)
 
   const totalFlagged =
     (clients?.length ?? 0) + (projects?.length ?? 0) + (proposals?.length ?? 0) +
@@ -45,14 +56,20 @@ export default async function CleanupPage() {
         <div className="page-eyebrow">Owner only · Cleanup</div>
         <h1 className="page-title">Scheduled for Deletion</h1>
         <p className="page-description">
-          {totalFlagged === 0
+          {anyFailed
+            ? 'Some records failed to load.'
+            : totalFlagged === 0
             ? 'No records are currently scheduled for deletion.'
             : `${totalFlagged} record${totalFlagged !== 1 ? 's' : ''} flagged. Review each one before permanently deleting.`
           }
         </p>
       </div>
 
-      {totalFlagged === 0 ? (
+      {anyFailed ? (
+        <div style={{ marginTop: 40 }}>
+          <ErrorState title="Couldn't load the cleanup queue" body="One or more tables failed to load, so this list may be incomplete. Nothing shown here can be safely acted on — check the server logs." />
+        </div>
+      ) : totalFlagged === 0 ? (
         <div style={{ marginTop: 40, padding: '48px 32px', border: '1px solid var(--rule)', background: 'var(--paper)', textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--ink)', marginBottom: 10 }}>All clear</div>
           <p style={{ fontSize: 14, color: 'var(--ink-muted)' }}>No records are scheduled for deletion. Use "Schedule delete" on any detail page to flag a record for review here.</p>

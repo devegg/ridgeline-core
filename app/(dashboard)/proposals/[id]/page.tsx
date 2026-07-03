@@ -9,6 +9,8 @@ import {
 } from '@/app/actions/proposals'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { DocumentList } from '@/components/documents/DocumentList'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Proposal, Document } from '@/lib/types'
 
 export default async function ProposalDetailPage({
@@ -21,12 +23,22 @@ export default async function ProposalDetailPage({
   const { mode } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: proposal }, { data: clients }, { data: projects }, { data: docs }] = await Promise.all([
+  const [
+    { data: proposal, error: proposalError },
+    { data: clients, error: clientsError },
+    { data: projects, error: projectsError },
+    { data: docs, error: docsError },
+  ] = await Promise.all([
     supabase.from('proposals').select('*, client:clients(id, name), project:projects(id, name)').eq('id', id).single(),
     supabase.from('clients').select('id, name').neq('status', 'archived').order('name'),
     supabase.from('projects').select('id, name').eq('status', 'active').order('name'),
     supabase.from('documents').select('*').eq('entity_type', 'proposal').eq('entity_id', id).order('created_at', { ascending: false }),
   ])
+
+  if (queryFailed('proposals', proposalError)) return <ErrorState title="Couldn't load this proposal" />
+  queryFailed('clients', clientsError)
+  queryFailed('projects', projectsError)
+  const docsFailed = queryFailed('documents', docsError)
 
   if (!proposal) notFound()
   const p = proposal as Proposal & { client: { id: string; name: string } | null; project: { id: string; name: string } | null }
@@ -101,7 +113,11 @@ export default async function ProposalDetailPage({
             {docs?.length ?? 0} file{docs?.length !== 1 ? 's' : ''}
           </span>
         </div>
-        <DocumentList documents={(docs as Document[]) ?? []} entityType="proposal" entityId={id} />
+        {docsFailed ? (
+          <div className="section-card__error">Documents failed to load.</div>
+        ) : (
+          <DocumentList documents={(docs as Document[]) ?? []} entityType="proposal" entityId={id} />
+        )}
       </div>
 
       <p style={{ marginTop: 20, fontSize: 13, color: 'var(--ink-soft)' }}>

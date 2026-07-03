@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Milestone, Deliverable } from '@/lib/types'
 
 export default async function PortalProjectDetailPage({
@@ -12,11 +14,21 @@ export default async function PortalProjectDetailPage({
   const { id } = await params
   const supabase = await createClient()
 
-  const [{ data: project }, { data: milestones }, { data: deliverables }] = await Promise.all([
+  const [
+    { data: project, error: projectError },
+    { data: milestones, error: milestonesError },
+    { data: deliverables, error: deliverablesError },
+  ] = await Promise.all([
     supabase.from('projects').select('*').eq('id', id).single(),
     supabase.from('milestones').select('*').eq('project_id', id).order('sort_order').order('created_at'),
     supabase.from('deliverables').select('*').eq('project_id', id).eq('status', 'delivered').order('delivered_at'),
   ])
+
+  if (queryFailed('projects', projectError)) {
+    return <ErrorState title="Couldn't load this project" body="Refresh to try again. If it keeps happening, reach out." />
+  }
+  const milestonesFailed = queryFailed('milestones', milestonesError)
+  const deliverablesFailed = queryFailed('deliverables', deliverablesError)
 
   if (!project) notFound()
 
@@ -66,7 +78,9 @@ export default async function PortalProjectDetailPage({
           )}
         </div>
         <div className="section-card__body">
-          {!totalMilestones ? (
+          {milestonesFailed ? (
+            <div className="section-card__error">Milestones failed to load.</div>
+          ) : !totalMilestones ? (
             <div className="section-card__empty">No milestones have been added yet.</div>
           ) : (
             (milestones as Milestone[]).map(m => (
@@ -99,7 +113,9 @@ export default async function PortalProjectDetailPage({
           <span className="section-card__label">Deliverables</span>
         </div>
         <div className="section-card__body">
-          {!deliverables?.length ? (
+          {deliverablesFailed ? (
+            <div className="section-card__error">Deliverables failed to load.</div>
+          ) : !deliverables?.length ? (
             <div className="section-card__empty">No deliverables have been shared yet.</div>
           ) : (
             <table className="data-table">

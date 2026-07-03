@@ -2,16 +2,19 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 
 export default async function PortalProjectsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const clientId = user?.app_metadata?.client_id as string | undefined
 
-  const { data: projects } = await supabase
+  const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
     .order('created_at', { ascending: false })
+  const loadFailed = queryFailed('projects', error)
 
   return (
     <div>
@@ -25,7 +28,9 @@ export default async function PortalProjectsPage() {
         )}
       </div>
 
-      {!projects?.length ? (
+      {loadFailed ? (
+        <ErrorState title="Couldn't load your projects" body="Refresh to try again. If it keeps happening, reach out." />
+      ) : !projects?.length ? (
         <EmptyState
           title="No projects yet"
           body="Your projects will appear here once they have been set up. Reach out if you expected to see something."

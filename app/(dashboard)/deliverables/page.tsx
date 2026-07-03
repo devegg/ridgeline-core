@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Deliverable, DeliverableStatus } from '@/lib/types'
 
 const TABS = [
@@ -22,7 +24,8 @@ export default async function DeliverablesPage({ searchParams }: { searchParams:
   let query = supabase.from('deliverables').select('*, project:projects(id, name)').order('due_date', { ascending: true, nullsFirst: false })
   if (current !== 'all') query = query.eq('status', current as DeliverableStatus)
   if (project_id) query = query.eq('project_id', project_id)
-  const { data: deliverables } = await query
+  const { data: deliverables, error } = await query
+  const loadFailed = queryFailed('deliverables', error)
 
   return (
     <div>
@@ -35,7 +38,9 @@ export default async function DeliverablesPage({ searchParams }: { searchParams:
       <div style={{ marginTop: 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/deliverables" />
 
-        {!deliverables?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load deliverables" />
+        ) : !deliverables?.length ? (
           <EmptyState title="No deliverables" body="Deliverables are created from project pages." />
         ) : (
           <div className="table-wrap">

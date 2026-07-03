@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState, LeadStage } from '@/lib/types'
@@ -41,7 +42,10 @@ export async function createLeadAction(_prev: ActionState, formData: FormData): 
     .select('id')
     .single()
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('leads', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/leads')
   redirect(`/leads/${data.id}`)
@@ -55,7 +59,10 @@ export async function updateLeadAction(_prev: ActionState, formData: FormData): 
   const supabase = await createSupabase()
   const { error } = await supabase.from('leads').update(fields).eq('id', id)
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('leads', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/leads/${id}`)
   revalidatePath('/leads')
@@ -68,17 +75,19 @@ export async function advanceStageAction(id: string, currentStage: LeadStage) {
   const nextStage = STAGE_ORDER[currentIndex + 1]
 
   const supabase = await createSupabase()
-  await supabase.from('leads').update({ stage: nextStage }).eq('id', id)
+  const { error } = await supabase.from('leads').update({ stage: nextStage }).eq('id', id)
+  queryFailed('leads', error)
   revalidatePath(`/leads/${id}`)
   revalidatePath('/leads')
 }
 
 export async function setStageAction(id: string, stage: LeadStage, lostReason?: string) {
   const supabase = await createSupabase()
-  await supabase.from('leads').update({
+  const { error } = await supabase.from('leads').update({
     stage,
     lost_reason: lostReason ?? null,
   }).eq('id', id)
+  queryFailed('leads', error)
   revalidatePath(`/leads/${id}`)
   revalidatePath('/leads')
 }
@@ -92,7 +101,10 @@ export async function convertToClientAction(id: string): Promise<{ clientId?: st
     .eq('id', id)
     .single()
 
-  if (fetchError || !lead) return { error: 'Lead not found' }
+  if (fetchError || !lead) {
+    queryFailed('leads', fetchError)
+    return { error: 'Lead not found' }
+  }
 
   const { data: client, error: clientError } = await supabase
     .from('clients')
@@ -109,12 +121,16 @@ export async function convertToClientAction(id: string): Promise<{ clientId?: st
     .select('id')
     .single()
 
-  if (clientError || !client) return { error: clientError?.message ?? 'Failed to create client' }
+  if (clientError || !client) {
+    queryFailed('clients', clientError)
+    return { error: clientError?.message ?? 'Failed to create client' }
+  }
 
-  await supabase.from('leads').update({
+  const { error: linkError } = await supabase.from('leads').update({
     stage: 'won',
     converted_client_id: client.id,
   }).eq('id', id)
+  queryFailed('leads', linkError)
 
   revalidatePath('/leads')
   revalidatePath('/clients')
@@ -123,7 +139,8 @@ export async function convertToClientAction(id: string): Promise<{ clientId?: st
 
 export async function deleteLeadAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('leads').delete().eq('id', id)
+  const { error } = await supabase.from('leads').delete().eq('id', id)
+  queryFailed('leads', error)
   revalidatePath('/leads')
   redirect('/leads')
 }

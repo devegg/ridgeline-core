@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/lib/types'
 
@@ -26,7 +27,10 @@ export async function createContactAction(_prev: ActionState, formData: FormData
     website: formData.get('website') || null,
   })
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('contacts', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/clients/${clientId}`)
   return { message: 'Contact added.' }
@@ -54,7 +58,10 @@ export async function updateContactAction(_prev: ActionState, formData: FormData
     website: formData.get('website') || null,
   }).eq('id', id)
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('contacts', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/clients/${clientId}`)
   return { message: 'Saved.' }
@@ -62,6 +69,7 @@ export async function updateContactAction(_prev: ActionState, formData: FormData
 
 export async function deleteContactAction(id: string, clientId: string) {
   const supabase = await createSupabase()
-  await supabase.from('contacts').delete().eq('id', id)
+  const { error } = await supabase.from('contacts').delete().eq('id', id)
+  queryFailed('contacts', error)
   revalidatePath(`/clients/${clientId}`)
 }

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState, LineItem } from '@/lib/types'
@@ -32,7 +33,10 @@ export async function createInvoiceAction(_prev: ActionState, formData: FormData
     .select('id')
     .single()
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('invoices', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/billing/invoices')
   redirect(`/billing/invoices/${data.id}`)
@@ -61,7 +65,10 @@ export async function updateInvoiceAction(_prev: ActionState, formData: FormData
     })
     .eq('id', id)
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('invoices', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/billing/invoices/${id}`)
   revalidatePath('/billing/invoices')
@@ -70,17 +77,19 @@ export async function updateInvoiceAction(_prev: ActionState, formData: FormData
 
 export async function sendInvoiceAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('invoices').update({ status: 'sent' }).eq('id', id)
+  const { error } = await supabase.from('invoices').update({ status: 'sent' }).eq('id', id)
+  queryFailed('invoices', error)
   revalidatePath(`/billing/invoices/${id}`)
   revalidatePath('/billing/invoices')
 }
 
 export async function markInvoicePaidAction(id: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('invoices')
     .update({ status: 'paid', paid_at: new Date().toISOString() })
     .eq('id', id)
+  queryFailed('invoices', error)
   revalidatePath(`/billing/invoices/${id}`)
   revalidatePath('/billing/invoices')
   revalidatePath('/billing')
@@ -88,7 +97,8 @@ export async function markInvoicePaidAction(id: string) {
 
 export async function cancelInvoiceAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('invoices').update({ status: 'cancelled' }).eq('id', id)
+  const { error } = await supabase.from('invoices').update({ status: 'cancelled' }).eq('id', id)
+  queryFailed('invoices', error)
   revalidatePath('/billing/invoices')
   redirect('/billing/invoices')
 }
@@ -108,7 +118,10 @@ export async function createRateAction(_prev: ActionState, formData: FormData): 
     is_default: formData.get('is_default') === 'true',
   })
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('billing_rates', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/billing/rates')
   return { message: 'Rate added.' }
@@ -116,6 +129,7 @@ export async function createRateAction(_prev: ActionState, formData: FormData): 
 
 export async function deleteRateAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('billing_rates').delete().eq('id', id)
+  const { error } = await supabase.from('billing_rates').delete().eq('id', id)
+  queryFailed('billing_rates', error)
   revalidatePath('/billing/rates')
 }

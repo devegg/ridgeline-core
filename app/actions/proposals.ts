@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState } from '@/lib/types'
@@ -24,7 +25,10 @@ export async function createProposalAction(_prev: ActionState, formData: FormDat
     .select('id')
     .single()
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('proposals', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/proposals')
   redirect(`/proposals/${data.id}`)
@@ -48,7 +52,10 @@ export async function updateProposalAction(_prev: ActionState, formData: FormDat
     })
     .eq('id', id)
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('proposals', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
@@ -57,41 +64,46 @@ export async function updateProposalAction(_prev: ActionState, formData: FormDat
 
 export async function approveProposalAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('proposals').update({ status: 'approved' }).eq('id', id)
+  const { error } = await supabase.from('proposals').update({ status: 'approved' }).eq('id', id)
+  queryFailed('proposals', error)
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
 }
 
 export async function sendProposalAction(id: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('proposals')
     .update({ status: 'pending', sent_at: new Date().toISOString() })
     .eq('id', id)
+  queryFailed('proposals', error)
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
 }
 
 export async function rejectProposalAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('proposals').update({ status: 'rejected' }).eq('id', id)
+  const { error } = await supabase.from('proposals').update({ status: 'rejected' }).eq('id', id)
+  queryFailed('proposals', error)
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
 }
 
 export async function acceptProposalAction(id: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('proposals')
     .update({ status: 'approved', accepted_at: new Date().toISOString() })
     .eq('id', id)
+  queryFailed('proposals', error)
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
 }
 
 export async function archiveProposalAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('proposals').update({ status: 'archived' }).eq('id', id)
+  const { error } = await supabase.from('proposals').update({ status: 'archived' }).eq('id', id)
+  queryFailed('proposals', error)
   revalidatePath('/proposals')
   redirect('/proposals')
 }
