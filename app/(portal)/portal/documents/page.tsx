@@ -1,16 +1,19 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Document } from '@/lib/types'
 
 export default async function PortalDocumentsPage() {
   const supabase = await createClient()
 
-  const { data: documents } = await supabase
+  const { data: documents, error } = await supabase
     .from('documents')
     .select('*')
     .eq('is_shared', true)
     .order('created_at', { ascending: false })
+  const loadFailed = queryFailed('documents', error)
 
   return (
     <div>
@@ -20,7 +23,9 @@ export default async function PortalDocumentsPage() {
         <p className="page-description">Documents and files shared with you by Ridgeline Knows.</p>
       </div>
 
-      {!documents?.length ? (
+      {loadFailed ? (
+        <ErrorState title="Couldn't load your documents" body="Refresh to try again. If it keeps happening, reach out." />
+      ) : !documents?.length ? (
         <EmptyState
           title="No documents yet"
           body="Documents shared with you will appear here once they have been released."

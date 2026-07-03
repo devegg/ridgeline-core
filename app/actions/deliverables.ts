@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/lib/types'
 
@@ -19,7 +20,10 @@ export async function createDeliverableAction(_prev: ActionState, formData: Form
     status: 'pending',
   })
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('deliverables', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/deliverables')
   revalidatePath(`/projects/${projectId}`)
@@ -28,27 +32,30 @@ export async function createDeliverableAction(_prev: ActionState, formData: Form
 
 export async function approveDeliverableAction(id: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('deliverables')
     .update({ status: 'approved', approved_at: new Date().toISOString() })
     .eq('id', id)
+  queryFailed('deliverables', error)
   revalidatePath('/deliverables')
   revalidatePath(`/deliverables/${id}`)
 }
 
 export async function deliverToClientAction(id: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('deliverables')
     .update({ status: 'delivered', delivered_at: new Date().toISOString() })
     .eq('id', id)
+  queryFailed('deliverables', error)
   revalidatePath('/deliverables')
   revalidatePath(`/deliverables/${id}`)
 }
 
 export async function updateDeliverableStatusAction(id: string, status: string) {
   const supabase = await createSupabase()
-  await supabase.from('deliverables').update({ status }).eq('id', id)
+  const { error } = await supabase.from('deliverables').update({ status }).eq('id', id)
+  queryFailed('deliverables', error)
   revalidatePath('/deliverables')
   revalidatePath(`/deliverables/${id}`)
 }

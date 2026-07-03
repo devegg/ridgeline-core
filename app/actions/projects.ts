@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState } from '@/lib/types'
@@ -24,7 +25,10 @@ export async function createProjectAction(_prev: ActionState, formData: FormData
     .select('id')
     .single()
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('projects', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/projects')
   redirect(`/projects/${data.id}`)
@@ -49,7 +53,10 @@ export async function updateProjectAction(_prev: ActionState, formData: FormData
     })
     .eq('id', id)
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('projects', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/projects/${id}`)
   revalidatePath('/projects')
@@ -58,14 +65,16 @@ export async function updateProjectAction(_prev: ActionState, formData: FormData
 
 export async function closeProjectAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('projects').update({ status: 'completed' }).eq('id', id)
+  const { error } = await supabase.from('projects').update({ status: 'completed' }).eq('id', id)
+  queryFailed('projects', error)
   revalidatePath(`/projects/${id}`)
   revalidatePath('/projects')
 }
 
 export async function archiveProjectAction(id: string) {
   const supabase = await createSupabase()
-  await supabase.from('projects').update({ status: 'archived' }).eq('id', id)
+  const { error } = await supabase.from('projects').update({ status: 'archived' }).eq('id', id)
+  queryFailed('projects', error)
   revalidatePath('/projects')
   redirect('/projects')
 }
@@ -80,7 +89,10 @@ export async function addMilestoneAction(_prev: ActionState, formData: FormData)
     .from('milestones')
     .insert({ project_id: projectId, title, due_date: formData.get('due_date') || null })
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('milestones', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/projects/${projectId}`)
   return null
@@ -88,15 +100,17 @@ export async function addMilestoneAction(_prev: ActionState, formData: FormData)
 
 export async function toggleMilestoneAction(milestoneId: string, projectId: string, completed: boolean) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('milestones')
     .update({ completed_at: completed ? new Date().toISOString() : null })
     .eq('id', milestoneId)
+  queryFailed('milestones', error)
   revalidatePath(`/projects/${projectId}`)
 }
 
 export async function deleteMilestoneAction(milestoneId: string, projectId: string) {
   const supabase = await createSupabase()
-  await supabase.from('milestones').delete().eq('id', milestoneId)
+  const { error } = await supabase.from('milestones').delete().eq('id', milestoneId)
+  queryFailed('milestones', error)
   revalidatePath(`/projects/${projectId}`)
 }

@@ -1,15 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Assessment } from '@/lib/types'
 
 export default async function PortalAssessmentsPage() {
   const supabase = await createClient()
 
-  const { data: assessments } = await supabase
+  const { data: assessments, error } = await supabase
     .from('assessments')
     .select('*')
     .order('scheduled_date', { ascending: false })
+  const loadFailed = queryFailed('assessments', error)
 
   return (
     <div>
@@ -19,7 +22,9 @@ export default async function PortalAssessmentsPage() {
         <p className="page-description">Scheduled and completed assessments for your engagement.</p>
       </div>
 
-      {!assessments?.length ? (
+      {loadFailed ? (
+        <ErrorState title="Couldn't load your assessments" body="Refresh to try again. If it keeps happening, reach out." />
+      ) : !assessments?.length ? (
         <EmptyState
           title="No assessments yet"
           body="Assessments will appear here once they have been scheduled."

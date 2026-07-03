@@ -1,15 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Invoice } from '@/lib/types'
 
 export default async function PortalBillingPage() {
   const supabase = await createClient()
 
-  const { data: invoices } = await supabase
+  const { data: invoices, error } = await supabase
     .from('invoices')
     .select('*')
     .order('created_at', { ascending: false })
+  const loadFailed = queryFailed('invoices', error)
 
   const outstanding = (invoices ?? [])
     .filter(i => ['sent', 'overdue'].includes(i.status))
@@ -23,7 +26,9 @@ export default async function PortalBillingPage() {
         <p className="page-description">Your invoices from Ridgeline Knows.</p>
       </div>
 
-      {!invoices?.length ? (
+      {loadFailed ? (
+        <ErrorState title="Couldn't load your invoices" body="Refresh to try again. If it keeps happening, reach out." />
+      ) : !invoices?.length ? (
         <EmptyState
           title="No invoices yet"
           body="Invoices will appear here once they have been issued."

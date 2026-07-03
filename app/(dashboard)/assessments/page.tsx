@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Assessment, AssessmentStatus } from '@/lib/types'
 
 const TABS = [
@@ -19,7 +21,8 @@ export default async function AssessmentsPage({ searchParams }: { searchParams: 
 
   let query = supabase.from('assessments').select('*, client:clients(id, name)').order('scheduled_date', { ascending: true, nullsFirst: false })
   if (current !== 'all') query = query.eq('status', current as AssessmentStatus)
-  const { data: assessments } = await query
+  const { data: assessments, error } = await query
+  const loadFailed = queryFailed('assessments', error)
 
   return (
     <div>
@@ -36,7 +39,9 @@ export default async function AssessmentsPage({ searchParams }: { searchParams: 
       <div style={{ marginTop: 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/assessments" />
 
-        {!assessments?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load assessments" />
+        ) : !assessments?.length ? (
           <EmptyState title="No assessments" body={current === 'all' ? 'Create your first assessment record.' : `No ${current.replace('_', ' ')} assessments.`} />
         ) : (
           <div className="table-wrap">

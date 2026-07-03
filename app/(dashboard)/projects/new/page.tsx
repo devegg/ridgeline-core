@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ProjectForm } from '@/components/forms/ProjectForm'
 import { createProjectAction } from '@/app/actions/projects'
+import { queryFailed } from '@/lib/supabase/errors'
 
 export default async function NewProjectPage({
   searchParams,
@@ -10,7 +11,8 @@ export default async function NewProjectPage({
 }) {
   const { client_id } = await searchParams
   const supabase = await createClient()
-  const { data: clients } = await supabase.from('clients').select('id, name').neq('status', 'archived').order('name')
+  const { data: clients, error } = await supabase.from('clients').select('id, name').neq('status', 'archived').order('name')
+  queryFailed('clients', error)
 
   return (
     <div>

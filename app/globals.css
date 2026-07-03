@@ -880,6 +880,18 @@ section {
 .empty-state__action { margin-top: 28px; }
 
 /* ============================================================
+   Error state (failed query)
+   ============================================================ */
+.error-state {
+  padding: 64px 32px;
+  text-align: center;
+  border: 1px solid rgba(177, 75, 60, 0.3);
+  background: rgba(177, 75, 60, 0.04);
+}
+.error-state__title { font-family: var(--serif); font-size: 22px; color: #8B2A1E; margin-bottom: 10px; }
+.error-state__body { font-size: 14.5px; color: var(--ink-muted); max-width: 40ch; margin: 0 auto; line-height: 1.6; }
+
+/* ============================================================
    Detail layout
    ============================================================ */
 .detail-grid {
@@ -906,6 +918,7 @@ section {
 .section-card__label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
 .section-card__body { padding: 0; }
 .section-card__empty { padding: 24px 22px; font-size: 14px; color: var(--ink-soft); }
+.section-card__error { padding: 24px 22px; font-size: 14px; color: #8B2A1E; }
 
 /* ============================================================
    Milestone row

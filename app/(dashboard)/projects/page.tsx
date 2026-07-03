@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Project, ProjectStatus } from '@/lib/types'
 
 const TABS = [
@@ -28,7 +30,8 @@ export default async function ProjectsPage({
     .order('created_at', { ascending: false })
   if (current !== 'all') query = query.eq('status', current as ProjectStatus)
 
-  const { data: projects } = await query
+  const { data: projects, error } = await query
+  const loadFailed = queryFailed('projects', error)
 
   return (
     <div>
@@ -45,7 +48,9 @@ export default async function ProjectsPage({
       <div style={{ marginTop: 28 }}>
         <FilterTabs tabs={TABS} current={current} basePath="/projects" />
 
-        {!projects?.length ? (
+        {loadFailed ? (
+          <ErrorState title="Couldn't load projects" />
+        ) : !projects?.length ? (
           <EmptyState
             title="No projects yet"
             body={current === 'all' ? 'Create your first project to get started.' : `No ${current.replace('_', ' ')} projects.`}

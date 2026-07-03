@@ -5,6 +5,8 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { completeAssessmentAction, updateAssessmentAction } from '@/app/actions/assessments'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { DocumentList } from '@/components/documents/DocumentList'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Assessment, Document } from '@/lib/types'
 
 export default async function AssessmentDetailPage({
@@ -17,12 +19,22 @@ export default async function AssessmentDetailPage({
   const { mode } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: assessment }, { data: clients }, { data: projects }, { data: docs }] = await Promise.all([
+  const [
+    { data: assessment, error: assessmentError },
+    { data: clients, error: clientsError },
+    { data: projects, error: projectsError },
+    { data: docs, error: docsError },
+  ] = await Promise.all([
     supabase.from('assessments').select('*, client:clients(id, name), project:projects!project_id(id, name), follow_up:projects!follow_up_project_id(id, name)').eq('id', id).single(),
     supabase.from('clients').select('id, name').neq('status', 'archived').order('name'),
     supabase.from('projects').select('id, name').eq('status', 'active').order('name'),
     supabase.from('documents').select('*').eq('entity_type', 'assessment').eq('entity_id', id).order('created_at', { ascending: false }),
   ])
+
+  if (queryFailed('assessments', assessmentError)) return <ErrorState title="Couldn't load this assessment" />
+  queryFailed('clients', clientsError)
+  queryFailed('projects', projectsError)
+  const docsFailed = queryFailed('documents', docsError)
 
   if (!assessment) notFound()
   const a = assessment as Assessment & {
@@ -85,7 +97,11 @@ export default async function AssessmentDetailPage({
             {docs?.length ?? 0} file{docs?.length !== 1 ? 's' : ''}
           </span>
         </div>
-        <DocumentList documents={(docs as Document[]) ?? []} entityType="assessment" entityId={id} />
+        {docsFailed ? (
+          <div className="section-card__error">Documents failed to load.</div>
+        ) : (
+          <DocumentList documents={(docs as Document[]) ?? []} entityType="assessment" entityId={id} />
+        )}
       </div>
 
       <p style={{ marginTop: 20, fontSize: 13, color: 'var(--ink-soft)' }}>

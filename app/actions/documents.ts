@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import type { ActionState, DocumentEntityType } from '@/lib/types'
 
@@ -22,7 +23,10 @@ export async function uploadDocumentAction(_prev: ActionState, formData: FormDat
     is_shared: formData.get('is_shared') === 'true',
   })
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('documents', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/${entityType}s/${entityId}`)
   return { message: 'Document uploaded.' }
@@ -30,13 +34,15 @@ export async function uploadDocumentAction(_prev: ActionState, formData: FormDat
 
 export async function toggleShareAction(documentId: string, entityType: DocumentEntityType, entityId: string, shared: boolean) {
   const supabase = await createSupabase()
-  await supabase.from('documents').update({ is_shared: shared }).eq('id', documentId)
+  const { error } = await supabase.from('documents').update({ is_shared: shared }).eq('id', documentId)
+  queryFailed('documents', error)
   revalidatePath(`/${entityType}s/${entityId}`)
   revalidatePath('/portal/documents')
 }
 
 export async function deleteDocumentAction(documentId: string, entityType: DocumentEntityType, entityId: string) {
   const supabase = await createSupabase()
-  await supabase.from('documents').delete().eq('id', documentId)
+  const { error } = await supabase.from('documents').delete().eq('id', documentId)
+  queryFailed('documents', error)
   revalidatePath(`/${entityType}s/${entityId}`)
 }

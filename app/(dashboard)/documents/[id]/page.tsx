@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { MarkdownViewer } from '@/components/documents/MarkdownViewer'
 import { DownloadMarkdownButton, DownloadPdfButton } from '@/components/documents/DownloadButton'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Document } from '@/lib/types'
 
 const ENTITY_PATHS: Record<string, string> = {
@@ -16,7 +18,8 @@ export default async function DocumentViewPage({ params }: { params: Promise<{ i
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: doc } = await supabase.from('documents').select('*').eq('id', id).single()
+  const { data: doc, error } = await supabase.from('documents').select('*').eq('id', id).single()
+  if (queryFailed('documents', error)) return <ErrorState title="Couldn't load this document" />
   if (!doc) notFound()
 
   const d = doc as Document

@@ -6,6 +6,8 @@ import { ClientForm } from '@/components/forms/ClientForm'
 import { archiveClientAction, updateClientAction } from '@/app/actions/clients'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { ContactList } from '@/components/clients/ContactList'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Client, Contact, Project } from '@/lib/types'
 
 export default async function ClientDetailPage({
@@ -19,11 +21,19 @@ export default async function ClientDetailPage({
   const { mode } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: client }, { data: projects }, { data: contacts }] = await Promise.all([
+  const [
+    { data: client, error: clientError },
+    { data: projects, error: projectsError },
+    { data: contacts, error: contactsError },
+  ] = await Promise.all([
     supabase.from('clients').select('*').eq('id', id).single(),
     supabase.from('projects').select('id, name, status').eq('client_id', id).order('created_at', { ascending: false }),
     supabase.from('contacts').select('*').eq('client_id', id).order('role').order('name'),
   ])
+
+  if (queryFailed('clients', clientError)) return <ErrorState title="Couldn't load this client" />
+  const projectsFailed = queryFailed('projects', projectsError)
+  const contactsFailed = queryFailed('contacts', contactsError)
 
   if (!client) notFound()
   const c = client as Client
@@ -84,7 +94,11 @@ export default async function ClientDetailPage({
             {(contacts as Contact[] ?? []).length} contact{(contacts?.length ?? 0) !== 1 ? 's' : ''}
           </span>
         </div>
-        <ContactList contacts={(contacts as Contact[]) ?? []} clientId={id} />
+        {contactsFailed ? (
+          <div className="section-card__error">Contacts failed to load.</div>
+        ) : (
+          <ContactList contacts={(contacts as Contact[]) ?? []} clientId={id} />
+        )}
       </div>
 
       {/* Associated Projects */}
@@ -96,7 +110,9 @@ export default async function ClientDetailPage({
           </Link>
         </div>
         <div className="section-card__body">
-          {!projects?.length ? (
+          {projectsFailed ? (
+            <div className="section-card__error">Projects failed to load.</div>
+          ) : !projects?.length ? (
             <div className="section-card__empty">No projects yet.</div>
           ) : (
             <table className="data-table">

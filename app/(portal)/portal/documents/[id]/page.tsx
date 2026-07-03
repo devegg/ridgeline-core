@@ -3,19 +3,24 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { MarkdownViewer } from '@/components/documents/MarkdownViewer'
 import { DownloadMarkdownButton, DownloadPdfButton } from '@/components/documents/DownloadButton'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Document } from '@/lib/types'
 
 export default async function PortalDocumentViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: doc } = await supabase
+  const { data: doc, error } = await supabase
     .from('documents')
     .select('*')
     .eq('id', id)
     .eq('is_shared', true)
     .single()
 
+  if (queryFailed('documents', error)) {
+    return <ErrorState title="Couldn't load this document" body="Refresh to try again. If it keeps happening, reach out." />
+  }
   if (!doc) notFound()
   const d = doc as Document
 

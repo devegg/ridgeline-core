@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
+import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState } from '@/lib/types'
@@ -22,7 +23,10 @@ export async function createAssessmentAction(_prev: ActionState, formData: FormD
     .select('id')
     .single()
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('assessments', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath('/assessments')
   redirect(`/assessments/${data.id}`)
@@ -46,7 +50,10 @@ export async function updateAssessmentAction(_prev: ActionState, formData: FormD
     })
     .eq('id', id)
 
-  if (error) return { errors: { _root: error.message } }
+  if (error) {
+    queryFailed('assessments', error)
+    return { errors: { _root: error.message } }
+  }
 
   revalidatePath(`/assessments/${id}`)
   revalidatePath('/assessments')
@@ -55,19 +62,21 @@ export async function updateAssessmentAction(_prev: ActionState, formData: FormD
 
 export async function completeAssessmentAction(id: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('assessments')
     .update({ status: 'completed', completed_at: new Date().toISOString() })
     .eq('id', id)
+  queryFailed('assessments', error)
   revalidatePath(`/assessments/${id}`)
   revalidatePath('/assessments')
 }
 
 export async function linkAssessmentToProjectAction(assessmentId: string, projectId: string) {
   const supabase = await createSupabase()
-  await supabase
+  const { error } = await supabase
     .from('assessments')
     .update({ follow_up_project_id: projectId })
     .eq('id', assessmentId)
+  queryFailed('assessments', error)
   revalidatePath(`/assessments/${assessmentId}`)
 }

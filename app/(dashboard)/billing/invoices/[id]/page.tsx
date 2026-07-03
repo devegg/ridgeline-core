@@ -5,6 +5,8 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { InvoiceForm } from '@/components/forms/InvoiceForm'
 import { updateInvoiceAction, sendInvoiceAction, markInvoicePaidAction, cancelInvoiceAction } from '@/app/actions/billing'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { queryFailed } from '@/lib/supabase/errors'
 import type { Invoice } from '@/lib/types'
 
 export default async function InvoiceDetailPage({
@@ -17,11 +19,19 @@ export default async function InvoiceDetailPage({
   const { mode } = await searchParams
   const supabase = await createClient()
 
-  const [{ data: invoice }, { data: clients }, { data: projects }] = await Promise.all([
+  const [
+    { data: invoice, error: invoiceError },
+    { data: clients, error: clientsError },
+    { data: projects, error: projectsError },
+  ] = await Promise.all([
     supabase.from('invoices').select('*, client:clients(id, name), project:projects(id, name)').eq('id', id).single(),
     supabase.from('clients').select('id, name').neq('status', 'archived').order('name'),
     supabase.from('projects').select('id, name').eq('status', 'active').order('name'),
   ])
+
+  if (queryFailed('invoices', invoiceError)) return <ErrorState title="Couldn't load this invoice" />
+  queryFailed('clients', clientsError)
+  queryFailed('projects', projectsError)
 
   if (!invoice) notFound()
   const inv = invoice as Invoice & {
