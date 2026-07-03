@@ -19,13 +19,13 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
 
 ## TIER 0 — Today: the one-pager, correct and honest (all S)
 
-- [ ] **0.1 Copy edit — service area.** Everywhere the homepage says
+- [x] **0.1 Copy edit — service area.** Everywhere the homepage says
   "Murrells Inlet" (ClientsSection copy), replace the geographic framing with
   **"The Lowcountry to Myrtle Beach and beyond."** Footer/contact stays
   "Myrtle Beach, South Carolina."
   > notes:
 
-- [ ] **0.2 Proof section (03 — PROOF) — add the products.** Add three
+- [x] **0.2 Proof section (03 — PROOF) — add the products.** Add three
   entries alongside the existing client stories: **RFQ Hunter**
   (federal-contract intelligence platform, live in private beta),
   **Movie Slot Machine** (movieslotmachine.com — live), **GridStrain**
@@ -52,7 +52,7 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   - /Users/brianboyd/Documents/Job Search/portfolio/TidyRipples-com/ (Case Study)
   - /Users/brianboyd/Documents/Job Search/portfolio/TRBF-com/ (Case Study)
 
-- [ ] **0.3 Wire the contact form for real.** Replace the mock submit
+- [x] **0.3 Wire the contact form for real.** Replace the mock submit
   (Contact.tsx:46 TODO) with a server action sending via **Resend** to
   brian@ridgelineknows.com, plus a honeypot field and a server-side
   min-length check. Keep the existing success card. Until the domain is
@@ -60,11 +60,11 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   after 1.4. Done when: a real test message lands in your inbox.
   > notes: as for the email used for resend, we need to have rules in place to where any project of mine will always use the same email addresses in format. So we need to look at RFQ Hunter to see what it uses. And plus we'll set up resend properly from the beginning, not the on boarding domain, but a real domain. You can build this without us having to test it right away. It can wait until I return.
 
-- [ ] **0.4 Logout button.** Dashboard TopBar gets sign-out (portal already
+- [x] **0.4 Logout button.** Dashboard TopBar gets sign-out (portal already
   has one). Done when: you can log out without clearing cookies.
   > notes:
 
-- [ ] **0.5 Merge `fix/surface-supabase-query-errors`.** The background
+- [x] **0.5 Merge `fix/surface-supabase-query-errors`.** The background
   session's branch is pushed and ready — review, merge, verify build.
   Errors never hide again.
   > notes:
@@ -73,12 +73,12 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
 
 ## TIER 1 — Today/tonight: make it live (S–M)
 
-- [ ] **1.1 SEO / credibility pack.** Create `public/` (favicon, OG image),
+- [x] **1.1 SEO / credibility pack.** Create `public/` (favicon, OG image),
   per-page metadata + Open Graph tags, `sitemap.ts`, `robots.ts`, JSON-LD
   LocalBusiness block on the homepage. (M)
   > notes:
 
-- [ ] **1.2 Vercel project for core.** Create project `ridgeline-core` (or
+- [x] **1.2 Vercel project for core.** Create project `ridgeline-core` (or
   `ridgelineknows`), link repo, set the two env vars
   (NEXT_PUBLIC_SUPABASE_URL / _ANON_KEY), first production deploy, verify
   the deploy reflects main HEAD (merged ≠ shipped). (S)
@@ -104,6 +104,19 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   > notes:
 
 ---
+
+**Executed while owner away (2026-07-03 evening):** 0.1 done (3 spots, exact
+wording; footer/contact = Myrtle Beach). 0.2 done as DRAFT — three linked
+product cards live in Stories.tsx, review the copy. 0.3 code complete +
+committed; sends soft-fail until RESEND_API_KEY exists (your call — see
+DNS-CUTOVER doc §4; bidscovery's key was off-limits by design). 0.4 was
+already built (TopBar had sign-out all along). 0.5 merged after review.
+1.1 done (icon, OG image, sitemap, robots, JSON-LD, full metadata).
+1.2 done — project ridgeline-core created, envs set, production deploy run.
+1.3/1.4 = your 10 minutes: docs/plans/DNS-CUTOVER-ridgelineknows.md is
+paste-ready. Portfolio sources for Tier 2 inventoried:
+docs/plans/PORTFOLIO-INVENTORY.md (note the macOS Documents-folder
+permission blocker listed there).
 
 ## TIER 2 — Weekend, part 1: the public proof layer (the /work engine) (L)
 
