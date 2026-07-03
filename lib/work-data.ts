@@ -160,11 +160,11 @@ export const WORK: WorkEntry[] = [
     status: 'Concept — design complete',
     oneLiner: 'A mobile music discovery game where players stake permanent, timestamped claims on AI music creators.',
     body: [
-      'ClaimedFirst is built around one feeling: I found them first. Players discover AI music creators and claim them — the first to claim an artist becomes Claimer #1, and that number is permanent and timestamped. Drop an artist and the original position is gone for good; re-add them later and you take a new number at the back of the line. Every claim a player ever makes lives on their profile forever. That record is the reputation.',
-      'It is not a stock market game. It is a taste-identity game, designed so the leaderboard reflects genuine taste — not hours played or money spent. The design covers the whole game: claim mechanics and the 30-day cooldown that closes the obvious scoring exploit, tiered roster storage as the revenue mechanic (pay to enhance, never pay to win), a scoring system that pairs early faith with artist growth, the artist side of the game, anti-gaming rules, and the daily retention loop. Claim data lives in the game’s own database, so nothing critical depends on outside music-platform APIs.',
+      'ClaimedFirst is built around one feeling: I found them first. Players discover AI music creators and claim them — the first to claim an artist becomes Claimer #1, and that number is permanent and timestamped. Drop an artist and the original position is gone for good. Every claim a player ever makes lives on their profile forever. That record is the reputation.',
+      'It is not a stock market game. It is a taste-identity game — the leaderboard is meant to reflect genuine taste, not hours played or money spent. The full design goes well past this page: the game economy, the integrity rules that keep the leaderboard honest, the artist side, and the retention loop are all specified. That part stays off the page on purpose.',
     ],
     outcome:
-      'Design complete, nothing built. Shown here as proof of product-design range: mechanics, economy, and integrity rules specified before a line of code.',
+      'Design complete, nothing built — and deliberately under-described here. The complete design spec is available in a serious conversation.',
     stack: 'Flutter · Supabase (proposed)',
   },
 ]

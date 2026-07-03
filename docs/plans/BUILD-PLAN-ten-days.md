@@ -180,6 +180,14 @@ one-pager (7-page staged reveal covering all 24 features with honest status
 labels; storyline page is the centerpiece). ClaimedFirst prompt unchanged —
 owner weighing public-vs-hidden; recommendation delivered.
 
+**Owner review round 2 applied 2026-07-03 night:** ClaimedFirst scaled back
+per owner — public entry now hook-only (mechanics, economy, cooldown, and
+anti-gaming detail removed; outcome says the full spec is available in a
+serious conversation). The teaser design prompt already matched this posture.
+SongLedger confirmed as the owner's own work (partner-era rename to
+SoundForge, later decoupled; SongLedger evolved into the Spinroom 24-feature
+platform) — published entry, status, and songledger.app link stand unchanged.
+
 ---
 
 ## TIER 3 — Weekend, part 2: dashboard completion (build-everything override) (L)
