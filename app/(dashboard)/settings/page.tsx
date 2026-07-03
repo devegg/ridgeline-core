@@ -1,17 +1,22 @@
-import { StubPage } from '@/components/ui/StubPage'
+import { createClient } from '@/lib/supabase/server'
+import { SettingsPanel } from '@/components/settings/SettingsPanel'
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const projectHost = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace('https://', '')
+
   return (
-    <StubPage
-      eyebrow="Settings"
-      title="Settings"
-      description="Platform permissions, billing configuration, team management, and audit logs. Planned for a future phase."
-      features={[
-        'Invite and remove Admin users',
-        'Set platform permissions and access levels',
-        'Configure billing and invoice settings',
-        'View audit logs',
-      ]}
-    />
+    <div>
+      <div className="page-header">
+        <div className="page-eyebrow">Settings</div>
+        <h1 className="page-title">Settings</h1>
+        <p className="page-description">Account and system. Preferences arrive when there are preferences to set.</p>
+      </div>
+      <SettingsPanel email={user?.email ?? ''} projectHost={projectHost} />
+    </div>
   )
 }
