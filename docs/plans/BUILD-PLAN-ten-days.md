@@ -143,9 +143,12 @@ permission blocker listed there).
   (b) **Salem case study** — the assessment + proposal already in the DB, anonymized ("a two-person DoD contractor").
   Wire homepage Stories cards → their /work pages.
   > notes: expanded far past "first two" — see execution log below. The RFQ
-  Hunter paper (a) is still unwritten; its /work entry carries the story
-  for now. Homepage Stories product cards link out to the live products
-  and cross-link to /work; per-card /work wiring not done.
+  Hunter flagship paper (a) shipped 2026-07-03 night: 1,472 words, the
+  longest on the site per owner directive, every claim traced to the
+  bidscovery runbook (forecast framed as "DLA published forecast", mock-AI
+  and preview-only features omitted). Homepage Stories product cards link
+  out to the live products and cross-link to /work; per-card /work wiring
+  not done.
 
 **Tier 2 content executed 2026-07-03 evening (owner green-light: "push the
 drafts, I'll review on the site"):** SEVEN papers live at /papers, in order:
@@ -162,6 +165,20 @@ docs/plans/design-prompts/ (tidyripples-site, spinroom-one-pager,
 claimedfirst-teaser — the last supersedes the prompt file in
 ~/Projects/a/ClaimedFirst/). OWNER REVIEW TONIGHT: everything above is live
 but unreviewed; flag list in the session summary.
+
+**Owner review round 1 applied 2026-07-03 night:** ACME's 249-discrepancy and
+30-second claims pulled (owner could not confirm as real-engagement results);
+RFQ Hunter origin line added to the ACME paper. TidyRipples repositioned —
+never launched, never operated, now presented as a complete business design
+FOR SALE (owner call; fake testimonials permitted on the demo site with
+fictional-disclosure small print). TRBF: book-manuscript lineage added,
+"Leverage Profile" restored as the framework's own term. All three live paper
+rows updated in place, md5-synced to drafts. RFQ Hunter flagship published to
+the top of /papers. Design prompts: tidyripples-site.md revised (no city,
+for-sale ending, fresh Next.js build); spinroom-platform.md replaces the
+one-pager (7-page staged reveal covering all 24 features with honest status
+labels; storyline page is the centerpiece). ClaimedFirst prompt unchanged —
+owner weighing public-vs-hidden; recommendation delivered.
 
 ---
 
