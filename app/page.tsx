@@ -23,6 +23,24 @@ export default function Home() {
           <Contact />
         </main>
         <SiteFooter />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ProfessionalService',
+              name: 'Ridgeline Knows',
+              url: 'https://ridgelineknows.com',
+              email: 'hello@ridgelineknows.com',
+              telephone: '+1-843-425-7030',
+              description:
+                'Operations counsel for small business owners. I help businesses eliminate hours lost to tasks that can run automatically.',
+              address: { '@type': 'PostalAddress', addressLocality: 'Myrtle Beach', addressRegion: 'SC', addressCountry: 'US' },
+              areaServed: 'The Lowcountry to Myrtle Beach and beyond — clients nationwide',
+              founder: { '@type': 'Person', name: 'Brian Boyd' },
+            }),
+          }}
+        />
       </div>
     </div>
   )

@@ -32,7 +32,25 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   (gridstrain.com — live). Products are yours: name them and LINK them —
   clickable proof beats described proof. Client stories keep the
   names-held-back rule. Copy drafts in your voice, you review before push.
-  > notes:
+  > notes: RFQ Hunter, will have its marketing page live before the weekend is over. For all three portfolio pieces along with the websites, we will create white papers, stories behind each one of them ready to go by the end of the weekend. I have other businesses where I created a business plan the concept behind the brand, and even plans for a marketing website. To my thought is while I have the session time and Claude design can take the prompt that you write and create the website we can make these available too. One is called TidyRipples and it has a really cool story behind it, plus, I have a domain name for it. I also have a website that started out as a book that I'd like to add. You can review the website https://therightbusinessfirst.com/ as this will be a good addition to the portfolio to show that I am versitile. I asked for spinroom.app, we will add just a one page marketing web page to showcase the storyline for what I had planned. And we might open that up to a public get hub. I have an idea for music app that I may never develop and if I don't, I would like to put that on the portfolio piece as well that's called ClaimedFirst. 
+
+  Where details are:
+  - /Users/brianboyd/Projects/a/ClaimedFirst/ (app idea)
+  - /Users/brianboyd/Projects/a/SpinRoom/  (SpinRoom version 3)
+  - /Users/brianboyd/Projects/Spinroom/  (SpinRoom version 2)
+  - /Users/brianboyd/Projects/SongLedger/ (SpinRoom version 1)
+  - /Users/brianboyd/Projects/therightbusinessfirst/ (version ???)
+  - /Users/brianboyd/Projects/trbf-app/ (version ???)
+  - /Users/brianboyd/0/_Loho/ (Maybe add at a later date)
+  - /Users/brianboyd/0/all-these-doors/ (Maybe add at a later date)
+  - /Users/brianboyd/0/hem-storefront/ (Maybe add at a later date)
+  - /Users/brianboyd/0/trades-platform/ (Maybe add at a later date)
+  - /Users/brianboyd/Documents/Job Search/portfolio/ACME_Mfg-demo/ (Case Study)
+  - /Users/brianboyd/Documents/Job Search/portfolio/ArtisticShield-com/ (Case Study)
+  - /Users/brianboyd/Documents/Job Search/portfolio/SongLedger-app/ (Case Study)
+  - /Users/brianboyd/Documents/Job Search/portfolio/Spinroom-app/ (Case Study)
+  - /Users/brianboyd/Documents/Job Search/portfolio/TidyRipples-com/ (Case Study)
+  - /Users/brianboyd/Documents/Job Search/portfolio/TRBF-com/ (Case Study)
 
 - [ ] **0.3 Wire the contact form for real.** Replace the mock submit
   (Contact.tsx:46 TODO) with a server action sending via **Resend** to
@@ -40,7 +58,7 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   min-length check. Keep the existing success card. Until the domain is
   verified in Resend, send from Resend's onboarding domain; swap sender
   after 1.4. Done when: a real test message lands in your inbox.
-  > notes:
+  > notes: as for the email used for resend, we need to have rules in place to where any project of mine will always use the same email addresses in format. So we need to look at RFQ Hunter to see what it uses. And plus we'll set up resend properly from the beginning, not the on boarding domain, but a real domain. You can build this without us having to test it right away. It can wait until I return.
 
 - [ ] **0.4 Logout button.** Dashboard TopBar gets sign-out (portal already
   has one). Done when: you can log out without clearing cookies.

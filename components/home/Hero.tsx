@@ -7,7 +7,7 @@ export function Hero() {
         <Reveal className="hero__meta">
           <span>Operations Counsel</span>
           <i />
-          <span>Murrells Inlet, SC</span>
+          <span>The Lowcountry to Myrtle Beach and beyond</span>
           <i />
           <span>Small Business</span>
         </Reveal>

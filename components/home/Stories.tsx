@@ -1,5 +1,35 @@
 import { Reveal } from './Reveal'
 
+const PRODUCTS = [
+  {
+    sector: 'Federal contracting · SaaS',
+    size: 'Private beta · rfqhunter.com',
+    title: 'Small suppliers were bidding blind on government contracts.',
+    body: 'DLA suppliers pick through thousands of solicitations by hand, with no view of award history or the competition. RFQ Hunter is a federal-contract intelligence platform I built from the ground up: solicitation matching, award and pricing history, competitor intelligence, and demand forecasting — built on the government’s own published data.',
+    outcome: 'Live in private beta. Four hundred merged pull requests and climbing.',
+    href: 'https://www.rfqhunter.com',
+    linkLabel: 'rfqhunter.com',
+  },
+  {
+    sector: 'Data & infrastructure',
+    size: 'Live · gridstrain.com',
+    title: 'Watching the American power grid strain, in near real time.',
+    body: 'GridStrain tracks stress on the U.S. power grid — regional demand, state-by-state electricity rates, and the gap between them. The data pipeline refreshes itself every hour, unattended. Built end-to-end: ingestion, database, and the site you can open right now.',
+    outcome: 'Live. The data updates itself, hourly, whether anyone is watching or not.',
+    href: 'https://gridstrain.com',
+    linkLabel: 'gridstrain.com',
+  },
+  {
+    sector: 'Consumer web',
+    size: 'Live · movieslotmachine.com',
+    title: 'Thirty minutes deciding what to watch. Pull the lever instead.',
+    body: 'Movie Slot Machine ends the endless scroll: set a genre, pull the lever, get a film. A small, finished thing — designed, built, and shipped to production. Not every build has to be an operations platform.',
+    outcome: 'Live. Deciding what to watch now takes eleven seconds.',
+    href: 'https://movieslotmachine.com',
+    linkLabel: 'movieslotmachine.com',
+  },
+]
+
 const STORIES = [
   {
     sector: 'Real estate brokerage',
@@ -33,14 +63,15 @@ export function Stories() {
         </Reveal>
         <Reveal delay={1}>
           <h2 className="section-title">
-            Three engagements,<br />
+            Client work and my own products,<br />
             <em>plainly</em> described.
           </h2>
         </Reveal>
         <Reveal delay={2}>
           <p className="lede">
-            Client names are held back; outcomes are not. If a serious conversation is underway,
-            references are available on request.
+            Client names are held back; outcomes are not. My own products are named — click
+            through and see them running. If a serious conversation is underway, references are
+            available on request.
           </p>
         </Reveal>
 
@@ -60,6 +91,42 @@ export function Stories() {
               </div>
               <div>
                 <p className="story__outcome">{s.outcome}</p>
+              </div>
+            </article>
+          </Reveal>
+        ))}
+
+        <Reveal delay={1}>
+          <p className="lede" style={{ marginTop: 56 }}>
+            And three products of my own — built, shipped, and running today:
+          </p>
+        </Reveal>
+
+        {PRODUCTS.map((p, i) => (
+          <Reveal key={p.href} delay={1}>
+            <article className="story">
+              <div>
+                <div className="story__num">{String(i + 4).padStart(2, '0')}</div>
+                <div className="story__meta">
+                  <span>{p.sector}</span>
+                  {p.size}
+                </div>
+              </div>
+              <div>
+                <h3 className="story__title">
+                  <a href={p.href} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+                    {p.title}
+                  </a>
+                </h3>
+                <p className="story__body">{p.body}</p>
+              </div>
+              <div>
+                <p className="story__outcome">
+                  {p.outcome}{' '}
+                  <a href={p.href} target="_blank" rel="noopener noreferrer">
+                    {p.linkLabel} →
+                  </a>
+                </p>
               </div>
             </article>
           </Reveal>

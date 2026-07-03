@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Reveal } from './Reveal'
+import { sendContactMessage } from '@/app/actions/contact'
 
 const SITUATIONS = [
   'Growth has stalled',
@@ -18,6 +19,7 @@ function ContactForm() {
     company: '',
     situation: SITUATIONS[0],
     message: '',
+    website: '', // honeypot — humans never see it, bots fill it
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -37,17 +39,19 @@ function ContactForm() {
     return next
   }
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const next = validate()
     setErrors(next)
     if (Object.keys(next).length) return
     setSubmitting(true)
-    // TODO: wire to actual email/form submission
-    setTimeout(() => {
-      setSubmitting(false)
+    const result = await sendContactMessage(values)
+    setSubmitting(false)
+    if (result.ok) {
       setSubmitted(true)
-    }, 900)
+    } else {
+      setErrors({ _root: result.error ?? 'Something went wrong — please email hello@ridgelineknows.com directly.' })
+    }
   }
 
   if (submitted) {
@@ -104,6 +108,24 @@ function ContactForm() {
         {errors.message && <div className="field__error">{errors.message}</div>}
       </div>
 
+      <div style={{ position: 'absolute', left: '-9999px', top: 'auto' }} aria-hidden="true">
+        <label htmlFor="f-website">Website</label>
+        <input
+          id="f-website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={values.website}
+          onChange={setField('website')}
+        />
+      </div>
+
+      {errors._root && (
+        <div className="field__error" role="alert" style={{ marginBottom: 12 }}>
+          {errors._root}
+        </div>
+      )}
+
       <div className="form__footer">
         <div className="form__note">
           Replies within two business days. Nothing here goes into a CRM or a mailing list.
@@ -149,15 +171,15 @@ export function Contact() {
             <div>
               <div className="info-row__label">By email</div>
               <div className="info-row__value">
-                <a href="mailto:info@ridgelineknows.com">info@ridgelineknows.com</a>
+                <a href="mailto:hello@ridgelineknows.com">hello@ridgelineknows.com</a>
               </div>
               <div className="info-row__note">Replies within two business days.</div>
             </div>
             <div>
               <div className="info-row__label">Based in</div>
-              <div className="info-row__value">Murrells Inlet, SC</div>
+              <div className="info-row__value">Myrtle Beach, SC</div>
               <div className="info-row__note">
-                Serving small business owners in the Lowcountry and across the country.
+                Serving the Lowcountry to Myrtle Beach and beyond — and clients across the country.
               </div>
             </div>
           </Reveal>
