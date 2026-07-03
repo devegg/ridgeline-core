@@ -23,38 +23,41 @@ fi
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# OUTPUT_DIR: use TARGET_DIR env var if set (web UI), otherwise use SCRIPT_DIR (CLI)
+OUTPUT_DIR="${TARGET_DIR:-$SCRIPT_DIR}"
+
 # Check if project already exists
-if [ -d "$SCRIPT_DIR/$PROJECT_NAME" ]; then
-  echo "❌ Error: Project '$PROJECT_NAME' already exists at $SCRIPT_DIR/$PROJECT_NAME"
+if [ -d "$OUTPUT_DIR/$PROJECT_NAME" ]; then
+  echo "❌ Error: Project '$PROJECT_NAME' already exists at $OUTPUT_DIR/$PROJECT_NAME"
   exit 1
 fi
 
 echo "Creating project: $PROJECT_NAME"
-echo "Location: $SCRIPT_DIR/$PROJECT_NAME"
+echo "Location: $OUTPUT_DIR/$PROJECT_NAME"
 echo ""
 
 # Create folder structure
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/app"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/architecture"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/setup"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/deployment"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/features"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/client/migrations"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/api"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/decisions"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/gitignored"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/config"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/scripts"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/ideas"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/research"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/screenshots"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/content"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/brand"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/product"
-mkdir -p "$SCRIPT_DIR/$PROJECT_NAME/docs/extras/portfolio"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/app"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/architecture"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/setup"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/deployment"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/features"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/client/migrations"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/api"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/decisions"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/gitignored"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/config"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/scripts"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/ideas"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/research"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/screenshots"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/content"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/brand"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/product"
+mkdir -p "$OUTPUT_DIR/$PROJECT_NAME/docs/extras/portfolio"
 
 # Create .gitignore with Node.js and Python patterns
-cat > "$SCRIPT_DIR/$PROJECT_NAME/.gitignore" << 'EOF'
+cat > "$OUTPUT_DIR/$PROJECT_NAME/.gitignore" << 'EOF'
 # Environment variables
 .env
 .env.local
@@ -111,7 +114,7 @@ temp/
 EOF
 
 # Create .env.example at project root
-cat > "$SCRIPT_DIR/$PROJECT_NAME/.env.example" << 'EOF'
+cat > "$OUTPUT_DIR/$PROJECT_NAME/.env.example" << 'EOF'
 # Environment variables template
 # Copy to .env and fill in actual values
 # Never commit .env to version control
@@ -123,7 +126,7 @@ cat > "$SCRIPT_DIR/$PROJECT_NAME/.env.example" << 'EOF'
 EOF
 
 # Create project root README
-cat > "$SCRIPT_DIR/$PROJECT_NAME/README.md" << EOF
+cat > "$OUTPUT_DIR/$PROJECT_NAME/README.md" << EOF
 # $PROJECT_NAME
 
 Brief description of the project and what it does.
@@ -158,7 +161,7 @@ See [docs/setup/](docs/setup/) for detailed setup instructions.
 EOF
 
 # Create docs README
-cat > "$SCRIPT_DIR/$PROJECT_NAME/docs/README.md" << 'EOF'
+cat > "$OUTPUT_DIR/$PROJECT_NAME/docs/README.md" << 'EOF'
 # Documentation
 
 ## Public Documentation (pushed to GitHub)
@@ -183,7 +186,7 @@ See **gitignored/** for:
 EOF
 
 # Create config explanation
-cat > "$SCRIPT_DIR/$PROJECT_NAME/config/.env.example" << 'EOF'
+cat > "$OUTPUT_DIR/$PROJECT_NAME/config/.env.example" << 'EOF'
 # Configuration Structure
 
 ## Environment-Specific Configs
@@ -205,27 +208,30 @@ cat > "$SCRIPT_DIR/$PROJECT_NAME/config/.env.example" << 'EOF'
 - NEVER commit actual credentials
 EOF
 
-# Ask about git initialization
-echo ""
-read -p "Initialize git repository? (y/n) " -n 1 -r REPLY
-echo ""
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  cd "$SCRIPT_DIR/$PROJECT_NAME"
-  git init
-  git add .
-  git commit -m "Initial project scaffold" --no-verify
-  echo "✓ Git repository initialized"
-  cd "$SCRIPT_DIR"
+# Ask about git initialization (skip in non-interactive / web UI mode)
+if [ -t 0 ]; then
+  echo ""
+  read -p "Initialize git repository? (y/n) " -n 1 -r REPLY
+  echo ""
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    cd "$OUTPUT_DIR/$PROJECT_NAME"
+    git init
+    git add .
+    git commit -m "Initial project scaffold" --no-verify
+    echo "✓ Git repository initialized"
+    cd "$SCRIPT_DIR"
+  fi
+else
+  echo "(Git init skipped — run manually if needed)"
 fi
 
 echo ""
 echo "✅ Project scaffolded successfully!"
 echo ""
-echo "Location: $SCRIPT_DIR/$PROJECT_NAME"
+echo "Location: $OUTPUT_DIR/$PROJECT_NAME"
 echo ""
 echo "Next steps:"
-echo "  1. cd $SCRIPT_DIR/$PROJECT_NAME"
+echo "  1. cd $OUTPUT_DIR/$PROJECT_NAME"
 echo "  2. Create docs/setup/README.md with project-specific setup instructions"
 echo "  3. Update the root README.md with project details"
 echo "  4. Start building in /app/"
