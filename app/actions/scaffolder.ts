@@ -3,9 +3,10 @@
 import { execFile } from 'child_process'
 import path from 'path'
 
-const SCRIPT_PATH = path.resolve(process.cwd(), 'scripts/scaffold-project.sh')
-// Projects are created as siblings of the ridgeline repo (one level up)
-const PROJECTS_ROOT = path.resolve(process.cwd(), '..')
+// Workspace layout (ADR-002): core/ sits one level below the workspace root
+const SCRIPT_PATH = path.resolve(process.cwd(), '../scripts/scaffold-project.sh')
+// New projects land in the workspace projects/ folder
+const PROJECTS_ROOT = path.resolve(process.cwd(), '../projects')
 
 type ScaffolderResult = {
   ok: boolean
