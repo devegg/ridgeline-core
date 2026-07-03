@@ -98,7 +98,8 @@ export function Stories() {
 
         <Reveal delay={1}>
           <p className="lede" style={{ marginTop: 56 }}>
-            And three products of my own — built, shipped, and running today:
+            And three products of my own — built, shipped, and running today. The full
+            portfolio, with the stories behind each build, lives at <a href="/work">/work</a>:
           </p>
         </Reveal>
 
