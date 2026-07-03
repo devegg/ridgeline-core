@@ -15,7 +15,6 @@ import {
   SlidersHorizontal,
   Terminal,
   File,
-  MessageSquare,
   Settings,
   Trash2,
 } from 'lucide-react'
@@ -49,7 +48,6 @@ const NAV_TOOLS: NavItem[] = [
 
 const NAV_STUBS: NavItem[] = [
   { href: '/documents', label: 'Documents', icon: File },
-  { href: '/communications', label: 'Communications', icon: MessageSquare, stub: true },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 

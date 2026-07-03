@@ -9,7 +9,7 @@ What exists on disk to power the weekend content push. Best-source paths verifie
 | **HEM Storefront** | In dev | `~/0/hem-storefront/docs/CASE_STUDY.md` (finished case study) | 900-song catalog, $26/mo infra ceiling, dual-audience storefront |
 | **SpinRoom v3** | Alpha (Season 1 July '26) | `~/Projects/a/SpinRoom/docs/project-reference.md` | Live DJ sessions → permanent catalog; Discord bot + realtime |
 | **SongLedger** | Pre-launch at songledger.app | `~/Projects/SongLedger/SongLedger Mission Statement (2 versions).md` | Creative Provenance differentiator; also = SpinRoom v1 lineage |
-| **TRBF** (framework + app) | Complete, paused | `~/Projects/therightbusinessfirst/` (canonical) + `~/Projects/trbf-app/` (Astro) | Book → framework → site; five-phase model; shows versatility |
+| **TRBF** (framework + app) | Complete, paused | `~/Projects/therightbusinessfirst/` (canonical) + `~/Projects/trbf-app/` (Astro) | Book → framework → site; four-phase model (+ an orientation step); shows versatility |
 | **TidyRipples** | Live site (Eleventy) | `~/TidyRipples/` + analysis in `~/TidyRipples-bak/tidyripples-website-analysis.md` | Owner has domain; "cool story" — get it from Brian directly |
 | **ClaimedFirst** | Concept, design complete | `~/Projects/a/ClaimedFirst/claimedfirst-concept-brief.md` (+ existing teaser-page prompt!) | Taste-game mechanics fully designed; portfolio-as-concept piece |
 | GridStrain / Movie Slot Machine | LIVE | in-repo READMEs + this session's proof-card copy | hourly self-refreshing pipeline / shipped consumer app |
@@ -51,8 +51,14 @@ Service and Capital Cleaning (construction cleaning + office/condo maintenance) 
 early exposure shaped the eye. "Cleaning was not the calling. Organizing was." Fused with
 30+ years of custom CRM/automation work, it became one physical + digital service model.
 
-**Reconcile before publishing:** the TRBF row above says "five-phase model"; this case
-study presents four phases. Also note ACME = anonymized Salem — decide whether /work shows
-one or both. Portfolio root additionally holds `The_Architect_s_Proof.pdf`, two brand-story
+**Reconcile flags — RESOLVED by owner 2026-07-03:**
+- **TRBF phases:** four phases is canon (Reality → Discovery → Filtering → Execution).
+  The site shows Orientation as a step before them; count it and you get five, but it is
+  an orientation step, not a fifth phase. Public copy says four.
+- **ACME vs Salem:** Salem stays private. ACME is the stage name the owner uses publicly
+  for that engagement — /work shows ONE entry, `acme-smart-log`, replacing the anonymous
+  `dod-contractor-platform` entry. Never publish the real client name.
+
+Portfolio root additionally holds `The_Architect_s_Proof.pdf`, two brand-story
 .mp4s, and a "Designing systems around human constraints" .m4a — unswept media, possible
 /papers or About-page assets.

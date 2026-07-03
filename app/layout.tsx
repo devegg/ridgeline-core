@@ -25,7 +25,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ridgelineknows.com'),
+  metadataBase: new URL('https://www.ridgelineknows.com'),
   title: 'Ridgeline Knows — Operations counsel for small business owners',
   description:
     'Ridgeline Knows helps small businesses eliminate hours lost to tasks that can run automatically. Thirty years inside real operations. I find what is costing you time, and I fix it.',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: 'Ridgeline Knows — Operations counsel for small business owners',
     description:
       'I help businesses eliminate hours lost to tasks that can run automatically. The Lowcountry to Myrtle Beach and beyond.',
-    url: 'https://ridgelineknows.com',
+    url: 'https://www.ridgelineknows.com',
     siteName: 'Ridgeline Knows',
     locale: 'en_US',
     type: 'website',

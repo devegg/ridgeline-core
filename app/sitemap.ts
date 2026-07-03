@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { WORK } from '@/lib/work-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://ridgelineknows.com'
+  const base = 'https://www.ridgelineknows.com'
   return [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${base}/work`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },

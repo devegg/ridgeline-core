@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/overview', '/clients', '/projects', '/proposals', '/assessments', '/deliverables', '/documents', '/billing', '/leads', '/communications', '/settings', '/scaffolder', '/cleanup', '/portal', '/login'],
     },
-    sitemap: 'https://ridgelineknows.com/sitemap.xml',
+    sitemap: 'https://www.ridgelineknows.com/sitemap.xml',
   }
 }

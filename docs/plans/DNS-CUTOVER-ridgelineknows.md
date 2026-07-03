@@ -1,13 +1,15 @@
 # DNS Cutover — ridgelineknows.com (paste-ready)
 
-Your part, ~10 minutes total. Everything else is already done.
+**2026-07-03: §1–§3 DONE (owner). Domain is live — apex 308-redirects to
+https://www.ridgelineknows.com (www is primary in Vercel); site metadata
+canonicalized to www to match. §4–§5 remain deferred by owner call.**
 
-## 1. Add the domain in Vercel (1 min)
+## 1. DONE 2026-07-03 — Add the domain in Vercel (1 min)
 Vercel dashboard → project **ridgeline-core** → Settings → Domains → Add
 `ridgelineknows.com` (and `www.ridgelineknows.com`, redirect www → apex).
 Vercel will then display the exact records it wants — they should match:
 
-## 2. In Squarespace Domains → DNS settings for ridgelineknows.com
+## 2. DONE 2026-07-03 — In Squarespace Domains → DNS settings for ridgelineknows.com
 Delete the Squarespace-site A records (the four 198.x parking ones) and the
 `www` CNAME to ext-sq.squarespace.com, then add:
 
@@ -22,7 +24,7 @@ Cert issues automatically a few minutes after DNS propagates; then
 https://ridgelineknows.com serves the marketing page and the "Coming Soon"
 parking page retires.
 
-## 3. Supabase auth URLs (2 min) — so login works in production
+## 3. DONE 2026-07-03 — Supabase auth URLs (2 min) — so login works in production
 Supabase dashboard → project **RidgelineKnows** → Authentication → URL
 Configuration:
 - Site URL: `https://ridgelineknows.com`
