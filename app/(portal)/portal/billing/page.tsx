@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -46,7 +47,7 @@ export default async function PortalBillingPage() {
                 </div>
               </div>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-soft)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                Questions? Contact us at<br />info@ridgelineknows.com
+                Questions? Contact us at<br />hello@ridgelineknows.com
               </div>
             </div>
           )}
@@ -65,7 +66,7 @@ export default async function PortalBillingPage() {
                 {(invoices as Invoice[]).map(inv => (
                   <tr key={inv.id}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 13 }}>
-                      {inv.invoice_number ?? inv.id.slice(0, 8)}
+                      <Link href={`/portal/billing/${inv.id}`}>{inv.invoice_number ?? inv.id.slice(0, 8)}</Link>
                     </td>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 13 }}>
                       ${Number(inv.total).toLocaleString()}
