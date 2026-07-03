@@ -9,7 +9,7 @@ site is polished. Replaces the Squarespace "Coming Soon" parking page.
 ## The prompt
 
 Design a single splash page for **Ridgeline Knows** (ridgelineknows.com) — a
-one-person operations-and-automation consultancy in Murrells Inlet, South
+one-person operations-and-automation consultancy in Myrtle Beach, South
 Carolina, run by Brian Boyd, thirty years inside real business operations. The
 full site is being finished; this page holds the domain until then. It should
 feel like a craftsman's business card left on a door: quiet, confident,
@@ -41,7 +41,7 @@ perfectly. No other imagery.
 - Line 1: *I help businesses eliminate hours lost to tasks that can run automatically.*
 - Line 2: *The full site is on its way. The work isn't waiting.*
 - Contact: **Let's talk → brian@ridgelineknows.com** (mailto link)
-- Footer, small: *Murrells Inlet, South Carolina*
+- Footer, small: *Myrtle Beach, South Carolina*
 
 ### Typography & palette
 
@@ -67,7 +67,7 @@ Anything that says "template."
   hold at every size (the line may simplify on small screens, never crop
   awkwardly).
 - Semantic HTML, visible focus states, honored `prefers-reduced-motion`.
-- `<title>`: `Ridgeline Knows — Operations & Automation, Murrells Inlet SC`;
+- `<title>`: `Ridgeline Knows — Operations & Automation, Myrtle Beach SC`;
   meta description: `I help businesses eliminate hours lost to tasks that can
   run automatically. Full site coming soon.`; Open Graph title/description to
   match (OG image optional — the settled page itself is the aesthetic).

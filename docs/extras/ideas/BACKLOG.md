@@ -80,3 +80,7 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 - Items are added here as they are spotted — not all will be built.
 - When an item moves into active development, remove it from here and track it in the session task list.
 - Last updated: May 2026
+
+## Site Content
+
+- [ ] **Location reframe across all site copy** — base location is Myrtle Beach (not Murrells Inlet; owner correction 2026-07-03). Reword geographic positioning site-wide to "the South Carolina coast — from the Lowcountry to Myrtle Beach." Applies to WHO I WORK WITH, contact, footer, and the content draft in docs/extras/content/. The splash-page brief (docs/plans/DESIGN-BRIEF-splash-page.md) already reflects it.
