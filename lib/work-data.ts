@@ -64,7 +64,7 @@ export const WORK: WorkEntry[] = [
     oneLiner: 'A two-person precision-parts operation moved off paper, spreadsheets, and one person’s memory.',
     body: [
       'ACME Manufacturing — a two-person DoD parts supplier — ran its precision-parts operation on handwritten job forms, Excel, and email. Job status lived in one person’s head. Government payment reconciliation was done by hand against 48-column CSV extracts, hours of work every week.',
-      'I designed and built ACME Smart Log, a purpose-built operations platform: live job tracking, camera-to-data form intake with AI document reading, automated reconciliation of government payments, inquiry management with deadline alerts, and a complete audit trail. The first reconciliation run surfaced 249 discrepancies nobody knew existed; what took hours by hand now takes about 30 seconds.',
+      'I designed and built ACME Smart Log, a purpose-built operations platform: live job tracking, camera-to-data form intake with AI document reading, automated reconciliation of government payments, inquiry management with deadline alerts, and a complete audit trail.',
     ],
     outcome:
       'In production, in daily use — roughly $2.4M in business data tracked across 419 job orders and ~3,600 payment transactions. One developer, zero shortcuts. ACME Manufacturing is a stage name — the client, the system, and the numbers are real. References available in a serious conversation.',
@@ -129,14 +129,14 @@ export const WORK: WorkEntry[] = [
     slug: 'tidyripples',
     name: 'TidyRipples',
     kind: 'Business design · Services',
-    status: 'Site built — my own business',
-    oneLiner: 'My own organizing business: physical spaces and digital systems treated as one problem.',
+    status: 'Designed end to end — for sale',
+    oneLiner: 'A complete organizing-business design — physical and digital as one service. Never launched; for sale.',
     body: [
       'Most organizing services sell the cleanup, not the system — the space drifts back toward chaos within weeks, the client calls again, and the cycle repeats. I grew up inside this trade. My mother and aunt ran two successful cleaning businesses on the Grand Strand for nearly 40 years, and while other kids mowed lawns, I organized garages and storerooms. Cleaning was not the calling. Organizing was.',
-      'TidyRipples fuses that instinct with over 30 years of custom CRM and automation work into one service model: four service categories spanning physical and digital, a philosophy of five expanding ripples, and a five-stage engagement built to leave clients independent rather than dependent on return visits. The site is a marketing and operations platform, not a brochure — philosophy, services, process, and pricing all laid out before the consultation call.',
+      'TidyRipples fuses that instinct with over 30 years of custom CRM and automation work into one service model: four service categories spanning physical and digital, a philosophy of five expanding ripples, and a five-stage engagement built to leave clients independent rather than dependent on return visits. The site — fully built, never launched — lays out the philosophy, services, process, and pricing the way a running business would, because the design itself is the showcase.',
     ],
     outcome:
-      'A complete business design: positioning, brand, service model, pricing, and an Eleventy site, built end to end.',
+      'A complete business design: positioning, brand, service model, pricing, and an Eleventy site, built end to end. I chose not to operate it — the brand, domain, and design are available to the right buyer.',
     stack: 'Eleventy · Nunjucks · SCSS · Netlify',
   },
   {
@@ -149,7 +149,7 @@ export const WORK: WorkEntry[] = [
       'Most people who start a business do not fail from lack of effort. They commit to a model that never fit the person running it — wrong hours, wrong energy demands, wrong personality requirements — and find out only after time, money, and identity are already invested. Business advice reinforces the cycle: it starts with opportunity and inspiration and skips the diagnostic step entirely.',
       'The Right Business First works the other way. Four phases — Reality, Discovery, Filtering, Execution — start from the operator’s actual constraints across seven categories, use AI as a bounded expansion engine to generate business architectures that respect them, then narrow the field through five structural filters until one direction remains worth testing. The prompt templates structurally forbid the AI from ranking or recommending. Published as a complete system: over twenty pages of documentation, six worksheets, and a full composite case study.',
     ],
-    outcome: 'Complete and live at TheRightBusinessFirst.com. Free, no account required, fully self-service.',
+    outcome: 'Complete and live at TheRightBusinessFirst.com. Free, no account required, fully self-service. It started as a book; the site made it executable.',
     href: 'https://therightbusinessfirst.com',
     stack: 'MkDocs Material · Custom CSS · Cloudflare',
   },
