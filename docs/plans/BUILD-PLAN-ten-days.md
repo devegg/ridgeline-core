@@ -149,21 +149,21 @@ permission blocker listed there).
 
 Order within the tier = most-used-first:
 
-- [ ] **3.1 Assessments module** — real list/detail/new (schema exists;
+- [x] **3.1 Assessments module** — real list/detail/new (schema exists;
   pattern-match Clients). Findings/recommendations editing feeds the portal
   view that already renders them.
   > notes:
-- [ ] **3.2 Deliverables module** — list + detail + status transitions
+- [x] **3.2 Deliverables module** — list + detail + status transitions
   (pending → delivered drives what clients see).
   > notes:
-- [ ] **3.3 Documents index** — replace the stub with a real all-documents
+- [x] **3.3 Documents index** — replace the stub with a real all-documents
   list (search by entity/client) reusing DocumentList; entity-level viewing
   already works.
   > notes:
-- [ ] **3.4 Billing rates** — finish the stub (CRUD on billing_rates,
+- [x] **3.4 Billing rates** — finish the stub (CRUD on billing_rates,
   default-rate flag feeding InvoiceForm).
   > notes:
-- [ ] **3.5 Settings** — minimum honest version: profile (name/email),
+- [x] **3.5 Settings** — minimum honest version: profile (name/email),
   password change, sign-out; plus a "system" card (Supabase project,
   version). Skip preferences until they exist.
   > notes:
@@ -173,6 +173,13 @@ Order within the tier = most-used-first:
   > notes:
 
 ---
+
+**Tier 3 executed 2026-07-03 night:** 3.1/3.2/3.4 were ALREADY BUILT (real
+pages + full action sets — earlier stub labels were wrong). Built fresh:
+3.3 documents index (filters, portal/public flags) and 3.5 settings
+(password change, sign-out, system info). Sidebar "soon" tags cleared for
+both. 3.6 communications still awaits your decision: (a) drop the nav item
+or (b) thin sent-mail log. Deployed to production.
 
 ## TIER 4 — Weekend, part 3: portal pass (M)
 
