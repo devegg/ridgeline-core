@@ -82,14 +82,20 @@ ADR-001's skeleton plus the BidScovery lessons, tiered so small projects aren't 
 
 Voice, banned words, working rules, and business context live once in `~/0/ridgeline/CLAUDE.md`. Per-project CLAUDE.md files hold only project-specific content. Claude Code combines them, closest file winning. Projects outside the workspace (bidscovery) rely on their own CLAUDE.md, unaffected.
 
-### 6. Planning pipeline (claude.ai Project ↔ Claude Code, in parallel)
+### 6. Planning happens with direct project access
 
-Generalized from BidScovery: a per-project snapshot uploaded to that project's claude.ai Project, so planning conversations run against full current truth while Claude Code develops locally.
+Planning runs as its **own Claude session with file access to the project**, in parallel with the build session — not via snapshot uploads. Surfaces, in order of preference:
 
-**Fixed sequence** (order is the discipline): 1) reconcile docs to code (STATUS/DECISIONS current), 2) regenerate `docs/PR-NOTES.md`, 3) run the snapshot, 4) upload to the claude.ai Project.
+- **Claude Code desktop app** — a planning session in the project folder: reads code, asks questions, writes the plan straight to `docs/plans/`. GUI chat, no terminal. The default.
+- **Cowork (claude.ai desktop)** — the claude.ai chat UI on the same local folders; good for strategy-flavored planning sessions.
+- **claude.ai/code (web)** — cloud session against the GitHub repo when away from the machine; plans arrive as PRs.
+- **claude.ai Project + GitHub sync** — chat-only fallback (phone/iPad): sync the repo into project knowledge; the committed `docs/PR-NOTES.md` carries full PR history in. Manual snapshots (`combine-files.cjs`, kept in `scripts/`) only when unpushed local state matters.
 
-- `scripts/snapshot.sh <project>` wraps `combine-files.cjs` (secret-scrubbing, binary/lockfile exclusion, size caps, skipped-files report) + `gen-pr-notes.mjs`; output to `<project>/docs/gitignored/snapshots/<codename>-YYYY-MM-DD[a].txt`.
-- Chosen over claude.ai's GitHub-repo sync deliberately: one curated scrubbed file beats a synced file tree — it captures unpushed local state and refreshes with a single delete-and-upload.
+**Collision rule** for parallel sessions: the planning session writes only under `docs/` (plans, decisions); the build session owns code. If both must write code, the build session uses a git worktree.
+
+**Discipline retained regardless of surface** (from BidScovery): before a planning session, reconcile docs to code — STATUS/DECISIONS current, `PR-NOTES.md` regenerated — because planning is only as good as the truth it reads. Plans land in `docs/plans/` as the handoff artifact; the build session executes from the file, not from chat memory.
+
+*(Amended 2026-07-03: the original design piped scrubbed snapshots to a claude.ai Project — a workaround for chat-without-disk-access. Owner decision: plan where Claude can read and write the project directly; snapshots demoted to away-from-machine fallback.)*
 
 ### 7. Marketing site & portfolio (inside `core/`)
 
