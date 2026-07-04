@@ -30,7 +30,7 @@ export default function Home() {
               '@context': 'https://schema.org',
               '@type': 'ProfessionalService',
               name: 'Ridgeline Knows',
-              url: 'https://ridgelineknows.com',
+              url: 'https://www.ridgelineknows.com',
               email: 'hello@ridgelineknows.com',
               telephone: '+1-843-425-7030',
               description:
