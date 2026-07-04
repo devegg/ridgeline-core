@@ -10,6 +10,7 @@ export type WorkEntry = {
   body: string[]
   outcome: string
   href?: string
+  paperId?: string
   stack: string
 }
 
@@ -137,6 +138,7 @@ export const WORK: WorkEntry[] = [
     ],
     outcome:
       'A complete business design: positioning, brand, service model, pricing, and an Eleventy site, built end to end. I chose not to operate it — the brand, domain, and design are available to the right buyer.',
+    paperId: 'BE99B6B1-DDE0-40D9-A121-D1CA8B349DFF',
     stack: 'Eleventy · Nunjucks · SCSS · Netlify',
   },
   {

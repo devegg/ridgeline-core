@@ -46,11 +46,16 @@ export default async function WorkDetail({ params }: { params: Promise<{ slug: s
 
               <p className="story__meta" style={{ marginTop: 24 }}>{w.stack}</p>
 
-              <div style={{ marginTop: 40, display: 'flex', gap: 24 }}>
+              <div style={{ marginTop: 40, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
                 {w.href && (
                   <a className="btn-primary" href={w.href} target="_blank" rel="noopener noreferrer">
                     See it live
                   </a>
+                )}
+                {w.paperId && (
+                  <Link className="btn-primary" href={`/papers/${w.paperId}`}>
+                    Read the full business plan
+                  </Link>
                 )}
                 <Link className="btn-quiet" href="/work">
                   ← All work
