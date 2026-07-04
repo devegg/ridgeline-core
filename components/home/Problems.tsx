@@ -28,13 +28,13 @@ export function Problems() {
         </Reveal>
         <Reveal delay={1}>
           <h2 className="section-title">
-            Ten small problems,<br />
+            Multiple small problems,<br />
             <em>costing you more</em> than you realize.
           </h2>
         </Reveal>
         <Reveal delay={2}>
           <p className="lede">
-            Most small businesses are not losing time to one big problem. They are losing it to ten
+            Most small businesses are not losing time to one big problem. They are losing it to many
             small ones, every single day. None of these feel urgent enough to stop and fix. Together,
             they cost you more than you realize.
           </p>

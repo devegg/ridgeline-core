@@ -28,6 +28,15 @@ const PRODUCTS = [
     href: 'https://movieslotmachine.com',
     linkLabel: 'movieslotmachine.com',
   },
+  {
+    sector: 'Decision framework · Publication',
+    size: 'Live · therightbusinessfirst.com',
+    title: 'A framework that rules out the wrong business before you fund it.',
+    body: 'The Right Business First is a free, constraint-aware system: it starts from the operator’s real limits — hours, energy, temperament — and filters out the business models that will never fit, before any money goes in. Published as a complete, self-serve system with worksheets, prompt templates, and a full case study.',
+    outcome: 'Complete and live — free, no account, fully self-service.',
+    href: 'https://therightbusinessfirst.com',
+    linkLabel: 'therightbusinessfirst.com',
+  },
 ]
 
 const STORIES = [
@@ -51,6 +60,13 @@ const STORIES = [
     title: 'Everything lived in one person\'s head — running on paper and spreadsheets.',
     body: 'A two-person precision parts operation was running on paper forms, spreadsheets, and email. I designed and built a full operations platform that replaced the entire system: live job tracking, document processing, automated reconciliation of government payments, inquiry management with deadline alerts, and a complete audit trail on every transaction.',
     outcome: 'From concept to production in active daily use. One developer. One client. Zero shortcuts.',
+  },
+  {
+    sector: 'Content & media',
+    size: 'Solo content creator',
+    title: 'Every comment on a video — pulled, searchable, exportable.',
+    body: 'A content creator needed to work with their audience in bulk, not scroll comments one screen at a time. I built a custom app that pulls every comment and reply from any public video through YouTube’s official Data API, then lets them search, sort, and export the whole set to CSV or JSON.',
+    outcome: 'From a buried comment thread to a working spreadsheet in one step.',
   },
 ]
 
@@ -98,7 +114,7 @@ export function Stories() {
 
         <Reveal delay={1}>
           <p className="lede" style={{ marginTop: 56 }}>
-            And three products of my own — built, shipped, and running today. The full
+            And four products of my own — built, shipped, and running today. The full
             portfolio, with the stories behind each build, lives at <a href="/work">/work</a>:
           </p>
         </Reveal>
@@ -107,7 +123,7 @@ export function Stories() {
           <Reveal key={p.href} delay={1}>
             <article className="story">
               <div>
-                <div className="story__num">{String(i + 4).padStart(2, '0')}</div>
+                <div className="story__num">{String(STORIES.length + i + 1).padStart(2, '0')}</div>
                 <div className="story__meta">
                   <span>{p.sector}</span>
                   {p.size}
@@ -132,6 +148,13 @@ export function Stories() {
             </article>
           </Reveal>
         ))}
+
+        <Reveal delay={1}>
+          <p className="lede" style={{ marginTop: 56 }}>
+            The full write-ups — what was actually wrong, what I built, and what changed —
+            live in the <a href="/papers">papers</a>.
+          </p>
+        </Reveal>
       </div>
     </section>
   )
