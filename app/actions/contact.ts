@@ -6,7 +6,10 @@
  *   • purpose-named senders on the verified domain: this one is contact@ridgelineknows.com
  *   • direct Resend REST call, no SDK; soft-fails with a clear message when unconfigured
  * Env: RESEND_API_KEY (required to send), CONTACT_TO / CONTACT_FROM (optional overrides).
+ * Also records a best-effort inbound lead in `leads` (shows in /leads).
  */
+
+import { createClient } from '@/lib/supabase/server'
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails'
 
@@ -37,6 +40,24 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
   if (!name || name.length > 200) return { ok: false, error: 'Please check the form and try again.' }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Please check the form and try again.' }
   if (message.length < 20 || message.length > 5000) return { ok: false, error: 'Please check the form and try again.' }
+
+  // Best-effort: record the inbound lead so it appears in /leads. A DB hiccup
+  // must never block the email (the primary notification), so this is isolated
+  // in its own try/catch and never changes what the visitor sees.
+  try {
+    const supabase = await createClient()
+    const { error: leadError } = await supabase.from('leads').insert({
+      business_name: company || name,
+      contact_name: name,
+      email,
+      source: 'inbound',
+      stage: 'identified',
+      notes: `Situation: ${situation || '—'}\n\n${message}`,
+    })
+    if (leadError) console.error('[contact] lead insert failed:', leadError.message)
+  } catch (err) {
+    console.error('[contact] lead insert threw:', err)
+  }
 
   const key = process.env.RESEND_API_KEY
   if (!key) {
