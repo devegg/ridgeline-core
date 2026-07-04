@@ -30,8 +30,10 @@ Last updated: 2026-07-04. Code is ground truth; this reconciles to it.
 - **Client portal**: projects, assessments, deliverables, documents,
   billing + invoice detail — RLS-scoped via app_metadata role/client_id.
   Provisioning: docs/setup/CLIENT-PORTAL-RUNBOOK.md.
-- **Contact form**: server action + honeypot; soft-fails politely until
-  Resend exists (deferred by owner).
+- **Contact form**: LIVE — Resend wired (separate free account for
+  ridgelineknows.com), sends to `hello@`; verified end-to-end 2026-07-04
+  (submit → Resend → Zoho inbox). Hardened against a deploy-skew silent-hang
+  (try/catch/finally + 10s send timeout, commit b3ceec2).
 - **CI**: GitHub Actions — tsc + build on push. Pushes to master
   auto-deploy (Vercel git-connected).
 
@@ -54,17 +56,17 @@ SoundForge, or ArtisticShield on a public page.
 ## Owner's return plan (2026-07-04)
 
 1. Read the rest of the papers/site.
-2. Create the email account, then wire Resend + `hello@` mailbox — steps are
-   paste-ready in docs/plans/DNS-CUTOVER-ridgelineknows.md §4–§5. Email
-   convention (from RFQ Hunter): `hello@` = human mailbox/Reply-To;
-   purpose-named senders (`contact@`, `digest@`); direct Resend REST.
+2. **DONE 2026-07-04** — email + Resend wired. Zoho Mail (Forever Free) hosts
+   `hello@`; Resend sends from a separate free account for ridgelineknows.com;
+   contact form verified end-to-end. Runbook: DNS-CUTOVER §4–§5. Convention
+   (from RFQ Hunter): `hello@` = human mailbox/Reply-To; purpose-named senders
+   (`contact@`); direct Resend REST.
 3. Walkthrough → owner hands Claude a revision list; get the site to
    "good enough for now."
 4. Return to RFQ Hunter to ready it, then unhide its marketing site.
 
 ## Not done / deferred (see BUILD-PLAN-ten-days.md + BACKLOG.md)
 
-- Resend wiring + `hello@` mailbox (owner's return-plan item 2).
 - Heart Echoes Music: paused — owner set it down for RFQ Hunter; will finish
   as a side business later. Status on site reflects this.
 - Tier 5 code quality: zod on actions, generated DB types, transaction on
