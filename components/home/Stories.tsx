@@ -69,7 +69,7 @@ export function Stories() {
         </Reveal>
         <Reveal delay={2}>
           <p className="lede">
-            Client names are held back; outcomes are not. My own products are named — click
+            Client names are withheld; outcomes are not. My own products are named — click
             through and see them running. If a serious conversation is underway, references are
             available on request.
           </p>

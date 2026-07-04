@@ -172,7 +172,7 @@ export function Contact() {
               <div className="info-row__value">
                 <a href="tel:+18434257030">843-425-7030</a>
               </div>
-              <div className="info-row__note">Monday through Friday, 9a – 5p Eastern.</div>
+              <div className="info-row__note">Leave a message and I&rsquo;ll return your call within a reasonable time — sometimes right away, sometimes a few hours, sometimes the next business day.</div>
             </div>
             <div>
               <div className="info-row__label">By email</div>

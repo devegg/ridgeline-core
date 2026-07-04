@@ -2,7 +2,7 @@ import { Reveal } from './Reveal'
 
 const PROBLEMS = [
   {
-    title: 'The report that takes four hours to pull together.',
+    title: 'The report that takes hours to pull together.',
     body: 'Manually gathering data from multiple systems, combining it in a spreadsheet, reviewing for errors.',
   },
   {
