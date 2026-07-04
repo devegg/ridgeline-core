@@ -56,6 +56,8 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
     `<p style="white-space:pre-wrap;border-top:1px solid #ddd;padding-top:12px">${esc(message)}</p>`,
   ].join('\n')
 
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 10_000)
   try {
     const res = await fetch(RESEND_ENDPOINT, {
       method: 'POST',
@@ -67,6 +69,7 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
         subject: `Website inquiry — ${name}${company ? ` (${company})` : ''}`,
         html,
       }),
+      signal: controller.signal,
     })
     if (!res.ok) {
       const body = await res.text()
@@ -77,5 +80,7 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
   } catch (err) {
     console.error('[contact] send threw:', err)
     return { ok: false, error: 'Sending failed — please email hello@ridgelineknows.com directly.' }
+  } finally {
+    clearTimeout(timer)
   }
 }

@@ -45,12 +45,18 @@ function ContactForm() {
     setErrors(next)
     if (Object.keys(next).length) return
     setSubmitting(true)
-    const result = await sendContactMessage(values)
-    setSubmitting(false)
-    if (result.ok) {
-      setSubmitted(true)
-    } else {
-      setErrors({ _root: result.error ?? 'Something went wrong — please email hello@ridgelineknows.com directly.' })
+    try {
+      const result = await sendContactMessage(values)
+      if (result.ok) {
+        setSubmitted(true)
+      } else {
+        setErrors({ _root: result.error ?? 'Something went wrong — please email hello@ridgelineknows.com directly.' })
+      }
+    } catch {
+      // Server action rejected (deployment skew, timeout, network) — never leave the button hung.
+      setErrors({ _root: 'Something went wrong — please refresh and try again, or email hello@ridgelineknows.com directly.' })
+    } finally {
+      setSubmitting(false)
     }
   }
 
