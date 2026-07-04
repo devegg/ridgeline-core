@@ -3,9 +3,8 @@
 **2026-07-03: §1–§3 DONE (owner). 2026-07-04: §4 (Resend) + §5 (Zoho `hello@`)
 LIVE — contact form sends end-to-end (submit → Resend → Zoho inbox), verified.
 Domain is live — apex 308-redirects to https://www.ridgelineknows.com (www is
-primary in Vercel); site metadata canonicalized to www to match. Optional §5
-polish (Zoho send-side SPF/DKIM/DMARC, notify preference) may
-still be pending — see §5.**
+primary in Vercel); site metadata canonicalized to www to match. §5 send-side auth
+(SPF/DKIM/DMARC) confirmed 2026-07-04 — email fully live.**
 
 ## 1. DONE 2026-07-03 — Add the domain in Vercel (1 min)
 Vercel dashboard → project **ridgeline-core** → Settings → Domains → Add
@@ -68,7 +67,7 @@ domains covers every project on one dashboard, not a per-project cost. Steps:
    locally + `vercel env add RESEND_API_KEY production`.
 3. Test: submit the site form → lands at hello@ridgelineknows.com.
 
-## 5. LIVE 2026-07-04 — hello@ mailbox (Zoho Forever Free): receiving confirmed; send-side auth to verify
+## 5. DONE 2026-07-04 — hello@ mailbox (Zoho Forever Free): live, receiving + SPF/DKIM/DMARC confirmed
 The email convention (from RFQ Hunter, now standard): **hello@** = the human
 mailbox on every product domain; purpose-named senders (contact@, digest@) for
 systems. This gives `hello@ridgelineknows.com` a real mailbox that **sends and
@@ -77,12 +76,13 @@ forwarding so replies never leave as the wrong brand. Free tier: 1 domain, up
 to 5 users, 5 GB, web + Zoho's own mobile apps (the free-tier limit is IMAP/POP
 into third-party clients, NOT the Zoho app — so Android push notifications work).
 
-**Status 2026-07-04:** `hello@ridgelineknows.com` is live and receiving — the
-contact-form test landed in the Zoho inbox, which confirms MX/receiving. Still
-verify/finish if not already done: the Zoho send-side records (SPF/DKIM/DMARC,
-steps 4–5) so mail you *send* from `hello@` authenticates; and your notify
-preference (steps 6–7). Owner decided 2026-07-04 against a `brian@` alias —
-`hello@` is the sole address; the old Squarespace `brian@` forward was deleted.
+**Status 2026-07-04 — DONE:** `hello@ridgelineknows.com` is live and receiving
+(contact-form test landed in the Zoho inbox), and send-side **SPF, DKIM, and
+DMARC are all confirmed** — outbound from `hello@` authenticates. The
+authoritative DMARC record is the `_dmarc` TXT in Squarespace DNS; Zoho's admin
+DMARC section is only a helper/reporting UI and is fine left as-is. Owner decided
+against a `brian@` alias — `hello@` is the sole address; the old Squarespace
+`brian@` forward was deleted. Notify: Zoho mobile app.
 
 **Do the steps in this order** (verify → MX → SPF → DKIM → DMARC → forward/notify):
 
