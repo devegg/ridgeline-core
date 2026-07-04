@@ -188,6 +188,21 @@ SongLedger confirmed as the owner's own work (partner-era rename to
 SoundForge, later decoupled; SongLedger evolved into the Spinroom 24-feature
 platform) — published entry, status, and songledger.app link stand unchanged.
 
+**TidyRipples business plan published 2026-07-04:** owner copied the full
+TidyRipples dump to _inbox/TidyRipples-Dump/ and asked to display the complete
+business plan as proof of thoroughness. The source _Business Plan/ folder (14
+files) was hollow scaffolding — endless noun-bullets and literal $XXX/XX%
+placeholders. Rebuilt from scratch into a 4,750-word, 15-section plan with a
+real intellectual spine (name thesis, five-ripple cascade, SPACES method), a
+genuine pricing architecture, and an illustrative financial model with stated
+assumptions (all figures labeled planned/projection — never-operated business).
+Grand Strand/Myrtle/Conway etc. generalized to a transferable "coastal resort
+market"; banned-words clean; visual identity filled from the real brand-
+guidelines file (hex palette, Montserrat/Open Sans). Published to /papers at
+fixed id BE99B6B1-DDE0-40D9-A121-D1CA8B349DFF (md5-verified), sorted to the
+bottom of the index; /work/tidyripples now has a "Read the full business plan"
+button. The two Markdown files that failed the Finder copy were not needed.
+
 ---
 
 ## TIER 3 — Weekend, part 2: dashboard completion (build-everything override) (L)
