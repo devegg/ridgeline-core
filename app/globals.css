@@ -266,6 +266,7 @@ section {
   border-bottom-color: var(--rule);
 }
 .site-header__inner {
+  position: relative;
   max-width: var(--max);
   margin: 0 auto;
   padding: 22px var(--gutter);
@@ -306,6 +307,76 @@ section {
   display: inline-block;
 }
 .login-link:hover { border-color: var(--blue); color: var(--blue); }
+
+/* Hamburger toggle + dropdown menu */
+.nav-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  width: 34px;
+  height: 34px;
+}
+.nav-toggle__bar {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: var(--ink);
+  transition: transform 240ms ease, opacity 160ms ease, width 240ms ease, background 160ms ease;
+}
+.nav-toggle__bar:nth-child(2) { width: 17px; }
+.nav-toggle:hover .nav-toggle__bar { background: var(--blue); }
+.nav-toggle.is-open .nav-toggle__bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); width: 24px; }
+.nav-toggle.is-open .nav-toggle__bar:nth-child(2) { opacity: 0; }
+.nav-toggle.is-open .nav-toggle__bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); width: 24px; }
+
+.site-menu {
+  position: absolute;
+  top: 100%;
+  right: var(--gutter);
+  margin-top: 8px;
+  z-index: 60;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  box-shadow: 0 20px 48px -24px rgba(27, 26, 23, 0.45);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.99);
+  transform-origin: top right;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.site-menu.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.site-menu__link {
+  font-family: var(--sans);
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  padding: 11px 14px;
+  border-radius: 1px;
+  transition: background 150ms ease, color 150ms ease;
+}
+.site-menu__link:hover { background: var(--bg-deep); color: var(--blue); }
+.site-menu__link--login {
+  margin-top: 8px;
+  padding-top: 15px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.site-menu__link--login:hover { color: var(--blue); background: var(--bg-deep); }
 
 /* ============================================================
    Hero
