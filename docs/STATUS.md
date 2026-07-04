@@ -32,7 +32,8 @@ Last updated: 2026-07-04. Code is ground truth; this reconciles to it.
   Provisioning: docs/setup/CLIENT-PORTAL-RUNBOOK.md.
 - **Contact form**: LIVE — Resend wired (separate free account for
   ridgelineknows.com), sends to `hello@`; verified end-to-end 2026-07-04
-  (submit → Resend → Zoho inbox). Hardened against a deploy-skew silent-hang
+  (submit → Resend → Zoho inbox). Also creates an inbound lead in `/leads`
+  (best-effort; scoped anon INSERT policy, migration 20260110). Hardened against a deploy-skew silent-hang
   (try/catch/finally + 10s send timeout, commit b3ceec2).
 - **CI**: GitHub Actions — tsc + build on push. Pushes to master
   auto-deploy (Vercel git-connected).

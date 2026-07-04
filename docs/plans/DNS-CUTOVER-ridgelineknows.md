@@ -4,7 +4,7 @@
 LIVE — contact form sends end-to-end (submit → Resend → Zoho inbox), verified.
 Domain is live — apex 308-redirects to https://www.ridgelineknows.com (www is
 primary in Vercel); site metadata canonicalized to www to match. Optional §5
-polish (brian@ alias, Zoho send-side SPF/DKIM/DMARC, notify preference) may
+polish (Zoho send-side SPF/DKIM/DMARC, notify preference) may
 still be pending — see §5.**
 
 ## 1. DONE 2026-07-03 — Add the domain in Vercel (1 min)
@@ -68,7 +68,7 @@ domains covers every project on one dashboard, not a per-project cost. Steps:
    locally + `vercel env add RESEND_API_KEY production`.
 3. Test: submit the site form → lands at hello@ridgelineknows.com.
 
-## 5. LIVE 2026-07-04 — hello@ mailbox (Zoho Forever Free): receiving confirmed; send-side auth + brian@ alias to verify
+## 5. LIVE 2026-07-04 — hello@ mailbox (Zoho Forever Free): receiving confirmed; send-side auth to verify
 The email convention (from RFQ Hunter, now standard): **hello@** = the human
 mailbox on every product domain; purpose-named senders (contact@, digest@) for
 systems. This gives `hello@ridgelineknows.com` a real mailbox that **sends and
@@ -80,8 +80,9 @@ into third-party clients, NOT the Zoho app — so Android push notifications wor
 **Status 2026-07-04:** `hello@ridgelineknows.com` is live and receiving — the
 contact-form test landed in the Zoho inbox, which confirms MX/receiving. Still
 verify/finish if not already done: the Zoho send-side records (SPF/DKIM/DMARC,
-steps 4–5) so mail you *send* from `hello@` authenticates; the `brian@` alias
-(step 3); and your notify preference (steps 6–7).
+steps 4–5) so mail you *send* from `hello@` authenticates; and your notify
+preference (steps 6–7). Owner decided 2026-07-04 against a `brian@` alias —
+`hello@` is the sole address; the old Squarespace `brian@` forward was deleted.
 
 **Do the steps in this order** (verify → MX → SPF → DKIM → DMARC → forward/notify):
 
@@ -101,16 +102,12 @@ steps 4–5) so mail you *send* from `hello@` authenticates; the `brian@` alias
    is blocked: Mail Lite, $1.25/user/mo billed annually (~$15/yr, adds IMAP).
 2. **Verify domain ownership.** Zoho shows a TXT (or CNAME) proof record → add
    it in the Squarespace DNS screen → click Verify in Zoho.
-3. **Create the mailbox.** User `hello@ridgelineknows.com`. Add
-   `brian@ridgelineknows.com` as an **alias** on it (free tier allows aliases) —
-   both then land in one Zoho inbox and you can send as either (`brian@` stays
-   your personal client-facing address, `hello@` the public one). This
-   **replaces the existing Squarespace `brian@` forward**, which stops receiving
-   the moment MX moves to Zoho — a domain has only one set of MX and Zoho takes
-   it. Set the alias up *before/at* the flip so no `brian@` mail is missed, then
-   delete the stale Squarespace forward rule once Zoho mail is confirmed.
-   Optional: add `contact@` / `support@` as aliases too (real named addresses,
-   no `+` needed for sending).
+3. **Create the mailbox.** User `hello@ridgelineknows.com` — the single human
+   address. Owner decided 2026-07-04 NOT to run a `brian@` alias: the old
+   Squarespace `brian@` forward was deleted and none was created on Zoho, so
+   `hello@` stands alone. Optional: add `contact@` / `support@` as aliases if ever
+   needed (free tier allows aliases — real named addresses, no `+` needed for
+   sending).
 4. **DNS records** — add these in the SAME Squarespace DNS screen. US-datacenter
    values shown; **use whatever Zoho's console displays for your data center if
    they differ:**

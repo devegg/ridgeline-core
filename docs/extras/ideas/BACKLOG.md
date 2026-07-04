@@ -32,6 +32,8 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 
 - [ ] **Leads / Lead funnel** — a pre-client pipeline separate from the Clients section. Stages: Identified → Contacted → Meeting Scheduled → Proposal Sent → Won / Lost. Winning a lead converts it to a Client record automatically. Losing one archives it with a reason.
 
+- [ ] **Leads admin screen polish** — owner idea 2026-07-04 (deferred, specifics TBD). The website contact form now writes inbound leads straight into `/leads` (source=inbound, stage=identified), so this is the screen that surfaces new submissions — worth a pass when higher-priority work clears.
+
 - [ ] **Networking contacts — card drops** — a lightweight record for businesses you've visited or left a card at. Fields: business name, address, type of business, date of visit, notes. Not a full client record — just a touchpoint log that can be promoted to a Lead when there's interest.
 
 - [x] **Extended contact details** ✅ Built — Contacts table includes LinkedIn, X, Facebook, Instagram, website. Multiple contacts per client, each with a role (Owner, Project Contact, Billing, Technical, Other) and portal user flag.
@@ -79,7 +81,7 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 - Items marked ✅ Built are complete and can be removed at next backlog review.
 - Items are added here as they are spotted — not all will be built.
 - When an item moves into active development, remove it from here and track it in the session task list.
-- Last updated: May 2026
+- Last updated: 2026-07-04
 
 ## Site Content
 
@@ -89,7 +91,7 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 
 - [ ] **THE NAME section rewrite** — Brian has personal source material for what the name means (one of his songs: permanence over riches, the morning ridgeline as the whole dream, building something nobody handed him). Ask him before drawing on it — the lyrics are Heart Echoes Music material and stay his. Even one grounded line beats a page of positioning copy.
 
-## Email (deferred 2026-07-03 — owner: "I need to set up an email account and I don't want to do that right now")
+## Email — DONE 2026-07-04 (was deferred 2026-07-03)
 
-- [ ] **Resend setup for ridgelineknows.com** — add domain in Resend, DNS records (DKIM/SPF), mint a sending-access key, put it in core/.env.local + `vercel env add RESEND_API_KEY production`. Until then the contact form soft-fails with a polite message. Steps: docs/plans/DNS-CUTOVER-ridgelineknows.md §4.
-- [ ] **hello@ridgelineknows.com mailbox** — create or forward (Squarespace email forwarding is the free 2-minute version). NOTE while deferred: every mailto on the site and the form's fallback message point at hello@ — until the mailbox exists, a visitor who emails it gets a bounce. Matters from the moment the domain flips.
+- [x] **Resend setup for ridgelineknows.com** ✅ Built 2026-07-04 — separate free Resend account (RFQ Hunter holds the other account's one free domain), domain verified, `RESEND_API_KEY` in Vercel (Preview+Production); contact form sends end-to-end. Details: docs/plans/DNS-CUTOVER-ridgelineknows.md §4.
+- [x] **hello@ridgelineknows.com mailbox** ✅ Built 2026-07-04 — Zoho Mail (Forever Free); receiving confirmed. Sole human address (owner chose no `brian@` alias). Details: docs/plans/DNS-CUTOVER-ridgelineknows.md §5.
