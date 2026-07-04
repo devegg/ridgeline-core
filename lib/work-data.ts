@@ -86,13 +86,13 @@ export const WORK: WorkEntry[] = [
   },
   {
     slug: 'spinroom',
-    name: 'Spinroom',
+    name: 'SpinRoom',
     kind: 'Creator platform · Live music',
     status: 'In alpha',
     oneLiner: 'A platform for AI-music creators, built as a city: a free live session at the door, a full catalog, authorship proof, and creator commerce behind it.',
     body: [
       'Discord AI-music communities run live listening sessions — a DJ hosts, artists drop tracks, an audience tunes in together. The culture was real but the infrastructure was a notepad and a dozen tabs, and the bigger problem sat underneath: when a session ended, everything vanished into chat history. No record of what played, no proof of who made it, no way to turn a good night into anything that lasted.',
-      'Spinroom is built as a city, revealed one door at a time. The free front door is the live session — a web DJ booth, a Discord bot, and a public audience view as one system, every play kept as a permanent scored record. Behind it the city opens: a SoundCard receipt for every song heard by real people, a SoundStage standing with seasons, a permanent Creator Station, a full catalog, a Trust Office that keeps the contemporaneous record of how each track was made, a Lyric Studio that logs every step as provenance, and a creator storefront. Twenty-four features across a free recognition layer and opt-in catalog and commerce.',
+      'SpinRoom is built as a city, revealed one door at a time. The free front door is the live session — a web DJ booth, a Discord bot, and a public audience view as one system, every play kept as a permanent scored record. Behind it the city opens: a SoundCard receipt for every song heard by real people, a SoundStage standing with seasons, a permanent Creator Station, a full catalog, a Trust Office that keeps the contemporaneous record of how each track was made, a Lyric Studio that logs every step as provenance, and a creator storefront. Twenty-four features across a free recognition layer and opt-in catalog and commerce.',
     ],
     outcome:
       'In alpha, built and operated by one person. The recognition core is live in alpha; the rest is partly built or finished-in-design, shipped in the open and labeled as what it is. The reveal — each free step pulling toward the next — is the design.',

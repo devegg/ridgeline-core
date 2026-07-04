@@ -42,14 +42,7 @@ export default async function PapersPage() {
                     <div>
                       <div className="story__num">{String(i + 1).padStart(2, '0')}</div>
                       <div className="story__meta">
-                        <span>
-                          {new Date(p.created_at).toLocaleDateString('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                        </span>
-                        {paperMinutes(p.content)} minute read
+                        <span>{paperMinutes(p.content)} min read</span>
                       </div>
                     </div>
                     <div>

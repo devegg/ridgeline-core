@@ -1,16 +1,16 @@
-# Claude Design brief — Spinroom platform showcase (multi-page)
+# Claude Design brief — SpinRoom platform showcase (multi-page)
 
 > **Supersedes `spinroom-one-pager.md`** (owner redirected 2026-07-03).
-> Spinroom is not a one-page product. The live room is the entrance to a
+> SpinRoom is not a one-page product. The live room is the entrance to a
 > full platform uncovered one step at a time. The site shows the whole
 > platform and explains the theory behind it. The storyline is the point.
 
-Build a multi-page public website for Spinroom. Everything you need is in
+Build a multi-page public website for SpinRoom. Everything you need is in
 this brief. Do not add facts, numbers, or claims that are not written here.
 
 ## The project
 
-Spinroom is a platform for AI-music creators, live in alpha at
+SpinRoom is a platform for AI-music creators, live in alpha at
 `alpha.spinroom.app`. The public face is a live listening session: a web DJ
 booth, a Discord bot, and a real-time audience view working as one system.
 Artists drop a Suno link in Discord; the bot builds the queue; the session
@@ -31,14 +31,14 @@ operated by one person. In alpha. The site says so.
 This section outranks every screen. The narrative arc is the product's core
 design decision, and the site's job is to make it visible.
 
-**Spinroom is a Music City**, built by and for the people who make music
+**SpinRoom is a Music City**, built by and for the people who make music
 inside it. Most arrive because they heard music coming from the corner bar.
 Some never leave. Every artist who passes through leaves a permanent record.
 
 **The city is uncovered one step at a time.** The first five features are a
 deliberate sequence, and their order is load-bearing:
 
-1. **Spinroom** (the live room) — outside the gate. You hear it before you
+1. **SpinRoom** (the live room) — outside the gate. You hear it before you
    decide whether to go inside. A song can play with no account, but it
    plays as "a sound without a face." That gap is the invitation.
 2. **Welcome Center** — stepping inside. An account, one song record, the
@@ -90,22 +90,22 @@ wherever a feature is shown: **Live in alpha**, **Partly built**, **Designed**.
 ### 1. Home — the gate
 
 - Purpose: get a listener into a live session; hint at the city behind the
-  door. Short page. Showcases: 01 Spinroom, surface level (Live in alpha).
+  door. Short page. Showcases: 01 SpinRoom, surface level (Live in alpha).
 - Headline options:
   - A: "The music is live. The room is real. The record is permanent."
   - B: "You hear it before you decide whether to go inside."
   - C: "Drop a Suno link. Hear it live. Keep the score."
-- Subline: "Spinroom runs live listening sessions for Discord AI-music
+- Subline: "SpinRoom runs live listening sessions for Discord AI-music
   communities — booth, bot, and audience view, one system. Free, in alpha."
 - Primary button: "Find a live session". Secondary: "Apply to DJ".
 - Door: "Behind this door is a city. → Step into the live room."
 
 ### 2. The live room — sessions, booth, bot
 
-- Showcases: 01 Spinroom in depth (Live in alpha), 23 Synced Lyrics (Partly
+- Showcases: 01 SpinRoom in depth (Live in alpha), 23 Synced Lyrics (Partly
   built), today's simple DJ-controlled voting.
 - Sections and copy pulls:
-  - The DJ: "The DJ's job is to be present. Spinroom handles the rest."
+  - The DJ: "The DJ's job is to be present. SpinRoom handles the rest."
     Private full-screen booth; setup in under a minute; playback automatic.
   - The artist: "Every submission is a moment. Every moment leaves a
     record." Drop a Suno link; the bot pulls title, artist, and cover art,
@@ -206,7 +206,7 @@ wherever a feature is shown: **Live in alpha**, **Partly built**, **Designed**.
   - Building in the open: all 24 features, one line each, grouped by
     layer, with today's real status.
 - Ends with the only pitch on the site, three sentences at most: I design
-  and build systems like this. Spinroom is the proof, in public, in alpha.
+  and build systems like this. SpinRoom is the proof, in public, in alpha.
   Footer credit on every page: "Built and operated by Brian Boyd."
 
 ## Honest status — non-negotiable
@@ -227,7 +227,7 @@ wherever a feature is shown: **Live in alpha**, **Partly built**, **Designed**.
   as the builder ("I"). Nothing speaks to an investor.
 - Use only facts and copy in this brief. The quoted lines are real platform
   copy — reuse them verbatim where they fit.
-- Keep names as written: Spinroom, Welcome Center, SoundCard, SoundStage,
+- Keep names as written: SpinRoom, Welcome Center, SoundCard, SoundStage,
   Creator Station, Lyric Studio, Trust Office.
 
 ## Copy rules — don't
@@ -238,7 +238,7 @@ wherever a feature is shown: **Live in alpha**, **Partly built**, **Designed**.
   leaderboard names. Every string is real copy from this brief.
 - No song lyrics anywhere, even as decoration, even in the synced-lyrics
   section — use a neutral placeholder shape instead.
-- No history lesson: the platform's name is Spinroom, full stop. No prior
+- No history lesson: the platform's name is SpinRoom, full stop. No prior
   project names, no partnership backstory.
 
 ## Technical requirements

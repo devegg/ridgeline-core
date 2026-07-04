@@ -27,14 +27,7 @@ export default async function PaperPage({ params }: { params: Promise<{ id: stri
             <div className="container" style={{ maxWidth: 820 }}>
               <div className="eyebrow">Paper</div>
               <div className="story__meta" style={{ marginTop: 0, marginBottom: 28 }}>
-                <span>
-                  {new Date(paper.created_at).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </span>
-                {paperMinutes(paper.content)} minute read
+                <span>{paperMinutes(paper.content)} min read</span>
               </div>
               <MarkdownViewer content={paper.content} />
               <div style={{ marginTop: 48 }}>
