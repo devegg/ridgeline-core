@@ -11,7 +11,7 @@ Checked against the live code, so nothing here is busywork.
 - **Structured data** (JSON-LD `ProfessionalService`: Myrtle Beach, phone, `hello@`, founder) on the homepage.
 
 ## A. Vercel Web Analytics
-- [ ] **[ME]** Add `@vercel/analytics` + `<Analytics/>` to the root layout; deploy.
+- [x] **[ME]** Added `@vercel/analytics` + `@vercel/speed-insights` (`<Analytics/>` + `<SpeedInsights/>`) to the root layout — live 2026-07-04 (commit 8103baa); the dashboard toggles now collect.
 - [x] **[YOU]** Vercel dashboard → project **ridgeline-core** → **Analytics** tab → **Enable** (Web Analytics, free tier). Data shows within minutes of a visit once my code is live.
 - [x] **[YOU]** *(optional)* Same tab — enable **Speed Insights** (Core Web Vitals) if you want it; tell me and I'll add its component too.
 
@@ -23,8 +23,8 @@ Checked against the live code, so nothing here is busywork.
 - [x] **[YOU]** *(optional, speeds first indexing)* **URL Inspection** → paste your homepage → **Request indexing**. Repeat for /work and a top paper.
 
 ## C. Sitemap gap I'll close
-- [ ] **[ME]** Add each **paper** (`/papers/<id>`) to the sitemap — it currently lists the /papers index but not the individual papers, and those long-form pages are your strongest SEO assets. After it deploys, re-submit the sitemap in Search Console (Google also re-crawls on its own).
-- [ ] **[ME]** Tiny consistency fix: point the homepage JSON-LD `url` at the www canonical (currently apex, which just redirects).
+- [x] **[ME]** Added each **paper** (`/papers/<id>`) to the sitemap — async DB fetch, all 7 emitted, revalidates hourly so new papers appear without a redeploy. Live 2026-07-04. (No need to re-submit in Search Console — Google re-reads the sitemap on its own.)
+- [x] **[ME]** Homepage JSON-LD `url` now points at the www canonical. Live 2026-07-04.
 
 ## D. Optional, later (not needed to be found on Google)
 - [x] **[YOU]** **Bing Webmaster Tools** — **import from Google Search Console** in ~2 clicks; covers Bing + DuckDuckGo. Nice-to-have.
