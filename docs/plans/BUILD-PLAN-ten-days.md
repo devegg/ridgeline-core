@@ -59,6 +59,8 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   verified in Resend, send from Resend's onboarding domain; swap sender
   after 1.4. Done when: a real test message lands in your inbox.
   > notes: as for the email used for resend, we need to have rules in place to where any project of mine will always use the same email addresses in format. So we need to look at RFQ Hunter to see what it uses. And plus we'll set up resend properly from the beginning, not the on boarding domain, but a real domain. You can build this without us having to test it right away. It can wait until I return.
+  >
+  > ✅ RESOLVED 2026-07-04: built from a real domain (not the onboarding domain) — a separate free Resend account for ridgelineknows.com, sends from `contact@` to `hello@` (not brian@), verified end-to-end, and now also saves an inbound lead to /leads. Convention follows RFQ Hunter. Details: DNS-CUTOVER §4–§5.
 
 - [x] **0.4 Logout button.** Dashboard TopBar gets sign-out (portal already
   has one). Done when: you can log out without clearing cookies.
@@ -84,13 +86,13 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
   the deploy reflects main HEAD (merged ≠ shipped). (S)
   > notes:
 
-- [ ] **1.3 Auth on the live URL.** Add the Vercel URL (and later the domain)
+- [x] **1.3 Auth on the live URL.** Add the Vercel URL (and later the domain)
   to Supabase Auth → URL configuration (site URL + redirect list) so login
   works in production, not just localhost. Smoke: log in on the deployed
   URL. (S)
   > notes:
 
-- [ ] **1.4 DNS cutover.** In Squarespace Domains: point ridgelineknows.com
+- [x] **1.4 DNS cutover.** In Squarespace Domains: point ridgelineknows.com
   A/CNAME records at Vercel (record-level; registrar stays). Add the domain
   in Vercel, wait for cert, verify https://ridgelineknows.com serves the
   marketing page. The Squarespace "Coming Soon" page retires. Also verify
@@ -101,7 +103,7 @@ Legend: ☐ = planned · effort: S (<1h) / M (half-day) / L (day+)
 - [ ] **1.5 Deploy-verify + analytics.** Confirm middleware keeps everything
   but `/` and `/login` gated in prod. Enable Vercel Analytics (free tier)
   so you can see if anyone visits. (S)
-  > notes:
+  > notes: 2026-07-04 — deploy-verify DONE (middleware gates everything but `/` and `/login` in prod, verified live). Vercel Analytics NOT enabled (not in package.json, no `<Analytics/>` in app), so this box stays open — it is the only remaining piece of 1.5, optional and low-priority.
 
 ---
 
