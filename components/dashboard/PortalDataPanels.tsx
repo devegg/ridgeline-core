@@ -6,6 +6,7 @@ import {
   draftCaseStudyAction, rotateIngestKeyAction, saveAutomationAction, savePortalSettingsAction,
 } from '@/app/actions/portal-data'
 import { sendMonthlyReportAction } from '@/app/actions/portal-report'
+import { changePortalEmailAction } from '@/app/actions/portal-users'
 import type { ActionState, Automation } from '@/lib/types'
 
 function Feedback({ state }: { state: ActionState }) {
@@ -302,6 +303,58 @@ export function CaseStudyPanel({ clientId }: { clientId: string }) {
       <div>
         <button className="btn-primary" disabled={pending}>{pending ? 'Drafting…' : 'Draft case study'}</button>
       </div>
+    </form>
+  )
+}
+
+// ------------------------------------------------------------
+export function PortalLoginPanel({ clientId, configured, currentEmail }: {
+  clientId: string
+  configured: boolean
+  currentEmail: string | null
+}) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(changePortalEmailAction, null)
+
+  if (!configured) {
+    return (
+      <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', maxWidth: '68ch' }}>
+        Managing the portal LOGIN email needs the Supabase secret key
+        (SUPABASE_SECRET_KEY — see the BACKLOG&rsquo;s one-line step). The contact email
+        above is editable regardless via Edit details on the client page.
+      </p>
+    )
+  }
+
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <input type="hidden" name="client_id" value={clientId} />
+      <Feedback state={state} />
+      <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', margin: 0 }}>
+        {currentEmail
+          ? <>Current sign-in email: <strong style={{ color: 'var(--ink)' }}>{currentEmail}</strong></>
+          : 'No portal login exists for this client yet (create one per the client-portal runbook).'}
+      </p>
+      {currentEmail && (
+        <>
+          <div style={row}>
+            <div className="field" style={grow}>
+              <label>New sign-in email</label>
+              <input name="new_email" type="email" required />
+            </div>
+          </div>
+          <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13.5, cursor: 'pointer' }}>
+            <input type="checkbox" name="notify" defaultChecked />
+            Notify both the old and new address (recommended)
+          </label>
+          <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13.5, cursor: 'pointer' }}>
+            <input type="checkbox" name="sync_contact" defaultChecked />
+            Also set it as the contact email on the client record
+          </label>
+          <div>
+            <button className="btn-primary" disabled={pending}>{pending ? 'Changing…' : 'Change login email'}</button>
+          </div>
+        </>
+      )}
     </form>
   )
 }
