@@ -44,10 +44,17 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   ON, signups OFF. Supabase NEW API keys (`sb_publishable_`) everywhere —
   LEGACY keys DISABLED in the dashboard 2026-07-11 and the code fallback
   removed; prod + local verified on the new key alone.
+- **Activity ingest + owner portal-data screen shipped later the same day**
+  (PR #5, D12): `POST /api/ingest/activity` with a per-client bearer key
+  (authorization inside the bounded SECURITY DEFINER `ingest_activity`; no
+  service-role key in the app; migration 20260711200000 applied via the
+  runner) + `/clients/[id]/portal` (automations CRUD, manual activity, caught
+  issues, roadmap, highlights, ingest-key generate/rotate — plaintext once).
+  Nav-overflow fix folded in. Ops retrofit (PR #3, D10/D11) and the
+  legacy-key removal (PR #4, D9 closed) also landed today.
 - Still open (the register in docs/decisions-log.md is the authority):
   Supabase Auth URL config for the magic-link redirect (link sending untested
-  until then); portal nav overflow below ~900px (toggle/sign-out off-screen —
-  cheap fix); real-client activity ingest + owner CRUD before client #1.
+  until then); the monthly report email once a real client exists.
 
 ## Shipped (live in production)
 
