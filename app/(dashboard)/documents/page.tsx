@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { DeleteDocumentButton } from '@/components/documents/DeleteDocumentButton'
 import { createClient } from '@/lib/supabase/server'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorState } from '@/components/ui/ErrorState'
@@ -61,6 +62,7 @@ export default async function DocumentsPage({
                 <th>Portal</th>
                 <th>Public</th>
                 <th>Updated</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -73,6 +75,9 @@ export default async function DocumentsPage({
                   <td>{d.is_shared ? 'Shared' : '—'}</td>
                   <td>{d.is_public ? 'Public' : '—'}</td>
                   <td>{new Date(d.updated_at).toLocaleDateString()}</td>
+                  <td style={{ textAlign: 'right' }}>
+                    <DeleteDocumentButton documentId={d.id} entityType={d.entity_type} entityId={d.entity_id} compact />
+                  </td>
                 </tr>
               ))}
             </tbody>

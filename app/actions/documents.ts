@@ -46,6 +46,21 @@ export async function deleteDocumentAction(documentId: string, entityType: Docum
   const { error } = await supabase.from('documents').delete().eq('id', documentId)
   queryFailed('documents', error)
   revalidatePath(`/${entityType}s/${entityId}`)
+  revalidatePath('/documents')
+}
+
+const ENTITY_PATHS: Record<string, string> = {
+  assessment: '/assessments', proposal: '/proposals', project: '/projects', client: '/clients',
+}
+
+/** Delete from the document's own page — lands back on the record it belonged to. */
+export async function deleteDocumentAndReturnAction(documentId: string, entityType: DocumentEntityType, entityId: string) {
+  const supabase = await createSupabase()
+  const { error } = await supabase.from('documents').delete().eq('id', documentId)
+  queryFailed('documents', error)
+  revalidatePath(`/${entityType}s/${entityId}`)
+  revalidatePath('/documents')
+  redirect(`${ENTITY_PATHS[entityType] ?? '/documents'}/${entityId}`)
 }
 
 export async function updateDocumentAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

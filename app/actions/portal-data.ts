@@ -280,5 +280,5 @@ export async function draftCaseStudyAction(_prev: ActionState, formData: FormDat
     queryFailed('documents', error)
     return { errors: { _root: 'Could not save the draft.' } }
   }
-  return { message: 'Draft saved to Documents (unshared) — edit before any eyes see it.' }
+  return { message: 'Draft saved to Documents (unshared) — edit before any eyes see it. Each click creates a NEW draft; delete extras from All Documents.' }
 }

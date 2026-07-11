@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { MarkdownViewer } from '@/components/documents/MarkdownViewer'
 import { DocumentEditForm } from '@/components/documents/DocumentEditForm'
+import { DeleteDocumentButton } from '@/components/documents/DeleteDocumentButton'
 import { DownloadMarkdownButton, DownloadPdfButton } from '@/components/documents/DownloadButton'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
@@ -57,6 +58,7 @@ export default async function DocumentViewPage({
           )}
           <DownloadMarkdownButton documentName={d.name} content={d.content} />
           <DownloadPdfButton />
+          <DeleteDocumentButton documentId={d.id} entityType={d.entity_type} entityId={d.entity_id} returnToRecord />
         </div>
       </div>
 
