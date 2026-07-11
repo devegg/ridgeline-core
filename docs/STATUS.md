@@ -1,6 +1,52 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-07-04. Code is ground truth; this reconciles to it.
+Last updated: 2026-07-11. Code is ground truth; this reconciles to it.
+
+## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
+
+The portal home dashboard ("the ten-second screen"), per ADR-100 and
+docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
+(both themes, owner preview, requests round trip) before merge:
+
+- `/portal` is now a value dashboard (was a redirect to projects): health
+  banner, hours/dollars/issues scoreboard with "How I count this" math
+  (30% haircut in `lib/portal/value.ts`), peace-of-mind card, caught & fixed
+  log, what's-next roadmap, Request a change.
+- New tables (migration `20260711000000_portal_value_layer.sql`): automations,
+  automation_activity, caught_issues, roadmap_items, change_requests,
+  portal_highlights + `clients.blended_labor_rate`. RLS app_metadata pattern;
+  explicit GRANTs. Also fixes the documents client policy (project/client
+  entity docs were invisible to clients).
+- Written request log: portal `/portal/requests` (client submit + thread) and
+  dashboard `/requests` (owner reply + status). First client WRITE in the
+  schema — insert policy pairs client_id + created_by to the JWT.
+- Magic-link sign-in option (shouldCreateUser: false) + role-aware callback.
+- Softened-dark portal theme (portal-scoped tokens, toggle in nav, system
+  default, localStorage persist). Marketing/login stay light.
+- Owner preview: owners browse the portal labeled, with an explicit client
+  picker on home. Demo data: `scripts/seed-portal-demo.sql` ("Demo Client
+  (Sample Data)") — paste after the migration; one DELETE removes it.
+- Migration runner adopted from RFQ Hunter (the Genesis Kit rule: numbered
+  migrations via `npm run migrate`, one-off SQL via
+  `node scripts/run-migration.mjs <path>` — never hand-paste SQL). Needs
+  DATABASE_URL in .env.local (owner-run on purpose).
+- Security hardening applied after a four-agent review (ADR-100 §9):
+  deny-by-default roles (explicit `role='owner'` in code + RLS, migration
+  20260711100000 stamps existing users), open-redirect guard on the auth
+  callback, http(s)-only guard on lead links (`lib/safe-url.ts` + CHECK
+  constraints), real SQL counts + `portal_value_raw` aggregate for the
+  dashboard numbers, tightened change_requests insert, anon default grants
+  revoked.
+- OPS state at merge: migrations + demo seed applied via the runner (against
+  the RIGHT project — the runner now refuses a DATABASE_URL whose ref differs
+  from the app's; that guard exists because of a real wrong-project incident,
+  fully reverted); public sign-ups DISABLED in Supabase Auth; Email provider
+  ON, signups OFF. Supabase NEW API keys (`sb_publishable_`) live locally and
+  in Vercel env; code falls back to the legacy anon key until it's disabled.
+- Still open after deploy verification: disable the LEGACY Supabase keys +
+  remove the fallback in `lib/supabase/keys.ts`; Supabase Auth URL config for
+  the magic-link redirect (link sending untested until then); portal nav
+  overflow below ~900px (toggle/sign-out off-screen — cheap fix).
 
 ## Shipped (live in production)
 

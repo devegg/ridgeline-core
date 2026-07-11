@@ -9,7 +9,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  const role = (user.app_metadata?.role as string | undefined) ?? 'owner'
+  // Defense in depth: the middleware gates this too, but the layout must not
+  // rely on a hand-maintained path regex. Explicit owner role or out.
+  const role = user.app_metadata?.role as string | undefined
+  if (role !== 'owner') redirect('/portal')
 
   return (
     <div className="dash-layout">

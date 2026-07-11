@@ -1,14 +1,15 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { supabasePublishableKey, supabaseUrl } from '@/lib/supabase/keys'
 
-const DASHBOARD_PATHS = /^\/(overview|leads|clients|projects|proposals|assessments|deliverables|billing|scaffolder|documents|communications|settings|cleanup)(\/|$)/
+const DASHBOARD_PATHS = /^\/(overview|leads|clients|projects|proposals|assessments|deliverables|billing|requests|scaffolder|documents|communications|settings|cleanup)(\/|$)/
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabasePublishableKey,
     {
       cookies: {
         getAll() {
@@ -34,21 +35,23 @@ export async function middleware(request: NextRequest) {
   const isDashboard = DASHBOARD_PATHS.test(pathname)
   const isPortal = pathname.startsWith('/portal')
 
-  const role = (user?.app_metadata?.role as string) ?? 'owner'
+  // Deny by default: owner access requires the explicit role. A user with
+  // no role gets the portal surface, where RLS gives them nothing.
+  const role = user?.app_metadata?.role as string | undefined
 
   // Unauthenticated users can't access protected routes
   if ((isDashboard || isPortal) && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Client-role users cannot access the dashboard — send them to the portal
-  if (isDashboard && user && role === 'client') {
+  // Only the explicit owner role reaches the dashboard
+  if (isDashboard && user && role !== 'owner') {
     return NextResponse.redirect(new URL('/portal', request.url))
   }
 
   // After login, route by role
   if (pathname === '/login' && user) {
-    return NextResponse.redirect(new URL(role === 'client' ? '/portal' : '/overview', request.url))
+    return NextResponse.redirect(new URL(role === 'owner' ? '/overview' : '/portal', request.url))
   }
 
   return supabaseResponse
