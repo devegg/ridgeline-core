@@ -44,5 +44,5 @@
 - [ ] PDF export on documents is a stub (Markdown download works).
 - [ ] Client provisioning is a manual runbook (auth user + app_metadata stamp
       by hand) — automate when client count justifies it.
-- [ ] Pilots' STATUS backfill (movie-slot-machine, gridstrain) — ten minutes
-      each, next time either project is touched.
+- Pilots (movie-slot-machine, gridstrain): boredom builds, not important
+      (owner, 2026-07-11). No backfill owed; nobody re-flags their stub docs.
