@@ -1,6 +1,33 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-07-04. Code is ground truth; this reconciles to it.
+Last updated: 2026-07-11. Code is ground truth; this reconciles to it.
+
+## In review — feature/portal-home (PR open, NOT yet merged/deployed)
+
+The portal home dashboard ("the ten-second screen"), per ADR-100 and
+docs/plans/BUILD-PLAN-portal-home-dashboard.md:
+
+- `/portal` is now a value dashboard (was a redirect to projects): health
+  banner, hours/dollars/issues scoreboard with "How I count this" math
+  (30% haircut in `lib/portal/value.ts`), peace-of-mind card, caught & fixed
+  log, what's-next roadmap, Request a change.
+- New tables (migration `20260711000000_portal_value_layer.sql`): automations,
+  automation_activity, caught_issues, roadmap_items, change_requests,
+  portal_highlights + `clients.blended_labor_rate`. RLS app_metadata pattern;
+  explicit GRANTs. Also fixes the documents client policy (project/client
+  entity docs were invisible to clients).
+- Written request log: portal `/portal/requests` (client submit + thread) and
+  dashboard `/requests` (owner reply + status). First client WRITE in the
+  schema — insert policy pairs client_id + created_by to the JWT.
+- Magic-link sign-in option (shouldCreateUser: false) + role-aware callback.
+- Softened-dark portal theme (portal-scoped tokens, toggle in nav, system
+  default, localStorage persist). Marketing/login stay light.
+- Owner preview: owners browse the portal labeled, with an explicit client
+  picker on home. Demo data: `scripts/seed-portal-demo.sql` ("Demo Client
+  (Sample Data)") — paste after the migration; one DELETE removes it.
+- OPS to confirm on merge: migration + seed pasted in Supabase SQL editor;
+  Supabase Auth URL configuration allows the /auth/callback redirect for
+  magic links; production deploy reflects master HEAD.
 
 ## Shipped (live in production)
 
