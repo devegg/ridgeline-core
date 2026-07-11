@@ -1203,3 +1203,7 @@ section {
 .portal-layout[data-theme="dark"] .health-banner--green .health-banner__dot { background: #6FAF7F; }
 .portal-layout[data-theme="dark"] .next-list__state--shipped { color: #6FAF7F; }
 .portal-layout[data-theme="dark"] .owner-preview { background: rgba(201, 156, 88, 0.1); }
+
+/* Chrome keeps a closed details' content box in layout (::details-content
+   content-visibility quirk) — hide the body explicitly when closed. */
+.how-we-count:not([open]) .how-we-count__body { display: none; }
