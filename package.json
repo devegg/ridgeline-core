@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate": "node scripts/run-migration.mjs"
+    "migrate": "node scripts/run-migration.mjs",
+    "test:portal": "node scripts/test-portal.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.0",

@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 /**
  * Portal test suite — security, isolation, ingest, light stress.
- * See docs/plans/TEST-PLAN-portal.md. Run with the dev server up:
+ * See docs/plans/TEST-PLAN-portal.md.
  *
- *   node scripts/test-portal.mjs            # BASE_URL defaults to localhost:3000
+ * Run (local target needs the dev server up; works from either folder):
+ *
+ *   cd /Users/brianboyd/0/ridgeline/core && npm run test:portal
+ *   node core/scripts/test-portal.mjs                    # from the workspace root
+ *   BASE_URL=https://www.ridgelineknows.com npm run test:portal   # against production
  *
  * Creates an ephemeral client login + throwaway rows; deletes everything it
  * made. Exit code 0 = all green.

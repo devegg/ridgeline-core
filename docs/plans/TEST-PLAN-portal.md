@@ -5,9 +5,10 @@ client-facing walkthrough. Last Updated: 2026-07-11.
 
 ## Two layers
 
-1. **The automated suite** — `node scripts/test-portal.mjs` (run with the dev
-   server up; it targets `BASE_URL`, default `http://localhost:3000`, and the
-   project database via the keys in `.env.local`). Zero test data survives a
+1. **The automated suite** — from `core/`: `npm run test:portal` (or from the
+   workspace root: `node core/scripts/test-portal.mjs`; against production:
+   `BASE_URL=https://www.ridgelineknows.com npm run test:portal`). The local
+   target needs the dev server up; keys come from `core/.env.local`. Zero test data survives a
    run: it creates an ephemeral client login, exercises everything, and
    deletes what it made. Run it before every walkthrough and after any
    portal-touching change. **Pass bar: 0 failures.**
