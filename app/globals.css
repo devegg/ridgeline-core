@@ -1207,3 +1207,8 @@ section {
 /* Chrome keeps a closed details' content box in layout (::details-content
    content-visibility quirk) — hide the body explicitly when closed. */
 .how-we-count:not([open]) .how-we-count__body { display: none; }
+
+/* Portal nav: wrap below wide widths so the theme toggle and sign-out
+   never fall off-screen (register item, 2026-07-11). */
+.portal-nav__inner { flex-wrap: wrap; row-gap: 6px; }
+.portal-nav__links { flex-wrap: wrap; }

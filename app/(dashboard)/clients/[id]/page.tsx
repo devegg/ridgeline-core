@@ -46,6 +46,7 @@ export default async function ClientDetailPage({
           <h1 className="page-title" style={{ marginTop: 6 }}>{c.name}</h1>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8 }}>
+          <Link href={`/clients/${id}/portal`} className="btn-outline">Portal data</Link>
           {mode !== 'edit' ? (
             <Link href={`/clients/${id}?mode=edit`} className="btn-outline">Edit details</Link>
           ) : (
