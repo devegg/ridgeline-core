@@ -93,7 +93,13 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
      Settings → enable Custom SMTP: sender `hello@ridgelineknows.com`, name
      `Ridgeline Knows`, host `smtp.resend.com`, port `465`, username `resend`,
      password = the API key → Save.
-  3. Test: login page → "Get a sign-in link by email" → link arrives, click →
+  3. Supabase → Authentication → Email Templates → Magic Link: replace the
+     ConfirmationURL anchor with
+     `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+     so links work from ANY browser or email app (the /auth/confirm route is
+     already deployed; without this template edit, links only work in the
+     browser that requested them).
+  4. Test: login page → "Get a sign-in link by email" → link arrives, click →
      lands signed in on /overview. Then strike the magic-link register item in
      docs/decisions-log.md.
 
