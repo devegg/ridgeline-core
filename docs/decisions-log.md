@@ -34,8 +34,11 @@
       2026-07-11: legacy keys disabled in the dashboard, fallback removed
       from `lib/supabase/keys.ts`, prod + local verified on
       `sb_publishable_` alone.
-- [ ] Supabase Auth URL configuration for the magic-link redirect — link
-      sending is UNTESTED until set (PR #2 checklist).
+- [ ] Magic-link send test — URL config is SET and the flow works up to the
+      send; blocked because Supabase's BUILT-IN mailer only delivers to the
+      project's own team addresses (it reports other recipients as
+      "invalid" — misleading). The BACKLOG's SMTP-via-Resend step removes
+      the restriction and the 2/hour limit in one move; test right after.
 - [x] ~~Portal nav overflow below ~900px~~ — DONE 2026-07-11 (PR #5): nav wraps.
 - [x] ~~Activity ingest for real clients~~ — DONE 2026-07-11 (PR #5, D12):
       `POST /api/ingest/activity` (per-client bearer key, authorization inside
