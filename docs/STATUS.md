@@ -97,9 +97,12 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   contact form with per-industry dropdown + page attribution (lead notes
   "Page:" + email line). Aliases + any-case 308 to canonical; unknown words
   hit the 404 word net; /customer-pulse-check is the generic 13th page.
-  Copy is v1 — upgrades per vertical as the 12 deep-research reports land
-  in `_inbox/research/`. Reveal animation now has no-JS/reduced-motion
-  fallbacks (content is never unreachable).
+  Copy upgrades per vertical as the 12 deep-research reports land in
+  `_inbox/research/landing/` — vrm + pm folded in 2026-07-11 (trust-account
+  /license angle, hurricane ops, HOA dues; discovery kits + software
+  landscape + guardrails from those reports are banked for the assessment
+  templates). The other ten are v1. Reveal animation now has
+  no-JS/reduced-motion fallbacks (content is never unreachable).
 - **/work — 9 entries**: rfq-hunter, gridstrain, movie-slot-machine,
   acme-smart-log (client work; Salem stage-named), heart-echoes-music
   (paused — see below), spinroom, tidyripples (for sale + links its
