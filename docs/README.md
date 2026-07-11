@@ -5,6 +5,7 @@ D#s + open items) — the two authorities. Code is ground truth; docs reconcile
 to code.
 
 - `decisions/` — detailed decision records (ADR-100+; the log indexes them)
+- `../BACKLOG.md` — repo-root backlog (fleet convention): owner steps + ideas
 - `plans/` — build plans, tracked and kept (build from the file)
 - `setup/` — runbooks (client-portal provisioning, etc.)
 - `client/` — client context and history
