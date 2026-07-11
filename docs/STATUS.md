@@ -70,6 +70,13 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   Approve (bounded RPC), request→roadmap checkbox, lifecycle nav order.
   **Standing test gate: `node scripts/test-portal.mjs` — 36 checks, currently
   green** (TEST-PLAN-portal.md).
+- **UAT punch list shipped** (PR #22, same day): owner-managed industries
+  single-select with inline add (migration 20260711600000), phone masks,
+  contact-form portal-login provisioning, the global closed-details ghost
+  fix (the phantom section gaps), self-explaining ingest/tier sections,
+  hourly removed from Rates (day + fixed only), the deliverables create
+  form (the action existed, nothing rendered it), document Edit mode,
+  settings form padding.
 - Still open (the register in docs/decisions-log.md is the authority):
   the Magic Link template edit (BACKLOG); cron env (`CRON_SECRET`,
   `SUPABASE_SECRET_KEY`) when the first client is flagged for auto-send.
