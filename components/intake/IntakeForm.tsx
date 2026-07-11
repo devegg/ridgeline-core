@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { submitIntakeAction } from '@/app/actions/intake'
 import { INTAKE_PAINS } from '@/lib/portal/intake'
 import type { ActionState } from '@/lib/types'
@@ -20,6 +20,11 @@ export interface IntakeContext {
 
 export function IntakeForm({ token, context }: { token: string; context?: IntakeContext | null }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(submitIntakeAction, null)
+
+  // The long form submits from the bottom; the thank-you renders at the top.
+  useEffect(() => {
+    if (state?.message || state?.errors) window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [state])
 
   if (state?.message) {
     return (
