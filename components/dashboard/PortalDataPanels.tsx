@@ -6,7 +6,7 @@ import {
   draftCaseStudyAction, rotateIngestKeyAction, saveAutomationAction, savePortalSettingsAction,
 } from '@/app/actions/portal-data'
 import { sendMonthlyReportAction } from '@/app/actions/portal-report'
-import { changePortalEmailAction } from '@/app/actions/portal-users'
+import { changePortalEmailAction, createPortalLoginAction } from '@/app/actions/portal-users'
 import type { ActionState, Automation } from '@/lib/types'
 
 function Feedback({ state }: { state: ActionState }) {
@@ -308,6 +308,35 @@ export function CaseStudyPanel({ clientId }: { clientId: string }) {
 }
 
 // ------------------------------------------------------------
+function CreateLoginInline({ clientId }: { clientId: string }) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(createPortalLoginAction, null)
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <input type="hidden" name="client_id" value={clientId} />
+      <Feedback state={state} />
+      {!state?.message && (
+        <>
+          <div style={row}>
+            <div className="field" style={grow}>
+              <label>Sign-in email for the client</label>
+              <input name="email" type="email" required placeholder="their@email.com" />
+            </div>
+            <div style={{ paddingBottom: 2 }}>
+              <button className="btn-primary" disabled={pending}>{pending ? 'Creating…' : 'Create portal login'}</button>
+            </div>
+          </div>
+          <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: 0 }}>
+            A one-time password shows after creation; magic-link sign-in also works when the
+            address receives mail. Tip for demo accounts: plus-addressing
+            (hello+demo@…) delivers to your own inbox.
+          </p>
+        </>
+      )}
+    </form>
+  )
+}
+
+// ------------------------------------------------------------
 export function PortalLoginPanel({ clientId, configured, currentEmail }: {
   clientId: string
   configured: boolean
@@ -332,8 +361,9 @@ export function PortalLoginPanel({ clientId, configured, currentEmail }: {
       <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', margin: 0 }}>
         {currentEmail
           ? <>Current sign-in email: <strong style={{ color: 'var(--ink)' }}>{currentEmail}</strong></>
-          : 'No portal login exists for this client yet (create one per the client-portal runbook).'}
+          : 'No portal login exists for this client yet — create one below.'}
       </p>
+      {!currentEmail && <CreateLoginInline clientId={clientId} />}
       {currentEmail && (
         <>
           <div style={row}>

@@ -1,3 +1,7 @@
+> **2026-07-11:** provisioning is automated — Clients → [client] → Portal data →
+> Portal login (create + change email, dual notification). This runbook remains
+> the manual fallback and the reference for what the automation does.
+
 # Client Portal — Provisioning Runbook
 
 Turning a client contact into a portal login. ~5 minutes, done rarely.
