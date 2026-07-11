@@ -1,12 +1,21 @@
-import { IntakeForm } from '@/components/intake/IntakeForm'
+import { IntakeForm, type IntakeContext } from '@/components/intake/IntakeForm'
+import { createClient } from '@/lib/supabase/server'
 
 /**
  * PUBLIC written intake — no login. The single-use token in the URL is the
- * authorization; validation happens inside the submit RPC, so this page
- * reads nothing and leaks nothing.
+ * authorization. The bounded intake_context RPC personalizes the page for a
+ * known client (their name is pre-filled, never re-typed); everything else
+ * stays zero-read.
  */
 export default async function IntakePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params
+
+  let context: IntakeContext | null = null
+  if (/^[0-9a-f-]{36}$/i.test(token)) {
+    const supabase = await createClient() // anon when logged out
+    const { data } = await supabase.rpc('intake_context', { p_token: token })
+    context = (data as IntakeContext[] | null)?.[0] ?? null
+  }
 
   return (
     <div className="site-bg" style={{ minHeight: '100vh', padding: 'var(--gutter)' }}>
@@ -22,12 +31,14 @@ export default async function IntakePage({ params }: { params: Promise<{ token: 
           Tell me how the work<br /><em style={{ color: 'var(--blue)' }}>actually happens.</em>
         </h1>
         <p style={{ fontSize: 15.5, lineHeight: 1.65, color: 'var(--ink-muted)', maxWidth: '60ch', marginBottom: 36 }}>
-          Ten minutes, in your own words — no wrong answers. This is how I show up to
-          our conversation already understanding your business instead of spending the
-          first hour asking these questions out loud.
+          {context?.business_name
+            ? `For ${context.business_name} — ten minutes, in your own words, no wrong answers. `
+            : 'Ten minutes, in your own words — no wrong answers. '}
+          This is how I show up to our conversation already understanding your
+          business instead of spending the first hour asking these questions out loud.
         </p>
 
-        <IntakeForm token={token} />
+        <IntakeForm token={token} context={context} />
       </div>
     </div>
   )

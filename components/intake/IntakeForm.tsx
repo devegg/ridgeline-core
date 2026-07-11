@@ -10,7 +10,15 @@ const sectionTitle: React.CSSProperties = {
   textTransform: 'uppercase', color: 'var(--amber-deep)', margin: '34px 0 14px',
 }
 
-export function IntakeForm({ token }: { token: string }) {
+export interface IntakeContext {
+  assessment_title: string
+  business_name: string | null
+  contact_name: string | null
+  contact_email: string | null
+  contact_phone: string | null
+}
+
+export function IntakeForm({ token, context }: { token: string; context?: IntakeContext | null }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(submitIntakeAction, null)
 
   if (state?.message) {
@@ -32,12 +40,16 @@ export function IntakeForm({ token }: { token: string }) {
 
       <div style={sectionTitle}>The basics</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-        <div className="field"><label>Business name</label><input name="business_name" required /></div>
-        <div className="field"><label>Your name</label><input name="contact_name" required /></div>
+        {context?.business_name ? (
+          <input type="hidden" name="business_name" value={context.business_name} />
+        ) : (
+          <div className="field"><label>Business name</label><input name="business_name" required /></div>
+        )}
+        <div className="field"><label>Your name</label><input name="contact_name" defaultValue={context?.contact_name ?? ''} required /></div>
         <div className="field"><label>Your role</label><input name="contact_role" placeholder="Owner, office manager…" /></div>
         <div className="field"><label>Team size</label><input name="team_size" placeholder="e.g. 6" /></div>
-        <div className="field"><label>Email</label><input name="email" type="email" /></div>
-        <div className="field"><label>Phone</label><input name="phone" /></div>
+        <div className="field"><label>Email</label><input name="email" type="email" defaultValue={context?.contact_email ?? ''} /></div>
+        <div className="field"><label>Phone</label><input name="phone" defaultValue={context?.contact_phone ?? ''} /></div>
       </div>
 
       <div style={sectionTitle}>Where the hours go</div>
