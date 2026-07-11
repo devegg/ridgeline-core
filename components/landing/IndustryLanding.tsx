@@ -104,7 +104,8 @@ export function IndustryLanding({ entry }: { entry: LandingIndustry }) {
                   <blockquote>&ldquo;He gave me my Tuesday mornings back.&rdquo;</blockquote>
                   <figcaption>
                     &mdash; Nobody yet. This space is reserved for my first{' '}
-                    {entry.name.toLowerCase()} clients, and I intend to earn it.
+                    {entry.reviewLabel ?? entry.name.toLowerCase()} clients, and I intend to earn
+                    it.
                   </figcaption>
                 </figure>
               </Reveal>

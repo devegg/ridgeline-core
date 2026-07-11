@@ -16,6 +16,9 @@ export type LandingIndustry = {
   slug: string
   aliases: string[]
   name: string
+  /** How the industry reads inside the reserved-review sentence, when
+      name.toLowerCase() would mangle an acronym (e.g. HVAC). */
+  reviewLabel?: string
   headline: string
   lede: string
   pains: { title: string; body: string }[]
@@ -114,105 +117,121 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     name: 'Real estate',
     headline: 'The deal moves fast. The paperwork shouldn’t slow it down.',
     lede:
-      'Brokerages and agent teams live on transaction paperwork, follow-up, and an inbox that never empties. I’ve built for brokers before: the system keeps the deal moving so the people can sell.',
+      'Coastal brokerages and teams run on out-of-state buyers who browse at 9 p.m., a summer surge of simultaneous closings, and deadlines where a typo costs someone their earnest money. I’ve built for brokers before: the system keeps the deal moving so the people can sell.',
     pains: [
       {
-        title: 'Transaction paperwork re-keyed at every stage.',
-        body: 'The same names, dates, and numbers typed into the contract, the checklist, the CRM, and the email chain. Every re-key is a chance to be wrong.',
+        title: 'Deadlines live in someone’s head and a spreadsheet.',
+        body: 'Inspection, due diligence, financing, closing — hand-calculated on every contract and remembered under pressure. One missed date can cost a client their earnest money, and it surfaces in the 48 hours before a Friday closing.',
       },
       {
-        title: 'Follow-up that depends on someone remembering.',
-        body: 'Leads, past clients, and pending deadlines all need a touch at the right moment. Memory is not a system, and dropped follow-up is dropped commission.',
+        title: 'The lead comes in Saturday night. The answer goes out Monday.',
+        body: 'A buyer in Ohio inquires at 9 p.m. from your listing — and by the time anyone replies, they’ve already talked to three other agents. The first response usually wins, and nobody is watching the inbox from a showing.',
       },
       {
-        title: 'An inbox that buries the deal-critical message.',
-        body: 'Offers, amendments, and closing documents arrive mixed in with everything else. The one that mattered gets found late.',
+        title: 'Closing day means split math, a CDA, and QuickBooks — by hand.',
+        body: 'Splits, caps, franchise fees, and referral cuts recalculated for every deal, a disbursement authorization typed for the attorney, then all of it entered again into the books. Three chances to get the same number wrong.',
+      },
+      {
+        title: 'The same deal gets typed into three systems.',
+        body: 'Parties, property, price, dates — keyed into the transaction platform, the CRM, and accounting, none of which talk to each other. You’re paying for all three and still doing the courier work yourself.',
       },
     ],
     mock: {
       hours: '8.9 hrs',
       rows: [
-        { label: 'Transaction checklist sync', meta: '7 active files · 0 missing docs' },
-        { label: 'Follow-up scheduler', meta: '23 touches queued this week' },
-        { label: 'Inbox triage', meta: 'Deal mail flagged · noise filtered' },
+        { label: 'Contract-to-close checklists', meta: '7 active files · deadlines auto-calculated' },
+        { label: 'Lead acknowledgment & routing', meta: 'Sat 9:14p inquiry · answered in 90 seconds' },
+        { label: 'Commission & CDA prep', meta: 'Draft ready for broker sign-off' },
       ],
     },
     situations: [
-      'Paperwork re-keyed at every stage',
-      'Follow-up depends on memory',
-      'The inbox buries what matters',
+      'Deadlines tracked by memory',
+      'Leads go cold after hours',
+      'Closing-day math by hand',
+      'Same deal typed into three systems',
       'Something else',
     ],
   },
   {
     slug: 'trades',
-    aliases: ['construction'],
+    aliases: ['construction', 'builders'],
     name: 'Construction & trades',
-    headline: 'You bid it and you build it. The office in between shouldn’t cost your evenings.',
+    headline: 'You bid it and you build it. Chasing your own money shouldn’t be a third job.',
     lede:
-      'Estimates, job costing, draws, subs, and punch lists: the jobsite runs all day and the paperwork waits for night. I build systems that handle the office side while you’re on the site side.',
+      'Every draw that sits an extra month is your money in someone else’s bank account — and on a builder’s margin, one kicked-back pay app or one mispriced job eats the profit from the next three. The jobsite runs all day; the paperwork waits for night. I build systems that handle the office side while you’re on the site side.',
     pains: [
       {
-        title: 'Estimates and bids built from scratch every time.',
-        body: 'Takeoffs and pricing live in old spreadsheets and your head. Slow quotes lose work to whoever answered first.',
+        title: 'A draw gets kicked back over one missing lien waiver.',
+        body: 'The pay app has to tie out to the penny, every sub’s waiver attached, photos included — one gap and the whole package bounces, and you wait another month to get paid. Meanwhile South Carolina’s 90-day lien clock doesn’t pause.',
       },
       {
-        title: 'Job costs that show up after the job is done.',
-        body: 'Receipts, sub invoices, and change orders trickle in, so you learn what a job actually made weeks too late to fix it.',
+        title: 'You find out a job lost money after it’s done.',
+        body: 'Hours and receipts ride around in the truck, get keyed in days later, and land uncoded. The overrun that could have been caught in week three shows up at closeout instead.',
       },
       {
-        title: 'Draws, pay apps, and lien waivers chased by hand.',
-        body: 'Getting paid means paperwork in the right order at the right time, and chasing it steals the hours that win the next job.',
+        title: 'Bids get built at the kitchen table, at night.',
+        body: 'Plan set, highlighter, spreadsheet — then five subs to call and their numbers to line up. Hours per bid, several due the same week, and most of it spent on jobs that go to someone else.',
+      },
+      {
+        title: 'Punch items live on a sticky note, and your retainage waits.',
+        body: 'Walkthrough notes get transcribed, sorted by trade, and emailed from memory. Until every item is verifiably closed, five or ten percent of the contract sits in someone else’s account.',
       },
     ],
     mock: {
       hours: '10.2 hrs',
       rows: [
-        { label: 'Quote builder from takeoff sheet', meta: '3 estimates drafted for review' },
-        { label: 'Job-cost roll-up', meta: 'Live across 5 active jobs' },
-        { label: 'Draw & waiver tracker', meta: '2 pay apps ready · 1 waiting on sub' },
+        { label: 'Draw package assembly', meta: 'SOV + waivers + photos · 1 missing waiver flagged' },
+        { label: 'Field-to-books job costing', meta: 'Live across 5 jobs · one trending over' },
+        { label: 'Punch-list routing', meta: '9 items by trade · 3 closed today' },
       ],
     },
     situations: [
-      'Quotes take too long to get out',
+      'Draws bounce and payment waits',
       'Job costs arrive too late',
-      'Draws and waivers are a chase',
+      'Bids eat my nights',
+      'Retainage stuck on punch items',
       'Something else',
     ],
   },
   {
     slug: 'home',
-    aliases: ['hvac'],
+    aliases: ['hvac', 'plumbing', 'pest', 'pools', 'lawn'],
     name: 'HVAC & home services',
-    headline: 'Your techs are in the field. The office shouldn’t need three more of you.',
+    reviewLabel: 'HVAC and home services',
+    headline: 'The work gets done. The money leaks out the seams.',
     lede:
-      'Dispatch, service agreements, invoicing from the truck, and the review follow-up nobody has time for. I build the systems that keep the calls flowing and the cash coming in without another office hire.',
+      'The extra parts that never make the bill. The maintenance plan nobody renewed. The invoice that aged a month. The truck that rolled to an empty house. None of it shows up as one big loss — it shows up as a business working twice as hard for the same money. I build the systems that close the seams.',
     pains: [
       {
-        title: 'Dispatch and scheduling juggled by one overloaded person.',
-        body: 'Calls come in, techs are mid-job, and the board changes hourly. When the scheduler is out sick, the whole day wobbles.',
+        title: 'The extra work never makes it onto the invoice.',
+        body: 'The add-on part, the after-hours trip, the second visit — noted on paper or in the tech’s head, gone by the time the office builds the bill. Work you already did, money you never see.',
       },
       {
-        title: 'Invoices that wait until the truck gets back.',
-        body: 'Work finished Tuesday gets billed Friday, paid whenever. The gap between job-done and money-in is pure float you’re giving away.',
+        title: 'You sold the maintenance plans. Nobody tracks them.',
+        body: 'Whose tune-up is due, whose renewal is this month, whose card on file just expired — the steadiest revenue you have, quietly canceling itself while everyone’s busy.',
       },
       {
-        title: 'Service agreements that renew on memory.',
-        body: 'Maintenance plans are the steadiest revenue you have, and renewals slip because reminding customers is a manual job.',
+        title: 'The invoice goes out late, then it just sits.',
+        body: 'Job closes Tuesday, bill goes out Friday, paid whenever. Then winter comes and you’re calling people for money in the slow season, financing your own work in the meantime.',
+      },
+      {
+        title: 'One no-show at 10 a.m. and the route falls apart.',
+        body: 'A customer who isn’t home is a truck roll you paid for and an afternoon of re-shuffling by phone. Confirmations and reschedule links are exactly the kind of thing a machine should be doing.',
       },
     ],
     mock: {
       hours: '12.1 hrs',
       rows: [
-        { label: 'Same-day invoice from job close', meta: '9 sent today · avg 2h after job' },
-        { label: 'Agreement renewal reminders', meta: '17 due this month · all queued' },
-        { label: 'Review request follow-up', meta: '6 requests sent · 2 new reviews' },
+        { label: 'Job close → same-day invoice', meta: '9 sent today · extras captured at the truck' },
+        { label: 'Agreement renewals & card checks', meta: '17 due · 3 expired cards caught' },
+        { label: 'Appointment confirmations', meta: '31 confirmed · 1 reschedule caught early' },
       ],
     },
     situations: [
-      'Dispatch depends on one person',
-      'Invoices lag days behind jobs',
-      'Renewals slip through',
+      'Extras never make the invoice',
+      'Maintenance plans slip away',
+      'Invoices lag and AR piles up',
+      'The schedule blows up daily',
       'Something else',
     ],
   },
