@@ -88,6 +88,18 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
 - **Marketing site**: home (hero/proof/stories/contact), /work (9 entries,
   SSG), /papers (7 public papers, DB-driven), SEO (OG image, sitemap,
   robots), icon.
+- **Industry landing pages (card words, PR #26)**: the business-card back
+  reads `ridgelineknows.com/___` + a handwritten word. 12 one-word SSG
+  routes (/vrm /pm /real /trades /home /med /food /boats /shop /mfg /books
+  /firms) from one template (lib/landing-data.ts + components/landing/):
+  per-industry pains, sample portal-dashboard mock (visible "Sample data"
+  chip), reserved-review placeholder (honest, not a fake testimonial),
+  contact form with per-industry dropdown + page attribution (lead notes
+  "Page:" + email line). Aliases + any-case 308 to canonical; unknown words
+  hit the 404 word net; /customer-pulse-check is the generic 13th page.
+  Copy is v1 — upgrades per vertical as the 12 deep-research reports land
+  in `_inbox/research/`. Reveal animation now has no-JS/reduced-motion
+  fallbacks (content is never unreachable).
 - **/work — 9 entries**: rfq-hunter, gridstrain, movie-slot-machine,
   acme-smart-log (client work; Salem stage-named), heart-echoes-music
   (paused — see below), spinroom, tidyripples (for sale + links its

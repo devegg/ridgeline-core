@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { WORK } from '@/lib/work-data'
+import { LANDING_INDUSTRIES } from '@/lib/landing-data'
 
 // Refresh hourly so papers added to the DB appear without a redeploy.
 export const revalidate = 3600
@@ -12,6 +13,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${base}/work`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${base}/papers`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${base}/customer-pulse-check`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    ...LANDING_INDUSTRIES.map((i) => ({
+      url: `${base}/${i.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
     ...WORK.map((w) => ({
       url: `${base}/work/${w.slug}`,
       lastModified: new Date(),
