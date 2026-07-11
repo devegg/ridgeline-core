@@ -197,6 +197,85 @@ export interface BillingRate {
 }
 
 // ============================================================
+// Portal value layer (migration 20260711)
+// ============================================================
+
+export type AutomationStatus = 'running' | 'issue' | 'paused'
+export type CaughtIssueStatus = 'resolved' | 'active'
+export type RoadmapState = 'next' | 'in_progress' | 'shipped'
+export type RequestUrgency = 'low' | 'normal' | 'high'
+export type RequestStatus = 'new' | 'in_progress' | 'done'
+
+export interface Automation {
+  id: string
+  client_id: string
+  project_id: string | null
+  name: string
+  plain_summary: string | null
+  status: AutomationStatus
+  baseline_minutes_per_item: number
+  started_on: string
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface AutomationActivity {
+  id: string
+  automation_id: string
+  activity_on: string
+  items_processed: number
+  created_at: string
+}
+
+export interface CaughtIssue {
+  id: string
+  client_id: string
+  automation_id: string | null
+  occurred_on: string
+  summary: string
+  detail: string | null
+  status: CaughtIssueStatus
+  resolved_on: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface RoadmapItem {
+  id: string
+  client_id: string
+  title: string
+  state: RoadmapState
+  shipped_on: string | null
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface ChangeRequest {
+  id: string
+  client_id: string
+  created_by: string
+  title: string
+  detail: string | null
+  urgency: RequestUrgency
+  status: RequestStatus
+  response: string | null
+  responded_on: string | null
+  created_at: string
+  updated_at: string
+  client?: Pick<Client, 'id' | 'name'>
+}
+
+export interface PortalHighlight {
+  id: string
+  client_id: string
+  line: string
+  sort_order: number
+  created_at: string
+}
+
+// ============================================================
 // Server action return type
 // ============================================================
 
