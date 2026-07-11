@@ -2,10 +2,11 @@
 
 Last updated: 2026-07-11. Code is ground truth; this reconciles to it.
 
-## In review — feature/portal-home (pushed, PR open, NOT yet merged/deployed)
+## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
 
 The portal home dashboard ("the ten-second screen"), per ADR-100 and
-docs/plans/BUILD-PLAN-portal-home-dashboard.md:
+docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
+(both themes, owner preview, requests round trip) before merge:
 
 - `/portal` is now a value dashboard (was a redirect to projects): health
   banner, hours/dollars/issues scoreboard with "How I count this" math
@@ -36,11 +37,16 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md:
   constraints), real SQL counts + `portal_value_raw` aggregate for the
   dashboard numbers, tightened change_requests insert, anon default grants
   revoked.
-- OPS to confirm on merge: `npm run migrate` (applies BOTH 20260711
-  migrations) + demo seed applied via the runner; **public sign-ups DISABLED
-  in Supabase Auth settings** (the app never self-registers users); Supabase
-  Auth URL configuration allows the /auth/callback redirect for magic links;
-  production deploy reflects master HEAD.
+- OPS state at merge: migrations + demo seed applied via the runner (against
+  the RIGHT project — the runner now refuses a DATABASE_URL whose ref differs
+  from the app's; that guard exists because of a real wrong-project incident,
+  fully reverted); public sign-ups DISABLED in Supabase Auth; Email provider
+  ON, signups OFF. Supabase NEW API keys (`sb_publishable_`) live locally and
+  in Vercel env; code falls back to the legacy anon key until it's disabled.
+- Still open after deploy verification: disable the LEGACY Supabase keys +
+  remove the fallback in `lib/supabase/keys.ts`; Supabase Auth URL config for
+  the magic-link redirect (link sending untested until then); portal nav
+  overflow below ~900px (toggle/sign-out off-screen — cheap fix).
 
 ## Shipped (live in production)
 
