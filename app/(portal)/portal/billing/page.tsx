@@ -60,6 +60,7 @@ export default async function PortalBillingPage() {
                   <th>Amount</th>
                   <th>Due</th>
                   <th>Status</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -75,6 +76,13 @@ export default async function PortalBillingPage() {
                       {inv.due_date ?? '—'}
                     </td>
                     <td><StatusBadge status={inv.status} /></td>
+                    <td>
+                      {inv.pay_link && ['sent', 'overdue'].includes(inv.status) && (
+                        <a href={inv.pay_link} target="_blank" rel="noreferrer" className="btn-primary" style={{ fontSize: 12, padding: '6px 14px' }}>
+                          Pay
+                        </a>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

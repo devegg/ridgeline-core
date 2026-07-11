@@ -20,6 +20,17 @@ export default async function PortalRequestsPage({
   const params = await searchParams
   const clientId = isOwner ? params.client : (user.app_metadata?.client_id as string | undefined)
 
+  const SLA: Record<string, string> = {
+    watch: 'within two business days',
+    improve: 'within one business day',
+    own: 'same-day',
+  }
+  let tierLine = 'within one business day'
+  if (clientId) {
+    const { data: c } = await supabase.from('clients').select('plan_tier').eq('id', clientId).single()
+    if (c?.plan_tier && SLA[c.plan_tier]) tierLine = SLA[c.plan_tier]
+  }
+
   let query = supabase.from('change_requests').select('*').order('created_at', { ascending: false })
   if (clientId) query = query.eq('client_id', clientId)
   const { data: requests, error } = await query
@@ -32,7 +43,7 @@ export default async function PortalRequestsPage({
         <h1 className="page-title">Request a change</h1>
         <p className="page-description">
           Tell me what you need in writing — a tweak, a fix, or a new idea. I reply here
-          within one business day, and everything stays on the record.
+          {' '}{tierLine} on your plan, and everything stays on the record.
         </p>
       </div>
 

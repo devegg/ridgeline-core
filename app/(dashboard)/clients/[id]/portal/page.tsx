@@ -4,7 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
 import {
-  ActivityQuickAdd, AutomationForm, HighlightForm, IngestKeyPanel, IssueForm, ReportSendPanel, RoadmapForm,
+  ActivityQuickAdd, AutomationForm, CaseStudyPanel, HighlightForm, IngestKeyPanel, IssueForm,
+  PortalSettingsPanel, ReportSendPanel, RoadmapForm,
 } from '@/components/dashboard/PortalDataPanels'
 import { advanceRoadmapAction, deleteHighlightAction, deleteRoadmapAction, resolveIssueAction } from '@/app/actions/portal-data'
 import type { Automation, CaughtIssue, PortalHighlight, RoadmapItem } from '@/lib/types'
@@ -18,7 +19,7 @@ export default async function ClientPortalDataPage({
   const supabase = await createClient()
 
   const [clientRes, automationsRes, issuesRes, roadmapRes, highlightsRes] = await Promise.all([
-    supabase.from('clients').select('id, name, email, blended_labor_rate, ingest_key_created_at').eq('id', id).single(),
+    supabase.from('clients').select('id, name, email, blended_labor_rate, ingest_key_created_at, plan_tier, report_auto_send').eq('id', id).single(),
     supabase.from('automations').select('*').eq('client_id', id).order('sort_order'),
     supabase.from('caught_issues').select('*').eq('client_id', id).order('occurred_on', { ascending: false }).limit(12),
     supabase.from('roadmap_items').select('*').eq('client_id', id).order('sort_order'),
@@ -94,8 +95,18 @@ export default async function ClientPortalDataPage({
       </section>
 
       <section className="portal-section">
+        <h2 className="portal-section__title">Portal settings</h2>
+        <PortalSettingsPanel clientId={client.id} planTier={client.plan_tier ?? 'improve'} autoSend={!!client.report_auto_send} />
+      </section>
+
+      <section className="portal-section">
         <h2 className="portal-section__title">Monthly report</h2>
         <ReportSendPanel clientId={client.id} defaultTo={client.email ?? ''} />
+      </section>
+
+      <section className="portal-section">
+        <h2 className="portal-section__title">Case study</h2>
+        <CaseStudyPanel clientId={client.id} />
       </section>
 
       <section className="portal-section">

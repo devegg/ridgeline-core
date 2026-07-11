@@ -100,6 +100,11 @@ export function InvoiceForm({ action, invoice, clients, projects, submitLabel = 
       </div>
 
       <div className="field">
+        <label>Payment link (optional — a Stripe payment link; shows a Pay button on the client portal)</label>
+        <input name="pay_link" type="url" placeholder="https://buy.stripe.com/…" defaultValue={invoice?.pay_link ?? ''} />
+      </div>
+
+      <div className="field">
         <label>Notes</label>
         <textarea name="notes" defaultValue={invoice?.notes ?? ''} style={{ minHeight: 60 }} />
       </div>

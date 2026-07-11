@@ -55,10 +55,17 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
 - **Monthly report email shipped v1** (D13, same day): owner-triggered from
   the portal-data screen, dashboard-identical numbers, Resend REST. Cron
   deferred until the first real care-plan client.
+- **Client-lifecycle wave shipped** (D14, same day): public written intake
+  (`/intake/[token]`) with measured baselines → assessments; care-plan block
+  on proposals; report send log + DARK monthly cron; request notifications
+  both directions; invoice pay links → portal Pay button; machine-reported
+  issues (`/api/ingest/issue`); lean plan tiers; case-study draft generator.
+  Demo script: docs/extras/demo-walkthrough.md.
 - Still open (the register in docs/decisions-log.md is the authority):
   magic-link send test (URL config confirmed set; blocked on Supabase's
   built-in 2/hour email limit — the BACKLOG's SMTP-via-Resend step removes
-  it permanently).
+  it permanently); cron env (`CRON_SECRET`, `SUPABASE_SECRET_KEY`) when the
+  first client is flagged for auto-send.
 
 ## Shipped (live in production)
 

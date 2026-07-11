@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import {
   addActivityAction, addHighlightAction, addIssueAction, addRoadmapAction,
-  rotateIngestKeyAction, saveAutomationAction,
+  draftCaseStudyAction, rotateIngestKeyAction, saveAutomationAction, savePortalSettingsAction,
 } from '@/app/actions/portal-data'
 import { sendMonthlyReportAction } from '@/app/actions/portal-report'
 import type { ActionState, Automation } from '@/lib/types'
@@ -256,6 +256,52 @@ export function ReportSendPanel({ clientId, defaultTo }: { clientId: string; def
         Same numbers as the dashboard — narrative first, cards, caught &amp; fixed, what&rsquo;s next,
         and a link back to the portal. Reply-to is hello@.
       </p>
+    </form>
+  )
+}
+
+// ------------------------------------------------------------
+export function PortalSettingsPanel({ clientId, planTier, autoSend }: { clientId: string; planTier: string; autoSend: boolean }) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(savePortalSettingsAction, null)
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <input type="hidden" name="client_id" value={clientId} />
+      <Feedback state={state} />
+      <div style={row}>
+        <div className="field" style={small}>
+          <label>Care-plan tier</label>
+          <select name="plan_tier" defaultValue={planTier}>
+            <option value="watch">Watch</option>
+            <option value="improve">Improve</option>
+            <option value="own">Own</option>
+          </select>
+        </div>
+        <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13.5, paddingBottom: 10, cursor: 'pointer' }}>
+          <input type="checkbox" name="report_auto_send" defaultChecked={autoSend} />
+          Auto-send the monthly report (the 1st, to the client email)
+        </label>
+        <div style={{ paddingBottom: 2 }}>
+          <button className="btn-primary" disabled={pending}>{pending ? 'Saving…' : 'Save'}</button>
+        </div>
+      </div>
+    </form>
+  )
+}
+
+// ------------------------------------------------------------
+export function CaseStudyPanel({ clientId }: { clientId: string }) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(draftCaseStudyAction, null)
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <input type="hidden" name="client_id" value={clientId} />
+      <Feedback state={state} />
+      <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', margin: 0, maxWidth: '68ch' }}>
+        Renders this client&rsquo;s real numbers into an anonymized draft (descriptor label,
+        rounded figures, methodology note) saved to Documents, unshared, for your edit.
+      </p>
+      <div>
+        <button className="btn-primary" disabled={pending}>{pending ? 'Drafting…' : 'Draft case study'}</button>
+      </div>
     </form>
   )
 }

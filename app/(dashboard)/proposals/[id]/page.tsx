@@ -102,6 +102,18 @@ export default async function ProposalDetailPage({
           <Field label="Created">{new Date(p.created_at).toLocaleDateString()}</Field>
           {p.scope && <Field label="Scope" full>{p.scope}</Field>}
           {p.pricing_notes && <Field label="Pricing Notes" full>{p.pricing_notes}</Field>}
+          {p.care_plan?.included && (
+            <Field label="Care Plan (opt-out)" full>
+              <div style={{ fontSize: 14, color: 'var(--ink-muted)', marginBottom: 8 }}>{p.care_plan.note}</div>
+              {p.care_plan.tiers.map((t, i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, padding: '6px 0', borderTop: i > 0 ? '1px solid var(--rule-soft)' : 'none' }}>
+                  <strong style={{ minWidth: 90 }}>{t.name}</strong>
+                  <span style={{ fontFamily: 'var(--mono)', minWidth: 90 }}>{t.price || '—'}</span>
+                  <span style={{ color: 'var(--ink-muted)' }}>{t.summary}</span>
+                </div>
+              ))}
+            </Field>
+          )}
         </div>
       )}
 
