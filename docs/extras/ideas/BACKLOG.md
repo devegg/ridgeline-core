@@ -83,6 +83,32 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 - When an item moves into active development, remove it from here and track it in the session task list.
 - Last updated: 2026-07-04
 
+## Email / Ops (owner steps, post-Max-plan — added 2026-07-11)
+
+- [ ] **Supabase auth email → Resend SMTP** (kills the 2-emails/hour limit on
+  magic links + fixes deliverability; needed before any real client signs in
+  by link). Steps:
+  1. resend.com → API Keys → Create API key (`supabase-auth`, Sending access) → copy.
+  2. Supabase Dashboard → RidgelineKnows → Authentication → Emails → SMTP
+     Settings → enable Custom SMTP: sender `hello@ridgelineknows.com`, name
+     `Ridgeline Knows`, host `smtp.resend.com`, port `465`, username `resend`,
+     password = the API key → Save.
+  3. Test: login page → "Get a sign-in link by email" → link arrives, click →
+     lands signed in on /overview. Then strike the magic-link register item in
+     docs/decisions-log.md.
+
+- [ ] **Google Workspace migration** (owner decision 2026-07-11: familiarity +
+  field-day email volume justify $8/mo once paying work lands, expected 1–2
+  months). Checklist:
+  1. Sign up Google Workspace Business Starter for ridgelineknows.com; create
+     users `brian@` (primary) and `hello@` (user or alias — alias is $0).
+  2. DNS (Squarespace, record-level): swap Zoho MX records for Google's;
+     KEEP every Resend record (SPF/DKIM on its subdomain) — Resend stays the
+     app's outbound sender (contact form, monthly reports, Supabase auth
+     SMTP); Workspace is human mail only.
+  3. Verify mail flow both addresses; retire the Zoho org after a safe overlap.
+  4. Update nothing in the app — it sends via Resend and receives nothing.
+
 ## Site Content
 
 - [ ] **Location reframe across all site copy** — base location is Myrtle Beach (not Murrells Inlet; owner correction 2026-07-03). Reword geographic positioning site-wide to "the South Carolina coast — from the Lowcountry to Myrtle Beach." Applies to WHO I WORK WITH, contact, footer, and the content draft in docs/extras/content/. The splash-page brief (docs/plans/DESIGN-BRIEF-splash-page.md) already reflects it.
