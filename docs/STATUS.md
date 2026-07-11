@@ -41,12 +41,13 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   the RIGHT project — the runner now refuses a DATABASE_URL whose ref differs
   from the app's; that guard exists because of a real wrong-project incident,
   fully reverted); public sign-ups DISABLED in Supabase Auth; Email provider
-  ON, signups OFF. Supabase NEW API keys (`sb_publishable_`) live locally and
-  in Vercel env; code falls back to the legacy anon key until it's disabled.
-- Still open after deploy verification: disable the LEGACY Supabase keys +
-  remove the fallback in `lib/supabase/keys.ts`; Supabase Auth URL config for
-  the magic-link redirect (link sending untested until then); portal nav
-  overflow below ~900px (toggle/sign-out off-screen — cheap fix).
+  ON, signups OFF. Supabase NEW API keys (`sb_publishable_`) everywhere —
+  LEGACY keys DISABLED in the dashboard 2026-07-11 and the code fallback
+  removed; prod + local verified on the new key alone.
+- Still open (the register in docs/decisions-log.md is the authority):
+  Supabase Auth URL config for the magic-link redirect (link sending untested
+  until then); portal nav overflow below ~900px (toggle/sign-out off-screen —
+  cheap fix); real-client activity ingest + owner CRUD before client #1.
 
 ## Shipped (live in production)
 
