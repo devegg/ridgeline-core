@@ -17,6 +17,7 @@ import {
   File,
   Settings,
   Trash2,
+  MessageSquare,
 } from 'lucide-react'
 
 interface NavItem {
@@ -34,6 +35,7 @@ const NAV_MAIN: NavItem[] = [
   { href: '/proposals', label: 'Proposals', icon: FileText },
   { href: '/assessments', label: 'Assessments', icon: ClipboardList },
   { href: '/deliverables', label: 'Deliverables', icon: Package },
+  { href: '/requests', label: 'Requests', icon: MessageSquare },
 ]
 
 const NAV_BILLING: NavItem[] = [
