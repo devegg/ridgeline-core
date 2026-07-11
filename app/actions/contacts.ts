@@ -2,8 +2,25 @@
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
+import { provisionPortalLogin } from '@/app/actions/portal-users'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/lib/types'
+
+/** When the portal-access box is checked and the contact has an email,
+    create the client's login right here (one per client; plain-language
+    outcome appended to the save message). */
+async function maybeProvision(clientId: string, formData: FormData): Promise<string> {
+  if (formData.get('is_portal_user') !== 'true') return ''
+  const email = ((formData.get('email') as string) ?? '').trim()
+  if (!email) return ' Portal access checked but no email — add one to create the login.'
+  const result = await provisionPortalLogin(clientId, email)
+  if ('error' in result) {
+    return result.error === 'This client already has a portal login.'
+      ? '' // already provisioned — the checkbox is just informational now
+      : ` Portal login NOT created: ${result.error}`
+  }
+  return ` Portal login created for ${email} — one-time password (copy now): ${result.password}`
+}
 
 export async function createContactAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const name = (formData.get('name') as string)?.trim()
@@ -32,8 +49,9 @@ export async function createContactAction(_prev: ActionState, formData: FormData
     return { errors: { _root: error.message } }
   }
 
+  const note = await maybeProvision(clientId, formData)
   revalidatePath(`/clients/${clientId}`)
-  return { message: 'Contact added.' }
+  return { message: `Contact added.${note}` }
 }
 
 export async function updateContactAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -63,8 +81,9 @@ export async function updateContactAction(_prev: ActionState, formData: FormData
     return { errors: { _root: error.message } }
   }
 
+  const note = await maybeProvision(clientId, formData)
   revalidatePath(`/clients/${clientId}`)
-  return { message: 'Saved.' }
+  return { message: `Saved.${note}` }
 }
 
 export async function deleteContactAction(id: string, clientId: string) {

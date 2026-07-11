@@ -43,7 +43,7 @@ export function SettingsPanel({ email, projectHost }: { email: string; projectHo
             <div className="detail-field__value">{email}</div>
           </div>
 
-          <form onSubmit={changePassword} style={{ marginTop: 16 }}>
+          <form onSubmit={changePassword} style={{ marginTop: 16, padding: '0 16px 16px' }}>
             <div className="field">
               <label htmlFor="s-pw">New password</label>
               <input id="s-pw" type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="new-password" />

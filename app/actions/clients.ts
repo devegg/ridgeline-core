@@ -31,6 +31,9 @@ export async function createClientAction(_prev: ActionState, formData: FormData)
     return { errors: { _root: error.message } }
   }
 
+  const industry = (formData.get('industry') as string)?.trim()
+  if (industry) await supabase.from('industries').insert({ name: industry }).select().maybeSingle().then(() => {}, () => {})
+
   revalidatePath('/clients')
   redirect(`/clients/${data.id}`)
 }
@@ -59,6 +62,9 @@ export async function updateClientAction(_prev: ActionState, formData: FormData)
     queryFailed('clients', error)
     return { errors: { _root: error.message } }
   }
+
+  const industry = (formData.get('industry') as string)?.trim()
+  if (industry) await supabase.from('industries').insert({ name: industry }).select().maybeSingle().then(() => {}, () => {})
 
   revalidatePath(`/clients/${id}`)
   revalidatePath('/clients')

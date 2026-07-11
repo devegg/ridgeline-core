@@ -1212,3 +1212,9 @@ section {
    never fall off-screen (register item, 2026-07-11). */
 .portal-nav__inner { flex-wrap: wrap; row-gap: 6px; }
 .portal-nav__links { flex-wrap: wrap; }
+
+
+/* Chrome keeps closed-details content boxes in layout (::details-content
+   quirk) — enforce spec behavior everywhere. Fixes phantom gaps between
+   sections wherever <details> is used. */
+details:not([open]) > *:not(summary) { display: none; }

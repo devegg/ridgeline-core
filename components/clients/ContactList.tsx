@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 import { createContactAction, updateContactAction, deleteContactAction } from '@/app/actions/contacts'
 import { safeHttpUrl } from '@/lib/safe-url'
+import { PhoneInput } from '@/components/forms/PhoneInput'
 import type { Contact, ActionState } from '@/lib/types'
 
 const ROLE_LABELS: Record<string, string> = {
@@ -48,7 +49,7 @@ function ContactFields({ contact }: { contact?: Contact }) {
       <div className="field-row">
         <div className="field">
           <label>Phone</label>
-          <input name="phone" type="tel" defaultValue={contact?.phone ?? ''} />
+          <PhoneInput name="phone" defaultValue={contact?.phone} />
         </div>
         <div className="field">
           <label>LinkedIn</label>

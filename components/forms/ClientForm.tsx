@@ -1,6 +1,8 @@
 'use client'
 
 import { useActionState } from 'react'
+import { PhoneInput } from '@/components/forms/PhoneInput'
+import { IndustrySelect } from '@/components/forms/IndustrySelect'
 import type { Client, ActionState } from '@/lib/types'
 
 const STATUS_OPTIONS = [
@@ -13,9 +15,10 @@ interface ClientFormProps {
   action: (_prev: ActionState, formData: FormData) => Promise<ActionState>
   client?: Client
   submitLabel?: string
+  industries?: string[]
 }
 
-export function ClientForm({ action, client, submitLabel = 'Save client' }: ClientFormProps) {
+export function ClientForm({ action, client, submitLabel = 'Save client', industries = [] }: ClientFormProps) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, null)
 
   return (
@@ -57,14 +60,14 @@ export function ClientForm({ action, client, submitLabel = 'Save client' }: Clie
         </div>
         <div className="field">
           <label htmlFor="cf-phone">Phone</label>
-          <input id="cf-phone" name="phone" type="tel" defaultValue={client?.phone ?? ''} />
+          <PhoneInput id="cf-phone" name="phone" defaultValue={client?.phone} />
         </div>
       </div>
 
       <div className="field-row">
         <div className="field">
           <label htmlFor="cf-industry">Industry</label>
-          <input id="cf-industry" name="industry" type="text" defaultValue={client?.industry ?? ''} />
+          <IndustrySelect id="cf-industry" industries={industries} defaultValue={client?.industry} />
         </div>
         <div className="field">
           <label htmlFor="cf-location">Location</label>
