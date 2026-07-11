@@ -71,7 +71,7 @@ export async function updateProposalAction(_prev: ActionState, formData: FormDat
 
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
-  return { message: 'Saved.' }
+  redirect(`/proposals/${id}`) // exit edit mode; the refreshed view is the confirmation
 }
 
 export async function approveProposalAction(id: string) {

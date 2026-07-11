@@ -60,7 +60,7 @@ export async function updateProjectAction(_prev: ActionState, formData: FormData
 
   revalidatePath(`/projects/${id}`)
   revalidatePath('/projects')
-  return { message: 'Saved.' }
+  redirect(`/projects/${id}`) // exit edit mode; the refreshed view is the confirmation
 }
 
 export async function closeProjectAction(id: string) {

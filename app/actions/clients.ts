@@ -68,7 +68,7 @@ export async function updateClientAction(_prev: ActionState, formData: FormData)
 
   revalidatePath(`/clients/${id}`)
   revalidatePath('/clients')
-  return { message: 'Saved.' }
+  redirect(`/clients/${id}`) // exit edit mode; the refreshed view is the confirmation
 }
 
 export async function archiveClientAction(id: string) {
