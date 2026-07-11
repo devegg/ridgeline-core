@@ -5,8 +5,9 @@ import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
 import {
   ActivityQuickAdd, AutomationForm, CaseStudyPanel, HighlightForm, IngestKeyPanel, IssueForm,
-  PortalSettingsPanel, ReportSendPanel, RoadmapForm,
+  PortalLoginPanel, PortalSettingsPanel, ReportSendPanel, RoadmapForm,
 } from '@/components/dashboard/PortalDataPanels'
+import { getPortalLogin } from '@/app/actions/portal-users'
 import { advanceRoadmapAction, deleteHighlightAction, deleteRoadmapAction, resolveIssueAction } from '@/app/actions/portal-data'
 import type { Automation, CaughtIssue, PortalHighlight, RoadmapItem } from '@/lib/types'
 
@@ -38,6 +39,7 @@ export default async function ClientPortalDataPage({
   const issues = (issuesRes.data ?? []) as CaughtIssue[]
   const roadmap = (roadmapRes.data ?? []) as RoadmapItem[]
   const highlights = (highlightsRes.data ?? []) as PortalHighlight[]
+  const login = await getPortalLogin(client.id)
 
   return (
     <div>
@@ -97,6 +99,15 @@ export default async function ClientPortalDataPage({
       <section className="portal-section">
         <h2 className="portal-section__title">Portal settings</h2>
         <PortalSettingsPanel clientId={client.id} planTier={client.plan_tier ?? 'improve'} autoSend={!!client.report_auto_send} />
+      </section>
+
+      <section className="portal-section">
+        <h2 className="portal-section__title">Portal login</h2>
+        <PortalLoginPanel
+          clientId={client.id}
+          configured={login.configured}
+          currentEmail={login.configured ? login.email : null}
+        />
       </section>
 
       <section className="portal-section">
