@@ -61,12 +61,13 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   both directions; invoice pay links → portal Pay button; machine-reported
   issues (`/api/ingest/issue`); lean plan tiers; case-study draft generator.
   Demo script: docs/extras/demo-walkthrough.md.
+- **Magic link verified end to end** (2026-07-11): Supabase auth email rides
+  Resend SMTP now; link arrived and signed in (same-browser PKCE). The
+  email-template edit that activates the browser-independent /auth/confirm
+  route stays a BACKLOG owner step.
 - Still open (the register in docs/decisions-log.md is the authority):
-  magic-link send test (URL config set; the REAL blocker is Supabase's
-  built-in mailer delivering only to project-team addresses — it calls other
-  recipients "invalid" — plus its 2/hour cap; the BACKLOG's SMTP-via-Resend
-  step removes both); cron env (`CRON_SECRET`, `SUPABASE_SECRET_KEY`) when
-  the first client is flagged for auto-send.
+  the Magic Link template edit (BACKLOG); cron env (`CRON_SECRET`,
+  `SUPABASE_SECRET_KEY`) when the first client is flagged for auto-send.
 
 ## Shipped (live in production)
 
