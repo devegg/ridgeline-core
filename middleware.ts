@@ -2,7 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { supabasePublishableKey, supabaseUrl } from '@/lib/supabase/keys'
 
-const DASHBOARD_PATHS = /^\/(overview|leads|clients|projects|proposals|assessments|deliverables|billing|requests|scaffolder|documents|communications|settings|cleanup)(\/|$)/
+const DASHBOARD_PATHS = /^\/(overview|leads|clients|projects|proposals|assessments|deliverables|billing|requests|documents|settings|cleanup)(\/|$)/
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
