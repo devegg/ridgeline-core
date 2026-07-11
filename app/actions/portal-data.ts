@@ -255,7 +255,7 @@ export async function savePortalSettingsAction(_prev: ActionState, formData: For
     return { errors: { _root: 'Could not save.' } }
   }
   revalidate(clientId)
-  return { message: 'Saved.' }
+  return { message: `Saved — tier: ${tier[0].toUpperCase()}${tier.slice(1)}, monthly auto-send ${formData.get('report_auto_send') === 'on' ? 'ON' : 'off'}.` }
 }
 
 export async function draftCaseStudyAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

@@ -12,7 +12,7 @@ export default function RatesPage() {
       <div className="page-header">
         <div className="page-eyebrow">Billing · Rates</div>
         <h1 className="page-title">Billing Rates</h1>
-        <p className="page-description">Default hourly, daily, or fixed rates. Assign to projects or use as defaults.</p>
+        <p className="page-description">Day rates and fixed prices — no hourly (value and scope set the price; the day rate is the floor).</p>
       </div>
       <RatesClient />
     </div>
@@ -41,7 +41,7 @@ function RatesClient() {
         <div className="field-row">
           <div className={`field ${state?.errors?.label ? 'field--error' : ''}`}>
             <label>Label *</label>
-            <input name="label" type="text" placeholder="Standard hourly" required />
+            <input name="label" type="text" placeholder="Standard day rate" required />
             {state?.errors?.label && <div className="field__error">{state.errors.label}</div>}
           </div>
           <div className={`field ${state?.errors?.rate ? 'field--error' : ''}`}>
@@ -53,8 +53,7 @@ function RatesClient() {
 
         <div className="field">
           <label>Type</label>
-          <select name="rate_type" defaultValue="hourly">
-            <option value="hourly">Hourly</option>
+          <select name="rate_type" defaultValue="daily">
             <option value="daily">Daily</option>
             <option value="fixed">Fixed</option>
           </select>

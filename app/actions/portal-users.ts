@@ -113,6 +113,34 @@ use the sign-in link first, then set one from your account.)</p>
 }
 
 /**
+ * Shared: create the auth user for a client (used by the Portal login panel
+ * and the contact form's portal-access checkbox). Returns the one-time
+ * password or a plain-language error.
+ */
+export async function provisionPortalLogin(clientId: string, email: string): Promise<{ password: string } | { error: string }> {
+  let admin
+  try {
+    admin = createAdminClient()
+  } catch {
+    return { error: 'SUPABASE_SECRET_KEY is not configured (see BACKLOG).' }
+  }
+  const { data: existing } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+  if (existing?.users.some(u => (u.app_metadata as { client_id?: string })?.client_id === clientId)) {
+    return { error: 'This client already has a portal login.' }
+  }
+  const { randomBytes } = await import('node:crypto')
+  const password = `rk-${randomBytes(12).toString('base64url')}`
+  const { error } = await admin.auth.admin.createUser({
+    email: email.toLowerCase(),
+    password,
+    email_confirm: true,
+    app_metadata: { role: 'client', client_id: clientId },
+  })
+  if (error) return { error: `Supabase refused: ${error.message}` }
+  return { password }
+}
+
+/**
  * Owner creates a client's portal login: an auth user stamped with
  * app_metadata { role: 'client', client_id } (the runbook's manual steps,
  * automated). Generates a strong password shown ONCE; magic-link sign-in
@@ -127,32 +155,11 @@ export async function createPortalLoginAction(_prev: ActionState, formData: Form
     return { errors: { _root: 'A valid email is required.' } }
   }
 
-  let admin
-  try {
-    admin = createAdminClient()
-  } catch {
-    return { errors: { _root: 'SUPABASE_SECRET_KEY is not configured (see BACKLOG).' } }
-  }
-
-  // One login per client — refuse a second.
-  const { data: existing } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
-  if (existing?.users.some(u => (u.app_metadata as { client_id?: string })?.client_id === clientId)) {
-    return { errors: { _root: 'This client already has a portal login.' } }
-  }
-
-  const { randomBytes } = await import('node:crypto')
-  const password = `rk-${randomBytes(12).toString('base64url')}`
-
-  const { error } = await admin.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-    app_metadata: { role: 'client', client_id: clientId },
-  })
-  if (error) return { errors: { _root: `Supabase refused: ${error.message}` } }
+  const result = await provisionPortalLogin(clientId, email)
+  if ('error' in result) return { errors: { _root: result.error } }
 
   revalidatePath(`/clients/${clientId}/portal`)
   return {
-    message: `Login created for ${email}. One-time password (copy now, it will not be shown again): ${password} — magic-link sign-in also works if that address receives mail.`,
+    message: `Login created for ${email}. One-time password (copy now, it will not be shown again): ${result.password} — magic-link sign-in also works if that address receives mail.`,
   }
 }

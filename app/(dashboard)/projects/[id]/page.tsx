@@ -8,6 +8,7 @@ import { archiveProjectAction, closeProjectAction, updateProjectAction } from '@
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
+import { DeliverableForm } from '@/components/forms/DeliverableForm'
 import type { Project, Milestone, Deliverable } from '@/lib/types'
 
 export default async function ProjectDetailPage({
@@ -117,7 +118,7 @@ export default async function ProjectDetailPage({
           {deliverablesFailed ? (
             <div className="section-card__error">Deliverables failed to load.</div>
           ) : !deliverables?.length ? (
-            <div className="section-card__empty">No deliverables linked to this project.</div>
+            <div className="section-card__empty">No deliverables yet — add the first below.</div>
           ) : (
             <table className="data-table">
               <thead><tr><th>Title</th><th>Due</th><th>Status</th></tr></thead>
@@ -132,6 +133,7 @@ export default async function ProjectDetailPage({
               </tbody>
             </table>
           )}
+          <DeliverableForm projectId={id} />
         </div>
       </div>
 

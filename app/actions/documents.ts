@@ -3,6 +3,7 @@
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import type { ActionState, DocumentEntityType } from '@/lib/types'
 
 export async function uploadDocumentAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -45,4 +46,25 @@ export async function deleteDocumentAction(documentId: string, entityType: Docum
   const { error } = await supabase.from('documents').delete().eq('id', documentId)
   queryFailed('documents', error)
   revalidatePath(`/${entityType}s/${entityId}`)
+}
+
+export async function updateDocumentAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const id = formData.get('id') as string
+  const name = (formData.get('name') as string)?.trim()
+  const content = (formData.get('content') as string) ?? ''
+  if (!id || !name) return { errors: { _root: 'A name is required.' } }
+
+  const supabase = await createSupabase()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || (user.app_metadata?.role as string | undefined) !== 'owner') {
+    return { errors: { _root: 'Owner only.' } }
+  }
+
+  const { error } = await supabase.from('documents').update({ name, content }).eq('id', id)
+  if (error) {
+    queryFailed('documents', error)
+    return { errors: { _root: 'Could not save.' } }
+  }
+  revalidatePath(`/documents/${id}`)
+  redirect(`/documents/${id}`)
 }

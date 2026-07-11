@@ -20,6 +20,7 @@ export default async function ClientDetailPage({
   const { id } = await params
   const { mode } = await searchParams
   const supabase = await createClient()
+  const { data: industriesList } = await supabase.from('industries').select('name').order('name')
 
   const [
     { data: client, error: clientError },
@@ -66,7 +67,7 @@ export default async function ClientDetailPage({
       </div>
 
       {mode === 'edit' ? (
-        <ClientForm action={updateClientAction} client={c} submitLabel="Save changes" />
+        <ClientForm action={updateClientAction} client={c} submitLabel="Save changes" industries={(industriesList ?? []).map(i => i.name)} />
       ) : (
         <div className="detail-grid">
           <Field label="Status"><StatusBadge status={c.status} /></Field>

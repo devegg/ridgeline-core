@@ -87,7 +87,12 @@ export default async function ClientPortalDataPage({
       </section>
 
       <section className="portal-section">
-        <h2 className="portal-section__title">Machine ingest</h2>
+        <h2 className="portal-section__title">Machine ingest (optional plumbing)</h2>
+        <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', maxWidth: '68ch', margin: '0 0 10px' }}>
+          For when the client&rsquo;s automations (n8n or anything that can POST JSON)
+          report their own daily activity and caught issues instead of you recording
+          them by hand above. Skip it entirely for manual clients.
+        </p>
         <IngestKeyPanel clientId={client.id} createdAt={client.ingest_key_created_at ?? null} />
         {automations.length > 0 && (
           <p style={{ marginTop: 10, fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--ink-soft)' }}>
@@ -98,6 +103,12 @@ export default async function ClientPortalDataPage({
 
       <section className="portal-section">
         <h2 className="portal-section__title">Portal settings</h2>
+        <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', maxWidth: '68ch', margin: '0 0 10px' }}>
+          The care-plan tier is what the client bought: it sets the reply-time promise
+          on their Requests page (Watch: two business days · Improve: one · Own:
+          same-day) and Watch sees a gentle upgrade line under their roadmap. Auto-send
+          emails the monthly report on the 1st without you clicking.
+        </p>
         <PortalSettingsPanel clientId={client.id} planTier={client.plan_tier ?? 'improve'} autoSend={!!client.report_auto_send} />
       </section>
 
