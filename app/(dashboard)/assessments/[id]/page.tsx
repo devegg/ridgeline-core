@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
-import { completeAssessmentAction, updateAssessmentAction } from '@/app/actions/assessments'
+import { completeAssessmentAction } from '@/app/actions/assessments'
+import { AssessmentForm } from '@/components/forms/AssessmentForm'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { DocumentList } from '@/components/documents/DocumentList'
 import { IntakePanel } from '@/components/assessments/IntakePanel'
@@ -71,7 +72,7 @@ export default async function AssessmentDetailPage({
       </div>
 
       {mode === 'edit' ? (
-        <EditAssessmentForm a={a} clients={clients ?? []} projects={projects ?? []} />
+        <AssessmentForm a={a} clients={clients ?? []} projects={projects ?? []} />
       ) : (
         <div className="detail-grid">
           <Field label="Client">
@@ -130,54 +131,3 @@ function Field({ label, children, full }: { label: string; children: React.React
   )
 }
 
-function EditAssessmentForm({ a, clients, projects }: {
-  a: Assessment
-  clients: { id: string; name: string }[]
-  projects: { id: string; name: string }[]
-}) {
-  return (
-    <form action={async (fd) => {
-      'use server'
-      const { updateAssessmentAction: act } = await import('@/app/actions/assessments')
-      await act(null, fd)
-    }} className="form" style={{ maxWidth: 680 }}>
-      <input type="hidden" name="id" value={a.id} />
-      <div className="field">
-        <label>Title *</label>
-        <input name="title" defaultValue={a.title} required />
-      </div>
-      <div className="field-row">
-        <div className="field">
-          <label>Client</label>
-          <select name="client_id" defaultValue={a.client_id ?? ''}>
-            <option value="">— none —</option>
-            {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-        </div>
-        <div className="field">
-          <label>Project</label>
-          <select name="project_id" defaultValue={a.project_id ?? ''}>
-            <option value="">— none —</option>
-            {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-        </div>
-      </div>
-      <div className="field">
-        <label>Scheduled Date</label>
-        <input name="scheduled_date" type="date" defaultValue={a.scheduled_date ?? ''} />
-      </div>
-      <div className="field">
-        <label>Findings</label>
-        <textarea name="findings" defaultValue={a.findings ?? ''} style={{ minHeight: 90 }} />
-      </div>
-      <div className="field">
-        <label>Recommendations</label>
-        <textarea name="recommendations" defaultValue={a.recommendations ?? ''} style={{ minHeight: 90 }} />
-      </div>
-      <div className="form__footer">
-        <div />
-        <button type="submit" className="btn-primary">Save changes <span className="arrow" /></button>
-      </div>
-    </form>
-  )
-}

@@ -52,12 +52,12 @@ export async function updateAssessmentAction(_prev: ActionState, formData: FormD
 
   if (error) {
     queryFailed('assessments', error)
-    return { errors: { _root: error.message } }
+    return { errors: { _root: 'Could not save — try again.' } }
   }
 
   revalidatePath(`/assessments/${id}`)
   revalidatePath('/assessments')
-  return { message: 'Saved.' }
+  redirect(`/assessments/${id}`) // exit edit mode; the saved values are the feedback
 }
 
 export async function completeAssessmentAction(id: string) {
