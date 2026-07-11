@@ -73,6 +73,7 @@ export interface ProposalCarePlan {
 
 export interface Proposal {
   care_plan?: ProposalCarePlan | null
+  assessment_id?: string | null
   id: string
   created_at: string
   updated_at: string

@@ -65,6 +65,11 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   Resend SMTP now; link arrived and signed in (same-browser PKCE). The
   email-template edit that activates the browser-independent /auth/confirm
   route stays a BACKLOG owner step.
+- **Lifecycle connectors shipped** (D15, same day): assessment→proposal→
+  project convert actions, the portal Proposals page with client one-click
+  Approve (bounded RPC), request→roadmap checkbox, lifecycle nav order.
+  **Standing test gate: `node scripts/test-portal.mjs` — 36 checks, currently
+  green** (TEST-PLAN-portal.md).
 - Still open (the register in docs/decisions-log.md is the authority):
   the Magic Link template edit (BACKLOG); cron env (`CRON_SECRET`,
   `SUPABASE_SECRET_KEY`) when the first client is flagged for auto-send.

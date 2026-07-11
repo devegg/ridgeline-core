@@ -27,6 +27,10 @@ export function RespondForm({ request }: { request: ChangeRequest }) {
         />
       </div>
 
+      <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, cursor: 'pointer', color: 'var(--ink-muted)' }}>
+        <input type="checkbox" name="add_to_roadmap" />
+        When marked Done, add to the client&rsquo;s roadmap as &ldquo;just shipped&rdquo;
+      </label>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
         <select name="status" defaultValue={request.status} style={{ maxWidth: 180 }}>
           <option value="new">New</option>

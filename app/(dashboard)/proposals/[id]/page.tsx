@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { createProjectFromProposalAction } from '@/app/actions/proposals'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
@@ -59,6 +60,11 @@ export default async function ProposalDetailPage({
           {p.status === 'draft' && (
             <form action={sendProposalAction.bind(null, id)}>
               <button type="submit" className="btn-primary">Send to client <span className="arrow" /></button>
+            </form>
+          )}
+          {p.status === 'approved' && !p.project_id && (
+            <form action={createProjectFromProposalAction.bind(null, id)}>
+              <button type="submit" className="btn-primary">Create project <span className="arrow" /></button>
             </form>
           )}
           {p.status === 'pending' && (
