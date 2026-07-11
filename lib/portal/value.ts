@@ -47,9 +47,37 @@ export interface ValueTotals {
   launchItems: number
 }
 
+/** Shape returned by the portal_value_raw() SQL aggregate. */
+export interface ValueRawRow {
+  month_raw_minutes: number | string
+  month_items: number | string
+  launch_raw_minutes: number | string
+  launch_items: number | string
+  last_activity_at: string | null
+}
+
+/**
+ * Apply the haircut and rate to the RAW minute sums computed in SQL
+ * (portal_value_raw). Aggregation lives in the database so totals can
+ * never silently truncate at a row cap; the honesty rules live here.
+ */
+export function totalsFromRaw(raw: ValueRawRow, laborRate: number): ValueTotals {
+  const monthHours = (Number(raw.month_raw_minutes) * (1 - HAIRCUT)) / 60
+  const launchHours = (Number(raw.launch_raw_minutes) * (1 - HAIRCUT)) / 60
+  return {
+    monthHours,
+    monthDollars: monthHours * laborRate,
+    monthItems: Number(raw.month_items),
+    launchHours,
+    launchDollars: launchHours * laborRate,
+    launchItems: Number(raw.launch_items),
+  }
+}
+
 /**
  * Aggregate activity rows against their automations' baselines.
  * `monthStart` is an ISO date (YYYY-MM-DD), first of the current month.
+ * (In-memory fallback; the portal page uses totalsFromRaw + SQL.)
  */
 export function computeTotals(
   automations: Pick<Automation, 'id' | 'baseline_minutes_per_item'>[],

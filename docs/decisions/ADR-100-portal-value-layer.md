@@ -55,6 +55,23 @@ Context: docs/plans/BUILD-PLAN-portal-home-dashboard.md, built from the
    mode for seeds. Requires DATABASE_URL in `.env.local`; owner-run on
    purpose. The 20260108 missing-GRANTs incident is the cautionary tale.
 
+9. **Security hardening (same-day review findings, applied).** Four-agent
+   review (2026-07-11) found the authorization model failed OPEN: an absent
+   app_metadata.role was treated as owner in code and RLS. Now: owner access
+   requires the explicit role everywhere (middleware, both layouts, pages,
+   actions, all owner_all policies); migration 20260711100000 stamps existing
+   non-client users as owner, so future users default to NO access. Also
+   fixed: open redirect in the auth callback (`next` restricted to same-origin
+   relative paths); `javascript:` hrefs from the anon-writable leads table
+   (render guard `lib/safe-url.ts` + http(s) CHECK constraints); client-visible
+   issue counts computed from a display-limited slice (now real SQL counts);
+   value totals moved to a SQL aggregate (`portal_value_raw`, SECURITY INVOKER)
+   so they cannot truncate at PostgREST's row cap; change_requests insert
+   policy pinned to status='new' with no response fields; anon default
+   privileges revoked for future tables and RLS enabled on schema_migrations.
+   OPS: confirm public sign-ups are DISABLED in Supabase Auth settings —
+   the app never creates accounts.
+
 ## Consequences
 
 - Real clients need a measured `baseline_minutes_per_item` per automation and

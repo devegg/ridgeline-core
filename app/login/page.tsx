@@ -54,8 +54,8 @@ export default function LoginPage() {
       return
     }
 
-    const role = (data.user?.app_metadata?.role as string) ?? 'owner'
-    router.push(role === 'client' ? '/portal' : '/overview')
+    const role = data.user?.app_metadata?.role as string | undefined
+    router.push(role === 'owner' ? '/overview' : '/portal')
     router.refresh()
   }
 

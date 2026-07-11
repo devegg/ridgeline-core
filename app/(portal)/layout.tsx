@@ -26,7 +26,8 @@ export default async function PortalLayout({ children }: { children: React.React
 
   // Owners may browse the portal deliberately — it is the demo and QA
   // surface — but pages label it and scope data via an explicit pick.
-  const isOwner = ((user.app_metadata?.role as string) ?? 'owner') !== 'client'
+  // Explicit role only: an account with no role is neither owner nor client.
+  const isOwner = (user.app_metadata?.role as string | undefined) === 'owner'
 
   return (
     <div className="portal-layout" suppressHydrationWarning>

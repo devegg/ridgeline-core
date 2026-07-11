@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { queryFailed } from '@/lib/supabase/errors'
-import { computeTotals, relativeLabel } from '@/lib/portal/value'
+import { relativeLabel, totalsFromRaw, type ValueRawRow } from '@/lib/portal/value'
 import {
   CaughtFixedLog, HealthBanner, HowWeCount, PeaceOfMind, ValueCards, WhatsNext,
 } from '@/components/portal/Dashboard'
@@ -18,8 +18,10 @@ export default async function PortalHomePage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null // layout redirects
 
-  const role = (user.app_metadata?.role as string) ?? 'owner'
-  const isOwner = role !== 'client'
+  // Explicit roles only (deny by default): an account with no role is
+  // neither owner nor client and sees nothing.
+  const role = user.app_metadata?.role as string | undefined
+  const isOwner = role === 'owner'
   const params = await searchParams
 
   // Clients are locked to their own record; the owner picks one to preview.
@@ -66,14 +68,30 @@ export default async function PortalHomePage({
     )
   }
 
-  // Every query filters by client_id explicitly — defense in depth on top of RLS.
-  const [clientRes, automationsRes, issuesRes, roadmapRes, highlightsRes] = await Promise.all([
+  const now = new Date()
+  const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
+
+  // Every query filters by client_id explicitly — defense in depth on top of
+  // RLS. Counts are real aggregates, never derived from a display-limited
+  // slice, and the value totals aggregate in SQL (portal_value_raw) so they
+  // cannot silently truncate at a row cap.
+  const [
+    clientRes, automationsRes, resolvedRes, activeRes,
+    totalIssuesRes, monthIssuesRes, roadmapRes, highlightsRes, rawRes,
+  ] = await Promise.all([
     supabase.from('clients').select('id, name, blended_labor_rate').eq('id', clientId).single(),
     supabase.from('automations').select('*').eq('client_id', clientId).order('sort_order'),
     supabase.from('caught_issues').select('*').eq('client_id', clientId)
-      .order('occurred_on', { ascending: false }).limit(8),
+      .eq('status', 'resolved').order('occurred_on', { ascending: false }).limit(5),
+    supabase.from('caught_issues').select('*').eq('client_id', clientId)
+      .eq('status', 'active').order('occurred_on', { ascending: false }),
+    supabase.from('caught_issues').select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId),
+    supabase.from('caught_issues').select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId).gte('occurred_on', monthStart),
     supabase.from('roadmap_items').select('*').eq('client_id', clientId).order('sort_order'),
     supabase.from('portal_highlights').select('*').eq('client_id', clientId).order('sort_order'),
+    supabase.rpc('portal_value_raw', { p_client: clientId, p_month_start: monthStart }),
   ])
 
   if (queryFailed('clients', clientRes.error) || !clientRes.data) {
@@ -82,15 +100,20 @@ export default async function PortalHomePage({
 
   const client = clientRes.data as Pick<Client, 'id' | 'name'> & { blended_labor_rate: number }
   const automations = (automationsRes.data ?? []) as Automation[]
-  const issues = (issuesRes.data ?? []) as CaughtIssue[]
+  const resolvedRecent = (resolvedRes.data ?? []) as CaughtIssue[]
+  const activeIssues = (activeRes.data ?? []) as CaughtIssue[]
   const roadmap = (roadmapRes.data ?? []) as RoadmapItem[]
   const highlights = (highlightsRes.data ?? []) as PortalHighlight[]
 
   const loadFailed =
     queryFailed('automations', automationsRes.error) ||
-    queryFailed('caught_issues', issuesRes.error) ||
+    queryFailed('caught_issues', resolvedRes.error) ||
+    queryFailed('caught_issues', activeRes.error) ||
+    queryFailed('caught_issues', totalIssuesRes.error) ||
+    queryFailed('caught_issues', monthIssuesRes.error) ||
     queryFailed('roadmap_items', roadmapRes.error) ||
-    queryFailed('portal_highlights', highlightsRes.error)
+    queryFailed('portal_highlights', highlightsRes.error) ||
+    queryFailed('portal_value_raw', rawRes.error)
   if (loadFailed) {
     return <ErrorState title="Couldn't load your overview" body="Refresh to try again. If it keeps happening, reach out." />
   }
@@ -112,25 +135,10 @@ export default async function PortalHomePage({
     )
   }
 
-  // Activity for this client's automations, launch-to-date (daily rollups).
-  const automationIds = automations.map(a => a.id)
-  const { data: activity, error: activityError } = await supabase
-    .from('automation_activity')
-    .select('automation_id, activity_on, items_processed, created_at')
-    .in('automation_id', automationIds)
-  if (queryFailed('automation_activity', activityError)) {
-    return <ErrorState title="Couldn't load your overview" body="Refresh to try again. If it keeps happening, reach out." />
-  }
-
-  const now = new Date()
-  const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
-  const totals = computeTotals(automations, activity ?? [], Number(client.blended_labor_rate), monthStart)
-
-  const monthIssues = issues.filter(i => i.occurred_on >= monthStart).length
-  const activeIssues = issues.filter(i => i.status === 'active')
-  const resolvedRecent = issues.filter(i => i.status === 'resolved').slice(0, 5)
-  const lastActivity = (activity ?? []).reduce<string | null>(
-    (max, row) => (!max || row.created_at > max ? row.created_at : max), null,
+  const raw = ((rawRes.data ?? []) as ValueRawRow[])[0]
+  const totals = totalsFromRaw(
+    raw ?? { month_raw_minutes: 0, month_items: 0, launch_raw_minutes: 0, launch_items: 0, last_activity_at: null },
+    Number(client.blended_labor_rate),
   )
 
   return (
@@ -141,10 +149,14 @@ export default async function PortalHomePage({
       <HealthBanner
         automations={automations}
         activeIssues={activeIssues}
-        lastUpdatedLabel={relativeLabel(lastActivity)}
+        lastUpdatedLabel={relativeLabel(raw?.last_activity_at ?? null)}
       />
 
-      <ValueCards totals={totals} issuesMonth={monthIssues} issuesTotal={issues.length} />
+      <ValueCards
+        totals={totals}
+        issuesMonth={monthIssuesRes.count ?? 0}
+        issuesTotal={totalIssuesRes.count ?? 0}
+      />
       <HowWeCount automations={automations} totals={totals} laborRate={Number(client.blended_labor_rate)} />
 
       <PeaceOfMind highlights={highlights} />

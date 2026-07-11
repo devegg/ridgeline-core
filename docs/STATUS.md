@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-11. Code is ground truth; this reconciles to it.
 
-## In review — feature/portal-home (PR open, NOT yet merged/deployed)
+## In review — feature/portal-home (pushed, PR open, NOT yet merged/deployed)
 
 The portal home dashboard ("the ten-second screen"), per ADR-100 and
 docs/plans/BUILD-PLAN-portal-home-dashboard.md:
@@ -29,9 +29,18 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md:
   migrations via `npm run migrate`, one-off SQL via
   `node scripts/run-migration.mjs <path>` — never hand-paste SQL). Needs
   DATABASE_URL in .env.local (owner-run on purpose).
-- OPS to confirm on merge: `npm run migrate` + demo seed applied via the
-  runner; Supabase Auth URL configuration allows the /auth/callback redirect
-  for magic links; production deploy reflects master HEAD.
+- Security hardening applied after a four-agent review (ADR-100 §9):
+  deny-by-default roles (explicit `role='owner'` in code + RLS, migration
+  20260711100000 stamps existing users), open-redirect guard on the auth
+  callback, http(s)-only guard on lead links (`lib/safe-url.ts` + CHECK
+  constraints), real SQL counts + `portal_value_raw` aggregate for the
+  dashboard numbers, tightened change_requests insert, anon default grants
+  revoked.
+- OPS to confirm on merge: `npm run migrate` (applies BOTH 20260711
+  migrations) + demo seed applied via the runner; **public sign-ups DISABLED
+  in Supabase Auth settings** (the app never self-registers users); Supabase
+  Auth URL configuration allows the /auth/callback redirect for magic links;
+  production deploy reflects master HEAD.
 
 ## Shipped (live in production)
 

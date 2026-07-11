@@ -15,8 +15,8 @@ export default async function PortalRequestsPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null // layout redirects
 
-  const role = (user.app_metadata?.role as string) ?? 'owner'
-  const isOwner = role !== 'client'
+  const role = user.app_metadata?.role as string | undefined
+  const isOwner = role === 'owner'
   const params = await searchParams
   const clientId = isOwner ? params.client : (user.app_metadata?.client_id as string | undefined)
 

@@ -18,7 +18,7 @@ export async function createRequestAction(_prev: ActionState, formData: FormData
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { errors: { _root: 'Your session expired. Sign in again.' } }
 
-  const role = (user.app_metadata?.role as string) ?? 'owner'
+  const role = user.app_metadata?.role as string | undefined
   const clientId = user.app_metadata?.client_id as string | undefined
   if (role !== 'client' || !clientId) {
     return { errors: { _root: 'Requests can only be submitted from a client account.' } }
@@ -50,8 +50,8 @@ export async function respondToRequestAction(_prev: ActionState, formData: FormD
 
   const supabase = await createSupabase()
   const { data: { user } } = await supabase.auth.getUser()
-  const role = (user?.app_metadata?.role as string) ?? 'owner'
-  if (!user || role === 'client') return { errors: { _root: 'Owner only.' } }
+  const role = user?.app_metadata?.role as string | undefined
+  if (!user || role !== 'owner') return { errors: { _root: 'Owner only.' } }
 
   const status = (formData.get('status') as string) || 'in_progress'
   const response = (formData.get('response') as string)?.trim() || null
@@ -67,7 +67,7 @@ export async function respondToRequestAction(_prev: ActionState, formData: FormD
 
   if (error) {
     queryFailed('change_requests', error)
-    return { errors: { _root: error.message } }
+    return { errors: { _root: 'Could not save. Try again.' } }
   }
 
   revalidatePath('/requests')

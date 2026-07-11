@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import { createContactAction, updateContactAction, deleteContactAction } from '@/app/actions/contacts'
+import { safeHttpUrl } from '@/lib/safe-url'
 import type { Contact, ActionState } from '@/lib/types'
 
 const ROLE_LABELS: Record<string, string> = {
@@ -163,8 +164,8 @@ export function ContactList({ contacts, clientId }: ContactListProps) {
                       {c.phone}
                     </a>
                   )}
-                  {c.linkedin_url && (
-                    <a href={c.linkedin_url} target="_blank" rel="noreferrer" style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-soft)', letterSpacing: '0.04em' }}>
+                  {safeHttpUrl(c.linkedin_url) && (
+                    <a href={safeHttpUrl(c.linkedin_url)!} target="_blank" rel="noreferrer" style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-soft)', letterSpacing: '0.04em' }}>
                       LinkedIn ↗
                     </a>
                   )}

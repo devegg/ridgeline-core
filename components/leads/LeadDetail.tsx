@@ -5,6 +5,7 @@ import { useActionState, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateLeadAction, advanceStageAction, setStageAction, convertToClientAction, deleteLeadAction } from '@/app/actions/leads'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import { safeHttpUrl } from '@/lib/safe-url'
 import type { Lead, LeadStage, ActionState } from '@/lib/types'
 
 const STAGE_LABELS: Record<LeadStage, string> = {
@@ -215,8 +216,20 @@ export function LeadDetail({ lead }: { lead: Lead }) {
         <Field label="Industry">{lead.industry}</Field>
         <Field label="Location">{lead.location}</Field>
         <Field label="Referred by">{lead.referred_by}</Field>
-        {lead.website && <Field label="Website"><a href={lead.website} target="_blank" rel="noreferrer" style={{ color: 'var(--blue)' }}>{lead.website}</a></Field>}
-        {lead.linkedin_url && <Field label="LinkedIn"><a href={lead.linkedin_url} target="_blank" rel="noreferrer" style={{ color: 'var(--blue)' }}>View profile ↗</a></Field>}
+        {lead.website && (
+          <Field label="Website">
+            {safeHttpUrl(lead.website)
+              ? <a href={safeHttpUrl(lead.website)!} target="_blank" rel="noreferrer" style={{ color: 'var(--blue)' }}>{lead.website}</a>
+              : <span title="Blocked: not an http(s) link">{lead.website}</span>}
+          </Field>
+        )}
+        {lead.linkedin_url && (
+          <Field label="LinkedIn">
+            {safeHttpUrl(lead.linkedin_url)
+              ? <a href={safeHttpUrl(lead.linkedin_url)!} target="_blank" rel="noreferrer" style={{ color: 'var(--blue)' }}>View profile ↗</a>
+              : <span title="Blocked: not an http(s) link">{lead.linkedin_url}</span>}
+          </Field>
+        )}
         {lead.notes && <Field label="Notes" full>{lead.notes}</Field>}
       </div>
 
