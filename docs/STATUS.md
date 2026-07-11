@@ -52,9 +52,13 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   issues, roadmap, highlights, ingest-key generate/rotate — plaintext once).
   Nav-overflow fix folded in. Ops retrofit (PR #3, D10/D11) and the
   legacy-key removal (PR #4, D9 closed) also landed today.
+- **Monthly report email shipped v1** (D13, same day): owner-triggered from
+  the portal-data screen, dashboard-identical numbers, Resend REST. Cron
+  deferred until the first real care-plan client.
 - Still open (the register in docs/decisions-log.md is the authority):
-  Supabase Auth URL config for the magic-link redirect (link sending untested
-  until then); the monthly report email once a real client exists.
+  magic-link send test (URL config confirmed set; blocked on Supabase's
+  built-in 2/hour email limit — the BACKLOG's SMTP-via-Resend step removes
+  it permanently).
 
 ## Shipped (live in production)
 

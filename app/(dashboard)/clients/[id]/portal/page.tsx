@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
 import {
-  ActivityQuickAdd, AutomationForm, HighlightForm, IngestKeyPanel, IssueForm, RoadmapForm,
+  ActivityQuickAdd, AutomationForm, HighlightForm, IngestKeyPanel, IssueForm, ReportSendPanel, RoadmapForm,
 } from '@/components/dashboard/PortalDataPanels'
 import { advanceRoadmapAction, deleteHighlightAction, deleteRoadmapAction, resolveIssueAction } from '@/app/actions/portal-data'
 import type { Automation, CaughtIssue, PortalHighlight, RoadmapItem } from '@/lib/types'
@@ -18,7 +18,7 @@ export default async function ClientPortalDataPage({
   const supabase = await createClient()
 
   const [clientRes, automationsRes, issuesRes, roadmapRes, highlightsRes] = await Promise.all([
-    supabase.from('clients').select('id, name, blended_labor_rate, ingest_key_created_at').eq('id', id).single(),
+    supabase.from('clients').select('id, name, email, blended_labor_rate, ingest_key_created_at').eq('id', id).single(),
     supabase.from('automations').select('*').eq('client_id', id).order('sort_order'),
     supabase.from('caught_issues').select('*').eq('client_id', id).order('occurred_on', { ascending: false }).limit(12),
     supabase.from('roadmap_items').select('*').eq('client_id', id).order('sort_order'),
@@ -91,6 +91,11 @@ export default async function ClientPortalDataPage({
             Automation ids: {automations.map(a => `${a.name.split(':')[0]} = ${a.id}`).join(' · ')}
           </p>
         )}
+      </section>
+
+      <section className="portal-section">
+        <h2 className="portal-section__title">Monthly report</h2>
+        <ReportSendPanel clientId={client.id} defaultTo={client.email ?? ''} />
       </section>
 
       <section className="portal-section">

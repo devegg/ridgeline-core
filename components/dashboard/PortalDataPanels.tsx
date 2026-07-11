@@ -5,6 +5,7 @@ import {
   addActivityAction, addHighlightAction, addIssueAction, addRoadmapAction,
   rotateIngestKeyAction, saveAutomationAction,
 } from '@/app/actions/portal-data'
+import { sendMonthlyReportAction } from '@/app/actions/portal-report'
 import type { ActionState, Automation } from '@/lib/types'
 
 function Feedback({ state }: { state: ActionState }) {
@@ -220,5 +221,41 @@ export function IngestKeyPanel({ clientId, createdAt }: { clientId: string; crea
         </button>
       </form>
     </div>
+  )
+}
+
+// ------------------------------------------------------------
+export function ReportSendPanel({ clientId, defaultTo }: { clientId: string; defaultTo: string }) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(sendMonthlyReportAction, null)
+  const now = new Date()
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const lastMonth = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}`
+
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <input type="hidden" name="client_id" value={clientId} />
+      <Feedback state={state} />
+      <div style={row}>
+        <div className="field" style={small}>
+          <label>Month</label>
+          <select name="month" defaultValue={lastMonth}>
+            <option value={lastMonth}>Last month</option>
+            <option value={thisMonth}>This month (to date)</option>
+          </select>
+        </div>
+        <div className="field" style={grow}>
+          <label>Send to</label>
+          <input name="to" type="email" defaultValue={defaultTo} required />
+        </div>
+        <div style={{ paddingBottom: 2 }}>
+          <button className="btn-primary" disabled={pending}>{pending ? 'Sending…' : 'Send report'}</button>
+        </div>
+      </div>
+      <p style={{ fontSize: 13, color: 'var(--ink-soft)', margin: 0 }}>
+        Same numbers as the dashboard — narrative first, cards, caught &amp; fixed, what&rsquo;s next,
+        and a link back to the portal. Reply-to is hello@.
+      </p>
+    </form>
   )
 }
