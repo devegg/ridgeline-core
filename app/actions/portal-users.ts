@@ -107,3 +107,48 @@ use the sign-in link first, then set one from your account.)</p>
   revalidatePath(`/clients/${clientId}/portal`)
   return { message: `Login email changed${oldEmail ? ` from ${oldEmail}` : ''} to ${newEmail}.${notify ? ' Both addresses were notified.' : ''}` }
 }
+
+/**
+ * Owner creates a client's portal login: an auth user stamped with
+ * app_metadata { role: 'client', client_id } (the runbook's manual steps,
+ * automated). Generates a strong password shown ONCE; magic-link sign-in
+ * works too when the address can receive mail.
+ */
+export async function createPortalLoginAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await assertOwner())) return { errors: { _root: 'Owner only.' } }
+
+  const clientId = formData.get('client_id') as string
+  const email = ((formData.get('email') as string) ?? '').trim().toLowerCase()
+  if (!clientId || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { errors: { _root: 'A valid email is required.' } }
+  }
+
+  let admin
+  try {
+    admin = createAdminClient()
+  } catch {
+    return { errors: { _root: 'SUPABASE_SECRET_KEY is not configured (see BACKLOG).' } }
+  }
+
+  // One login per client — refuse a second.
+  const { data: existing } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
+  if (existing?.users.some(u => (u.app_metadata as { client_id?: string })?.client_id === clientId)) {
+    return { errors: { _root: 'This client already has a portal login.' } }
+  }
+
+  const { randomBytes } = await import('node:crypto')
+  const password = `rk-${randomBytes(12).toString('base64url')}`
+
+  const { error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    app_metadata: { role: 'client', client_id: clientId },
+  })
+  if (error) return { errors: { _root: `Supabase refused: ${error.message}` } }
+
+  revalidatePath(`/clients/${clientId}/portal`)
+  return {
+    message: `Login created for ${email}. One-time password (copy now, it will not be shown again): ${password} — magic-link sign-in also works if that address receives mail.`,
+  }
+}

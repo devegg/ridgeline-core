@@ -55,7 +55,10 @@
       `baseline_minutes_per_item` per automation + real `blended_labor_rate`
       (the audit produces both). No baseline, no claim.
 - [ ] PDF export on documents is a stub (Markdown download works).
-- [ ] Client provisioning is a manual runbook (auth user + app_metadata stamp
-      by hand) — automate when client count justifies it.
+- [x] ~~Client provisioning is a manual runbook~~ — AUTOMATED 2026-07-11
+      (PR #17): the Portal login panel creates the auth user with the
+      role/client_id stamp (one login per client, one-time password shown
+      once) and changes login emails with dual notification. Runbook stays
+      as the fallback/reference.
 - Pilots (movie-slot-machine, gridstrain): boredom builds, not important
       (owner, 2026-07-11). No backfill owed; nobody re-flags their stub docs.
