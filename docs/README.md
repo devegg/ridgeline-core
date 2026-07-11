@@ -1,22 +1,17 @@
-# Documentation
+# docs/
 
-## Public Documentation (pushed to GitHub)
+Start here: **STATUS.md** (what is shipped) and **decisions-log.md** (locked
+D#s + open items) — the two authorities. Code is ground truth; docs reconcile
+to code.
 
-- **architecture/** - System design, data flow, tech stack decisions
-- **setup/** - Local development environment setup
-- **deployment/** - Production deployment, environments, infrastructure
-- **features/** - Feature specifications, user stories, acceptance criteria
-- **client/** - Client context, business requirements, constraints, project history
-  - **migrations/** - Data migration plans and documentation
-- **api/** - API endpoints, authentication, data models (if applicable)
-- **decisions/** - Architecture Decision Records (ADRs)
+- `decisions/` — detailed decision records (ADR-100+; the log indexes them)
+- `plans/` — build plans, tracked and kept (build from the file)
+- `setup/` — runbooks (client-portal provisioning, etc.)
+- `client/` — client context and history
+- `__inbox/` — untracked task lane (root = live; `hold/` = not ready;
+  `completed/` = archive)
+- `__retired/` — untracked holding pen for retired files awaiting owner review
+- `gitignored/` — papers' drafts of record (untracked; see STATUS)
 
-## Local References (NOT pushed to GitHub)
-
-See **gitignored/** for:
-
-- Prototypes and mockups
-- Research and analysis
-- Draft documents
-- Temporary working files
-- Screenshots and visual references
+Older taxonomy-era docs (architecture/, the feature matrix) were retired
+2026-07-11 (D11) into `__retired/`.

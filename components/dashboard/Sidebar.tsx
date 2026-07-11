@@ -13,7 +13,6 @@ import {
   DollarSign,
   Receipt,
   SlidersHorizontal,
-  Terminal,
   File,
   Settings,
   Trash2,
@@ -44,9 +43,7 @@ const NAV_BILLING: NavItem[] = [
   { href: '/billing/rates', label: 'Rates', icon: SlidersHorizontal },
 ]
 
-const NAV_TOOLS: NavItem[] = [
-  { href: '/scaffolder', label: 'Scaffolder', icon: Terminal },
-]
+const NAV_TOOLS: NavItem[] = []
 
 const NAV_STUBS: NavItem[] = [
   { href: '/documents', label: 'Documents', icon: File },
@@ -96,10 +93,14 @@ export function Sidebar({ role = 'owner' }: { role?: string }) {
           ))}
         </div>
 
-        <div className="dash-nav__section-label" style={{ marginTop: '8px' }}>Tools</div>
-        {NAV_TOOLS.map((item) => (
-          <NavLink key={item.href} item={item} />
-        ))}
+        {NAV_TOOLS.length > 0 && (
+          <>
+            <div className="dash-nav__section-label" style={{ marginTop: '8px' }}>Tools</div>
+            {NAV_TOOLS.map((item) => (
+              <NavLink key={item.href} item={item} />
+            ))}
+          </>
+        )}
 
         <hr className="dash-nav__divider" />
         {NAV_STUBS.map((item) => (

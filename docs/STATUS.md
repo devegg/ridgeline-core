@@ -71,8 +71,10 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   md5-verified). Stale drafts left as records: paper-songledger.md,
   paper-artisticshield.md, paper-dod-contractor.md — none are published.
 - **Dashboard** (owner role): overview, leads, clients, projects, proposals,
-  assessments, deliverables, billing (overview/invoices/rates), documents
-  index, settings, scaffolder, cleanup. Communications dropped 2026-07-03.
+  assessments, deliverables, requests, billing (overview/invoices/rates),
+  documents index, settings, cleanup. Communications dropped 2026-07-03 (stub
+  removed 2026-07-11); Scaffolder retired 2026-07-11 (ADR-003/D10 — it drove
+  the retired workspace script; new projects start by Genesis Kit genesis).
 - **Client portal**: projects, assessments, deliverables, documents,
   billing + invoice detail — RLS-scoped via app_metadata role/client_id.
   Provisioning: docs/setup/CLIENT-PORTAL-RUNBOOK.md.

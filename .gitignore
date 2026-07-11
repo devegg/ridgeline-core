@@ -59,3 +59,7 @@ logs/
 .tmp/
 temp/
 .env*
+
+# Untracked lanes (Scheme B __ = local-only)
+docs/__inbox/
+docs/__retired/
