@@ -21,17 +21,21 @@ async function assertOwner(): Promise<boolean> {
  * configured. Owner-gated read used by the portal-data page.
  */
 export async function getPortalLogin(clientId: string): Promise<
-  { configured: true; email: string | null; userId: string | null } | { configured: false }
+  | { configured: true; email: string | null; userId: string | null }
+  | { configured: false; reason: 'missing_key' | 'key_rejected' }
 > {
-  if (!(await assertOwner())) return { configured: false }
+  if (!(await assertOwner())) return { configured: false, reason: 'missing_key' }
   let admin
   try {
     admin = createAdminClient()
   } catch {
-    return { configured: false }
+    return { configured: false, reason: 'missing_key' }
   }
   const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 })
-  if (error) return { configured: true, email: null, userId: null }
+  if (error) {
+    console.error('[portal-login] listUsers failed:', error.message)
+    return { configured: false, reason: 'key_rejected' }
+  }
   const match = data.users.find(u => (u.app_metadata as { client_id?: string })?.client_id === clientId)
   return { configured: true, email: match?.email ?? null, userId: match?.id ?? null }
 }

@@ -337,19 +337,20 @@ function CreateLoginInline({ clientId }: { clientId: string }) {
 }
 
 // ------------------------------------------------------------
-export function PortalLoginPanel({ clientId, configured, currentEmail }: {
+export function PortalLoginPanel({ clientId, configured, currentEmail, reason }: {
   clientId: string
   configured: boolean
   currentEmail: string | null
+  reason?: 'missing_key' | 'key_rejected'
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(changePortalEmailAction, null)
 
   if (!configured) {
     return (
       <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', maxWidth: '68ch' }}>
-        Managing the portal LOGIN email needs the Supabase secret key
-        (SUPABASE_SECRET_KEY — see the BACKLOG&rsquo;s one-line step). The contact email
-        above is editable regardless via Edit details on the client page.
+        {reason === 'key_rejected'
+          ? 'A SUPABASE_SECRET_KEY is set but Supabase Auth REJECTED it — re-paste the sb_secret_ key (Supabase → Project Settings → API Keys → Secret keys) into this environment (Vercel: Production scope, then redeploy; local: .env.local + restart dev).'
+          : 'Managing the portal LOGIN email needs the Supabase secret key (SUPABASE_SECRET_KEY — see the BACKLOG one-line step). The contact email is editable regardless via Edit details on the client page.'}
       </p>
     )
   }
