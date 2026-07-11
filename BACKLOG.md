@@ -85,7 +85,8 @@ Items spotted during development and testing. Owner-reviewed. Not prioritized �
 
 ## Email / Ops (owner steps, post-Max-plan — added 2026-07-11)
 
-- [ ] **Supabase auth email → Resend SMTP** (kills the 2-emails/hour limit on
+- [x] ~~**Supabase auth email → Resend SMTP**~~ — DONE 2026-07-11 (steps 1–2
+  wired, send + sign-in verified). Step 3 below is the one piece still open: (kills the 2-emails/hour limit on
   magic links + fixes deliverability; needed before any real client signs in
   by link). Steps:
   1. resend.com → API Keys → Create API key (`supabase-auth`, Sending access) → copy.
