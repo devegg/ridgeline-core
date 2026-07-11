@@ -7,14 +7,20 @@ Last Updated: 2026-07-11
 Ground rule: the demo client is named as sample data and stays that way —
 nothing fictitious is ever presented as a real result (workspace rule).
 
-## Setup once (5 minutes)
+## Setup once (one paste)
 
-1. Dashboard → Clients → New: create the fictitious client (industry +
-   location make the case-study draft read better). Add an email you control.
-2. Client page → **Portal data**: set the care-plan tier, add 2–3 automations
-   with plain names and baselines, a few caught issues, roadmap items, and
-   peace-of-mind lines. Record a couple of manual activity days (or seed via
-   the ingest curl below).
+```
+cd /Users/brianboyd/0/ridgeline/core && node scripts/run-migration.mjs scripts/seed-demo-walkthrough.sql
+```
+
+That stages "Coastal Cottage Rentals (Demo)" — a Grand Strand vacation-rental
+manager (the research's #1 vertical, so this doubles as the sales demo):
+client + tier, three automations with baselines, ~120 days of activity, six
+caught issues, a roadmap, peace-of-mind lines, one answered + one OPEN change
+request (reply to it live in step 5), an assessment staged for the intake
+demo, a proposal carrying the Care Plan, and a sent invoice (paste any Stripe
+payment link on it to light up the portal Pay button). Idempotent — safe to
+re-run; a single DELETE (bottom of the seed file) removes it all.
 
 ## The demo, in order
 
