@@ -33,6 +33,26 @@ if (!line) {
 }
 const connectionString = line.slice("DATABASE_URL=".length).trim().replace(/^"|"$/g, "");
 
+// Wrong-database guard (added 2026-07-11 after a pasted DATABASE_URL pointed
+// at a DIFFERENT project's prod DB and the runner applied every migration
+// there). The project ref inside DATABASE_URL must match the app's
+// NEXT_PUBLIC_SUPABASE_URL ref. ALLOW_REF_MISMATCH=1 overrides for a
+// deliberate cross-project one-off.
+const appUrlLine = env.split("\n").find((l) => l.startsWith("NEXT_PUBLIC_SUPABASE_URL="));
+const appRef = appUrlLine?.match(/https:\/\/([a-z0-9]+)\.supabase\.co/)?.[1];
+const dbRef = connectionString.match(/postgres(?:ql)?:\/\/[^@]*postgres\.([a-z0-9]+)/)?.[1]
+  ?? connectionString.match(/@db\.([a-z0-9]+)\.supabase\.co/)?.[1];
+if (appRef && dbRef && appRef !== dbRef && process.env.ALLOW_REF_MISMATCH !== "1") {
+  console.error(
+    `REFUSING TO RUN: DATABASE_URL points at project "${dbRef}" but the app's\n` +
+    `NEXT_PUBLIC_SUPABASE_URL is project "${appRef}". These must be the same\n` +
+    `database. Fix DATABASE_URL in .env.local (Supabase → the ${appRef}\n` +
+    `project → Connect → Session pooler), or set ALLOW_REF_MISMATCH=1 for a\n` +
+    `deliberate cross-project run.`,
+  );
+  process.exit(1);
+}
+
 const allFiles = fs
   .readdirSync(path.resolve(MIG_DIR))
   .filter((f) => f.endsWith(".sql"))
