@@ -1,8 +1,9 @@
 -- ============================================================
 -- Portal demo seed — "Demo Client (Sample Data)".
 --
--- Paste into the Supabase SQL editor AFTER the
--- 20260711000000_portal_value_layer migration.
+-- Apply with the runner (never hand-paste SQL):
+--   node scripts/run-migration.mjs scripts/seed-portal-demo.sql
+-- AFTER the 20260711000000_portal_value_layer migration (npm run migrate).
 --
 -- Everything here is clearly-labeled sample data for demos and
 -- QA. It is NOT a real client and must never be presented as

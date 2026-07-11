@@ -46,6 +46,15 @@ Context: docs/plans/BUILD-PLAN-portal-home-dashboard.md, built from the
    portal-adoption lever (report + invoices live ONLY behind the login) applies
    once there is a real retainer client.
 
+8. **Migration runner adopted (addendum, same day).** ridgeline-core predates
+   the Genesis Kit and was still hand-pasting SQL in the Supabase editor —
+   the Kit's rule ("numbered migrations applied with `scripts/run-migration.mjs`;
+   never hand-paste SQL anywhere") now applies here. The runner is adapted
+   from RFQ Hunter's reference implementation with a BASELINE constant
+   (everything through 20260110 was hand-applied pre-runner) and a one-off
+   mode for seeds. Requires DATABASE_URL in `.env.local`; owner-run on
+   purpose. The 20260108 missing-GRANTs incident is the cautionary tale.
+
 ## Consequences
 
 - Real clients need a measured `baseline_minutes_per_item` per automation and

@@ -25,9 +25,13 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md:
 - Owner preview: owners browse the portal labeled, with an explicit client
   picker on home. Demo data: `scripts/seed-portal-demo.sql` ("Demo Client
   (Sample Data)") — paste after the migration; one DELETE removes it.
-- OPS to confirm on merge: migration + seed pasted in Supabase SQL editor;
-  Supabase Auth URL configuration allows the /auth/callback redirect for
-  magic links; production deploy reflects master HEAD.
+- Migration runner adopted from RFQ Hunter (the Genesis Kit rule: numbered
+  migrations via `npm run migrate`, one-off SQL via
+  `node scripts/run-migration.mjs <path>` — never hand-paste SQL). Needs
+  DATABASE_URL in .env.local (owner-run on purpose).
+- OPS to confirm on merge: `npm run migrate` + demo seed applied via the
+  runner; Supabase Auth URL configuration allows the /auth/callback redirect
+  for magic links; production deploy reflects master HEAD.
 
 ## Shipped (live in production)
 

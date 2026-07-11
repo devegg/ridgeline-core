@@ -124,8 +124,10 @@ studies later render from the same numbers — report 15 §h).
 
 ## Seed (demo data — clearly labeled, never presented as real)
 
-`scripts/seed-portal-demo.sql` — paste into the Supabase SQL editor (same
-pattern as the client-portal runbook). Idempotent (fixed UUIDs, upserts).
+`scripts/seed-portal-demo.sql` — applied with the migration runner
+(`node scripts/run-migration.mjs scripts/seed-portal-demo.sql`), never
+hand-pasted (Genesis Kit rule, adopted mid-build — see ADR-100 addendum).
+Idempotent (fixed UUIDs, upserts).
 Creates client "Demo Client (Sample Data)" with three automations in the
 Ridgeline voice (order sync, invoice intake, lead intake), ~90 days of daily
 activity at plausible volumes, caught issues (all resolved), roadmap items,
