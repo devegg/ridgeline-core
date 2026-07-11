@@ -23,6 +23,7 @@
 | D8 | Deny-by-default roles (2026-07-11) | Owner access requires explicit `app_metadata.role='owner'` in middleware, layouts, pages, actions, and every owner_all RLS policy; migration 20260711100000 stamped existing users; unknown role = no access. ADR-100 §9 | The fail-open `COALESCE(role,'owner')` pattern |
 | D9 | Supabase NEW API keys (2026-07-11) | `sb_publishable_` via `lib/supabase/keys.ts` (one resolution point), legacy anon fallback ONLY until legacy keys are disabled post-deploy; Vercel carries the new key. RFQ Hunter standard | Legacy JWT anon/service_role keys |
 | D10 | Genesis Kit is the one scaffolder (2026-07-11) | Workspace ADR-003: new projects start by genesis; the workspace template/scaffolder is retired; scaffolding lessons flow upstream to the Kit (propose-then-approve). Consequence: the core in-app Scaffolder page + action (they shelled out to the retired script) are retired with it — nav entry, route, and middleware path removed; files in `docs/__retired/code/` | The workspace template v2 (ADR-002 §3, scaffolding side); the `/scaffolder` dashboard tool |
+| D12 | Machine ingest authorizes inside the database (2026-07-11) | Per-client bearer key (sha256 hash on `clients`), verified by the bounded SECURITY DEFINER `ingest_activity()` that can touch nothing but one `automation_activity` row; the app keeps NO service-role key. Key plaintext shown once at generate/rotate. Migration 20260711200000; PR #5 | A service-role/API-secret client in the app layer |
 | D11 | Core runs the fleet's operating system (2026-07-11) | This retrofit: core CLAUDE.md + session-start hook + this decisions log + the ridgeline-core-doc-sync skill + guard hooks (blanket-adds, main-commit, lanes, db-sql, build-vs-dev, doc-sync tripwire) + `docs/__inbox/` lanes + Scheme B naming going forward. Stale taxonomy-era docs retired to untracked `docs/__retired/` for owner review | Core's pre-system shape (no CLAUDE.md, no hook, decisions scattered) |
 
 ## Open items / TBD register
@@ -33,12 +34,15 @@
       `sb_publishable_` alone.
 - [ ] Supabase Auth URL configuration for the magic-link redirect — link
       sending is UNTESTED until set (PR #2 checklist).
-- [ ] Portal nav overflows below ~900px viewport (theme toggle + sign-out fall
-      off-screen) — wrap or collapse; cheap.
-- [ ] Activity ingest for real clients: `automation_activity` fills by hand
-      today; an authenticated POST endpoint (n8n-shaped) + a small owner CRUD
-      for automations/issues/roadmap/highlights must exist before client #1's
-      hand-off. The monthly report email (the portal-adoption lever) follows.
+- [x] ~~Portal nav overflow below ~900px~~ — DONE 2026-07-11 (PR #5): nav wraps.
+- [x] ~~Activity ingest for real clients~~ — DONE 2026-07-11 (PR #5, D12):
+      `POST /api/ingest/activity` (per-client bearer key, authorization inside
+      the bounded SECURITY DEFINER `ingest_activity`, sha256 hash on clients,
+      no service-role key in the app) + the owner portal-data screen
+      (`/clients/[id]/portal`: automations, manual activity, issues, roadmap,
+      highlights, ingest-key rotate). Round trip verified incl. 401 paths.
+- [ ] Monthly report email (the portal-adoption lever) — next portal build,
+      once a real client exists to send it to.
 - [ ] Real-client prerequisites for the value dashboard: measured
       `baseline_minutes_per_item` per automation + real `blended_labor_rate`
       (the audit produces both). No baseline, no claim.
