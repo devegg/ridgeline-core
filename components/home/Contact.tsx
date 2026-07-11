@@ -12,12 +12,12 @@ const SITUATIONS = [
   'Something else',
 ]
 
-function ContactForm() {
+function ContactForm({ situations = SITUATIONS, source }: { situations?: string[]; source?: string }) {
   const [values, setValues] = useState({
     name: '',
     email: '',
     company: '',
-    situation: SITUATIONS[0],
+    situation: situations[0],
     message: '',
     website: '', // honeypot — humans never see it, bots fill it
   })
@@ -46,7 +46,7 @@ function ContactForm() {
     if (Object.keys(next).length) return
     setSubmitting(true)
     try {
-      const result = await sendContactMessage(values)
+      const result = await sendContactMessage({ ...values, source })
       if (result.ok) {
         setSubmitted(true)
       } else {
@@ -98,7 +98,7 @@ function ContactForm() {
         <div className="field">
           <label htmlFor="f-situation">Which is closest</label>
           <select id="f-situation" value={values.situation} onChange={setField('situation')}>
-            {SITUATIONS.map((s) => <option key={s}>{s}</option>)}
+            {situations.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
       </div>
@@ -145,12 +145,12 @@ function ContactForm() {
   )
 }
 
-export function Contact() {
+export function Contact({ situations, source, eyebrow = '06 — Let’s talk' }: { situations?: string[]; source?: string; eyebrow?: string } = {}) {
   return (
     <section className="contact" id="contact">
       <div className="container">
         <Reveal>
-          <div className="eyebrow">06 — Let&rsquo;s talk</div>
+          <div className="eyebrow">{eyebrow}</div>
         </Reveal>
         <Reveal delay={1}>
           <h2 className="section-title">
@@ -191,7 +191,7 @@ export function Contact() {
           </Reveal>
 
           <Reveal delay={2}>
-            <ContactForm />
+            <ContactForm situations={situations} source={source} />
           </Reveal>
         </div>
       </div>

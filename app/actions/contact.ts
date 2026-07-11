@@ -20,6 +20,8 @@ export type ContactPayload = {
   situation: string
   message: string
   website: string // honeypot
+  /** Which page sent the form (e.g. "/vrm") — the card-word attribution. */
+  source?: string
 }
 
 export type ContactResult = { ok: boolean; error?: string }
@@ -36,6 +38,7 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
   const company = (p.company ?? '').trim()
   const situation = (p.situation ?? '').trim().slice(0, 80)
   const message = (p.message ?? '').trim()
+  const source = (p.source ?? '').trim().slice(0, 80)
 
   if (!name || name.length > 200) return { ok: false, error: 'Please check the form and try again.' }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Please check the form and try again.' }
@@ -52,7 +55,7 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
       email,
       source: 'inbound',
       stage: 'identified',
-      notes: `Situation: ${situation || '—'}\n\n${message}`,
+      notes: `Situation: ${situation || '—'}${source ? `\nPage: ${source}` : ''}\n\n${message}`,
     })
     if (leadError) console.error('[contact] lead insert failed:', leadError.message)
   } catch (err) {
@@ -74,6 +77,7 @@ export async function sendContactMessage(p: ContactPayload): Promise<ContactResu
     `<p><strong>Email:</strong> ${esc(email)}</p>`,
     company ? `<p><strong>Company:</strong> ${esc(company)}</p>` : '',
     `<p><strong>Situation:</strong> ${esc(situation)}</p>`,
+    source ? `<p><strong>Page:</strong> ${esc(source)}</p>` : '',
     `<p style="white-space:pre-wrap;border-top:1px solid #ddd;padding-top:12px">${esc(message)}</p>`,
   ].join('\n')
 
