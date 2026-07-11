@@ -1227,11 +1227,26 @@ details:not([open]) > *:not(summary) { display: none; }
 /* ============================================================
    Industry landing pages (card words) + 404 net
    ============================================================ */
-.landing-hero__title {
-  font-size: clamp(38px, 5.4vw, 72px);
-  line-height: 1.04;
-  letter-spacing: -0.022em;
-  max-width: 20ch;
+/* The industry name is the dominant element (wordmark-scale, the site's
+   blue-italic treatment); the hook line sits beneath it in ink. */
+.landing-hero__industry {
+  display: block;
+  font-size: clamp(40px, 6.5vw, 84px);
+  line-height: 1.0;
+  letter-spacing: -0.026em;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--blue);
+  max-width: 14ch;
+}
+.landing-hero__hook {
+  display: block;
+  margin-top: 28px;
+  font-size: clamp(26px, 3.2vw, 44px);
+  line-height: 1.14;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  max-width: 26ch;
 }
 .landing-hero__pitch { max-width: 58ch; }
 

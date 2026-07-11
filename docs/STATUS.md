@@ -97,14 +97,15 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   contact form with per-industry dropdown + page attribution (lead notes
   "Page:" + email line). Aliases + any-case 308 to canonical; unknown words
   hit the 404 word net; /customer-pulse-check is the generic 13th page.
-  Copy upgrades per vertical as the 12 deep-research reports land in
-  `_inbox/research/landing/` — researched so far (2026-07-11): vrm, pm,
-  real, trades, home (trust-account/license angles, speed-to-lead, draw/
-  lien-waiver mechanics, unbilled-work leakage; discovery kits + software
-  landscapes + guardrails from all five are banked for the assessment
-  templates). New shop-type aliases: /pools /pest /plumbing /lawn → /home,
-  /builders → /trades. The other seven verticals are v1. Reveal animation
-  has no-JS/reduced-motion fallbacks (content is never unreachable).
+  ALL 12 verticals carry researched copy (2026-07-11, from the reports in
+  `_inbox/research/landing/`): trust-account/license angles, speed-to-lead,
+  draw/lien-waiver mechanics, unbilled-work leakage, eligibility/denials,
+  POS↔books reconciliation, quote-speed, time-capture leakage. Discovery
+  kits + software landscapes + guardrails from all 12 reports are banked
+  for the assessment templates. Hero puts the industry name at wordmark
+  scale (blue italic) above the hook line — the visitor sees THEIR industry
+  first. Shop-type aliases: /pools /pest /plumbing /lawn → /home, /builders
+  → /trades. Reveal animation has no-JS/reduced-motion fallbacks.
 - **/work — 9 entries**: rfq-hunter, gridstrain, movie-slot-machine,
   acme-smart-log (client work; Salem stage-named), heart-echoes-music
   (paused — see below), spinroom, tidyripples (for sale + links its
