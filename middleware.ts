@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { supabasePublishableKey, supabaseUrl } from '@/lib/supabase/keys'
 
 const DASHBOARD_PATHS = /^\/(overview|leads|clients|projects|proposals|assessments|deliverables|billing|requests|scaffolder|documents|communications|settings|cleanup)(\/|$)/
 
@@ -7,8 +8,8 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabasePublishableKey,
     {
       cookies: {
         getAll() {
