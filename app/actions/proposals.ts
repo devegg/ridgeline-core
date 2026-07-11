@@ -119,3 +119,84 @@ export async function archiveProposalAction(id: string) {
   revalidatePath('/proposals')
   redirect('/proposals')
 }
+
+/**
+ * Owner: draft a proposal FROM a completed assessment — pre-fills the client,
+ * provenance link, scope from the recommendations, and the default Care Plan
+ * block (opt-out). Lands in edit mode for pricing.
+ */
+export async function draftProposalFromAssessmentAction(assessmentId: string) {
+  const supabase = await createSupabase()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || (user.app_metadata?.role as string | undefined) !== 'owner') return
+
+  const { data: a } = await supabase
+    .from('assessments')
+    .select('id, client_id, title, recommendations')
+    .eq('id', assessmentId)
+    .single()
+  if (!a) return
+
+  const { data, error } = await supabase
+    .from('proposals')
+    .insert({
+      client_id: a.client_id,
+      assessment_id: a.id,
+      title: a.title.replace(/^Operations audit/i, 'Proposal').trim() || `Proposal — ${a.title}`,
+      scope: a.recommendations
+        ? `From the assessment's recommendations:\n\n${a.recommendations}`
+        : null,
+      status: 'draft',
+      care_plan: {
+        included: true,
+        note: 'Every build includes its first 60 days of care at no charge; the plan below continues month to month after that, cancel anytime.',
+        tiers: [
+          { name: 'Watch', price: '', summary: 'Monitoring, error alerts, fixes when something breaks, and the monthly report.' },
+          { name: 'Improve', price: '', summary: 'Everything in Watch, plus one enhancement like the ones on your roadmap each month.' },
+          { name: 'Own', price: '', summary: 'Everything in Improve, with continuous improvement work and first-priority response.' },
+        ],
+      },
+    })
+    .select('id')
+    .single()
+  if (error || !data) {
+    queryFailed('proposals', error)
+    return
+  }
+  revalidatePath('/proposals')
+  redirect(`/proposals/${data.id}?mode=edit`)
+}
+
+/**
+ * Owner: create the build project from an APPROVED proposal and link them.
+ */
+export async function createProjectFromProposalAction(proposalId: string) {
+  const supabase = await createSupabase()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || (user.app_metadata?.role as string | undefined) !== 'owner') return
+
+  const { data: p } = await supabase
+    .from('proposals')
+    .select('id, client_id, title, status, project_id')
+    .eq('id', proposalId)
+    .single()
+  if (!p || p.status !== 'approved' || p.project_id) return
+
+  const { data: project, error } = await supabase
+    .from('projects')
+    .insert({
+      client_id: p.client_id,
+      name: p.title.replace(/^Proposal[ —:-]*/i, '').trim() || p.title,
+      status: 'active',
+    })
+    .select('id')
+    .single()
+  if (error || !project) {
+    queryFailed('projects', error)
+    return
+  }
+  await supabase.from('proposals').update({ project_id: project.id }).eq('id', p.id)
+  revalidatePath(`/proposals/${p.id}`)
+  revalidatePath('/projects')
+  redirect(`/projects/${project.id}`)
+}

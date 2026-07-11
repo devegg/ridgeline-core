@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { completeAssessmentAction } from '@/app/actions/assessments'
+import { draftProposalFromAssessmentAction } from '@/app/actions/proposals'
 import { AssessmentForm } from '@/components/forms/AssessmentForm'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { DocumentList } from '@/components/documents/DocumentList'
@@ -61,6 +62,11 @@ export default async function AssessmentDetailPage({
           {a.status !== 'completed' && (
             <form action={completeAssessmentAction.bind(null, id)}>
               <button type="submit" className="btn-success">Mark complete</button>
+            </form>
+          )}
+          {a.client_id && (
+            <form action={draftProposalFromAssessmentAction.bind(null, id)}>
+              <button type="submit" className="btn-outline">Draft proposal from this</button>
             </form>
           )}
           {a.status !== 'scheduled_delete' && (

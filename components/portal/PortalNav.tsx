@@ -5,14 +5,16 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/portal/ThemeToggle'
 
+// Lifecycle order: the nav reads as the story of the engagement.
 const LINKS = [
   { href: '/portal', label: 'Overview', exact: true },
-  { href: '/portal/projects', label: 'My Projects' },
   { href: '/portal/assessments', label: 'Assessments' },
+  { href: '/portal/proposals', label: 'Proposals' },
+  { href: '/portal/projects', label: 'My Projects' },
   { href: '/portal/deliverables', label: 'Deliverables' },
+  { href: '/portal/requests', label: 'Requests' },
   { href: '/portal/billing', label: 'Billing' },
   { href: '/portal/documents', label: 'Documents' },
-  { href: '/portal/requests', label: 'Requests' },
 ]
 
 export function PortalNav({ isOwner = false }: { isOwner?: boolean }) {

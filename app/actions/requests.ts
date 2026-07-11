@@ -66,6 +66,7 @@ export async function respondToRequestAction(_prev: ActionState, formData: FormD
 
   const status = (formData.get('status') as string) || 'in_progress'
   const response = (formData.get('response') as string)?.trim() || null
+  const addToRoadmap = formData.get('add_to_roadmap') === 'on'
 
   const { error } = await supabase
     .from('change_requests')
@@ -83,6 +84,23 @@ export async function respondToRequestAction(_prev: ActionState, formData: FormD
 
   revalidatePath('/requests')
   revalidatePath('/portal/requests')
+
+  // Done + flagged: reflect it on the portal's What's Next without double entry.
+  if (addToRoadmap && status === 'done') {
+    try {
+      const { data: req } = await supabase
+        .from('change_requests').select('client_id, title').eq('id', id).single()
+      if (req) {
+        await supabase.from('roadmap_items').insert({
+          client_id: req.client_id,
+          title: req.title,
+          state: 'shipped',
+          shipped_on: new Date().toISOString().slice(0, 10),
+        })
+        revalidatePath('/portal')
+      }
+    } catch { /* soft-fail */ }
+  }
 
   // Notify the client that a written reply landed (soft-fail, only when a
   // response was actually written).
