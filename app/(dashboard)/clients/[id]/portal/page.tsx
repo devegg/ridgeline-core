@@ -107,6 +107,7 @@ export default async function ClientPortalDataPage({
           clientId={client.id}
           configured={login.configured}
           currentEmail={login.configured ? login.email : null}
+          reason={login.configured ? undefined : login.reason}
         />
       </section>
 
