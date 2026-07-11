@@ -27,9 +27,10 @@
 
 ## Open items / TBD register
 
-- [ ] Disable the LEGACY Supabase API keys + remove the fallback in
-      `lib/supabase/keys.ts` (owner dashboard step; prod verified on the new
-      key 2026-07-11).
+- [x] ~~Disable the LEGACY Supabase API keys + remove the fallback~~ — DONE
+      2026-07-11: legacy keys disabled in the dashboard, fallback removed
+      from `lib/supabase/keys.ts`, prod + local verified on
+      `sb_publishable_` alone.
 - [ ] Supabase Auth URL configuration for the magic-link redirect — link
       sending is UNTESTED until set (PR #2 checklist).
 - [ ] Portal nav overflows below ~900px viewport (theme toggle + sign-out fall
