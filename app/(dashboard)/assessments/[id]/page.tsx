@@ -5,6 +5,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge'
 import { completeAssessmentAction, updateAssessmentAction } from '@/app/actions/assessments'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { DocumentList } from '@/components/documents/DocumentList'
+import { IntakePanel } from '@/components/assessments/IntakePanel'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
 import type { Assessment, Document } from '@/lib/types'
@@ -88,6 +89,12 @@ export default async function AssessmentDetailPage({
           {a.recommendations && <Field label="Recommendations" full>{a.recommendations}</Field>}
         </div>
       )}
+
+      <IntakePanel
+        assessmentId={a.id}
+        submittedAt={a.intake_submitted_at ?? null}
+        answers={a.intake_answers ?? null}
+      />
 
       {/* Documents */}
       <div className="section-card">

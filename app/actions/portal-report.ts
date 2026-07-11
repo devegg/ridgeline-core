@@ -54,6 +54,8 @@ export async function sendMonthlyReportAction(_prev: ActionState, formData: Form
       console.error(`[report] Resend ${res.status}: ${body.slice(0, 300)}`)
       return { errors: { _root: `Send failed (Resend ${res.status}).` } }
     }
+    // Log the send (best-effort; the email already went).
+    await supabase.from('report_sends').insert({ client_id: clientId, month, sent_to: to, sent_by: 'owner' })
     return { message: `Report for ${data.monthLabel} sent to ${to}.` }
   } catch {
     return { errors: { _root: 'Send timed out — try again.' } }

@@ -29,6 +29,7 @@ export async function createInvoiceAction(_prev: ActionState, formData: FormData
       status: 'draft',
       due_date: formData.get('due_date') || null,
       notes: formData.get('notes') || null,
+      pay_link: (formData.get('pay_link') as string)?.trim() || null,
     })
     .select('id')
     .single()
@@ -62,6 +63,7 @@ export async function updateInvoiceAction(_prev: ActionState, formData: FormData
       total: subtotal,
       due_date: formData.get('due_date') || null,
       notes: formData.get('notes') || null,
+      pay_link: (formData.get('pay_link') as string)?.trim() || null,
     })
     .eq('id', id)
 

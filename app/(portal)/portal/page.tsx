@@ -79,7 +79,7 @@ export default async function PortalHomePage({
     clientRes, automationsRes, resolvedRes, activeRes,
     totalIssuesRes, monthIssuesRes, roadmapRes, highlightsRes, rawRes,
   ] = await Promise.all([
-    supabase.from('clients').select('id, name, blended_labor_rate').eq('id', clientId).single(),
+    supabase.from('clients').select('id, name, blended_labor_rate, plan_tier').eq('id', clientId).single(),
     supabase.from('automations').select('*').eq('client_id', clientId).order('sort_order'),
     supabase.from('caught_issues').select('*').eq('client_id', clientId)
       .eq('status', 'resolved').order('occurred_on', { ascending: false }).limit(5),
@@ -98,7 +98,7 @@ export default async function PortalHomePage({
     return <ErrorState title="Couldn't load your overview" body="Refresh to try again. If it keeps happening, reach out." />
   }
 
-  const client = clientRes.data as Pick<Client, 'id' | 'name'> & { blended_labor_rate: number }
+  const client = clientRes.data as Pick<Client, 'id' | 'name'> & { blended_labor_rate: number; plan_tier?: string }
   const automations = (automationsRes.data ?? []) as Automation[]
   const resolvedRecent = (resolvedRes.data ?? []) as CaughtIssue[]
   const activeIssues = (activeRes.data ?? []) as CaughtIssue[]
@@ -162,6 +162,12 @@ export default async function PortalHomePage({
       <PeaceOfMind highlights={highlights} />
       <CaughtFixedLog issues={resolvedRecent} />
       <WhatsNext items={roadmap} requestHref={requestHref} />
+      {client.plan_tier === 'watch' && (
+        <p style={{ marginTop: 14, fontSize: 13.5, color: 'var(--ink-soft)' }}>
+          &#128274; On the Improve plan, I build one enhancement like these every month.
+          Reply to any monthly report if you&rsquo;d like to see what that would look like.
+        </p>
+      )}
     </div>
   )
 }

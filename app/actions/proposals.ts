@@ -20,6 +20,12 @@ export async function createProposalAction(_prev: ActionState, formData: FormDat
       scope: formData.get('scope') || null,
       pricing_notes: formData.get('pricing_notes') || null,
       total_amount: formData.get('total_amount') ? Number(formData.get('total_amount')) : null,
+      care_plan: (() => {
+        try {
+          const raw = formData.get('care_plan') as string
+          return raw ? JSON.parse(raw) : null
+        } catch { return null }
+      })(),
       status: 'draft',
     })
     .select('id')
@@ -49,6 +55,12 @@ export async function updateProposalAction(_prev: ActionState, formData: FormDat
       scope: formData.get('scope') || null,
       pricing_notes: formData.get('pricing_notes') || null,
       total_amount: formData.get('total_amount') ? Number(formData.get('total_amount')) : null,
+      care_plan: (() => {
+        try {
+          const raw = formData.get('care_plan') as string
+          return raw ? JSON.parse(raw) : null
+        } catch { return null }
+      })(),
     })
     .eq('id', id)
 

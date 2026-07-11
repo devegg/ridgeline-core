@@ -233,3 +233,52 @@ export async function rotateIngestKeyAction(_prev: ActionState, formData: FormDa
   revalidate(clientId)
   return { message: key } // shown once by the panel; only the hash is stored
 }
+
+// ------------------------------------------------------------
+// Portal settings (tier + report auto-send) + the case-study draft
+// ------------------------------------------------------------
+export async function savePortalSettingsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await ownerClient()
+  if (!supabase) return { errors: { _root: 'Owner only.' } }
+
+  const clientId = formData.get('client_id') as string
+  const tier = formData.get('plan_tier') as string
+  if (!clientId || !['watch', 'improve', 'own'].includes(tier)) {
+    return { errors: { _root: 'Pick a valid tier.' } }
+  }
+
+  const { error } = await supabase.from('clients')
+    .update({ plan_tier: tier, report_auto_send: formData.get('report_auto_send') === 'on' })
+    .eq('id', clientId)
+  if (error) {
+    queryFailed('clients', error)
+    return { errors: { _root: 'Could not save.' } }
+  }
+  revalidate(clientId)
+  return { message: 'Saved.' }
+}
+
+export async function draftCaseStudyAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await ownerClient()
+  if (!supabase) return { errors: { _root: 'Owner only.' } }
+
+  const clientId = formData.get('client_id') as string
+  if (!clientId) return { errors: { _root: 'Missing client.' } }
+
+  const { composeCaseStudyDraft } = await import('@/lib/portal/case-study')
+  const draft = await composeCaseStudyDraft(supabase, clientId)
+  if ('error' in draft) return { errors: { _root: draft.error } }
+
+  const { error } = await supabase.from('documents').insert({
+    entity_type: 'client',
+    entity_id: clientId,
+    name: draft.name,
+    content: draft.content,
+    is_shared: false,
+  })
+  if (error) {
+    queryFailed('documents', error)
+    return { errors: { _root: 'Could not save the draft.' } }
+  }
+  return { message: 'Draft saved to Documents (unshared) — edit before any eyes see it.' }
+}

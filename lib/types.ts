@@ -18,6 +18,10 @@ export type LeadSource = 'card_drop' | 'referral' | 'networking_event' | 'cold_o
 // ============================================================
 
 export interface Client {
+  plan_tier?: 'watch' | 'improve' | 'own'
+  report_auto_send?: boolean
+  ingest_key_created_at?: string | null
+  blended_labor_rate?: number
   id: string
   created_at: string
   updated_at: string
@@ -55,7 +59,20 @@ export interface Milestone {
   sort_order: number
 }
 
+export interface CarePlanTier {
+  name: string
+  price: string
+  summary: string
+}
+
+export interface ProposalCarePlan {
+  included: boolean
+  note: string
+  tiers: CarePlanTier[]
+}
+
 export interface Proposal {
+  care_plan?: ProposalCarePlan | null
   id: string
   created_at: string
   updated_at: string
@@ -73,6 +90,9 @@ export interface Proposal {
 }
 
 export interface Assessment {
+  intake_token?: string | null
+  intake_answers?: import('@/lib/portal/intake').IntakeAnswers | null
+  intake_submitted_at?: string | null
   id: string
   created_at: string
   updated_at: string
@@ -111,6 +131,7 @@ export interface LineItem {
 }
 
 export interface Invoice {
+  pay_link?: string | null
   id: string
   created_at: string
   updated_at: string

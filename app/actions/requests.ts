@@ -2,8 +2,11 @@
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
+import { sendNotification } from '@/lib/email'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/lib/types'
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ridgelineknows.com'
 
 /**
  * Portal: a client submits a change request. client_id and created_by are
@@ -40,6 +43,14 @@ export async function createRequestAction(_prev: ActionState, formData: FormData
 
   revalidatePath('/portal/requests')
   revalidatePath('/requests')
+
+  // Notify the owner (soft-fail; the request is already saved).
+  await sendNotification({
+    to: process.env.CONTACT_TO ?? 'hello@ridgelineknows.com',
+    subject: `New change request — ${title.slice(0, 80)}`,
+    html: `<p>A client filed a change request:</p><p><strong>${title.replace(/</g, '&lt;')}</strong></p><p><a href="${SITE}/requests">Reply from the dashboard</a></p>`,
+  })
+
   return { message: "Got it — I'll reply here within one business day." }
 }
 
@@ -72,5 +83,26 @@ export async function respondToRequestAction(_prev: ActionState, formData: FormD
 
   revalidatePath('/requests')
   revalidatePath('/portal/requests')
+
+  // Notify the client that a written reply landed (soft-fail, only when a
+  // response was actually written).
+  if (response) {
+    try {
+      const { data: req } = await supabase
+        .from('change_requests')
+        .select('title, client:clients(email, name)')
+        .eq('id', id)
+        .single()
+      const clientEmail = (req?.client as unknown as { email: string | null } | null)?.email
+      if (clientEmail) {
+        await sendNotification({
+          to: clientEmail,
+          subject: 'Ridgeline replied to your request',
+          html: `<p>Your request <strong>${(req?.title ?? '').replace(/</g, '&lt;')}</strong> has a written reply.</p><p><a href="${SITE}/portal/requests">Read it on your portal</a></p>`,
+        })
+      }
+    } catch { /* soft-fail */ }
+  }
+
   return { message: 'Saved.' }
 }
