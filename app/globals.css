@@ -1441,3 +1441,18 @@ details:not([open]) > *:not(summary) { display: none; }
 .nf__word:hover { background: var(--bg-deep); }
 .nf__word span { font-family: var(--mono); font-size: 14px; color: var(--blue); letter-spacing: 0.03em; }
 .nf__word em { font-style: normal; font-size: 12.5px; color: var(--ink-soft); }
+
+/* Your numbers — client-editable value inputs inside How I count this */
+.value-inputs { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule-soft); display: flex; flex-direction: column; gap: 14px; }
+.value-inputs__head {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--amber-deep);
+}
+.value-inputs__note { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--ink-muted); max-width: 58ch; }
+.value-inputs__field { display: flex; flex-direction: column; gap: 6px; max-width: 420px; }
+.value-inputs__field label { font-size: 12.5px; color: var(--ink-muted); }
+.value-inputs__field input { padding: 8px 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); font: inherit; width: 130px; }
+.value-inputs__field input:disabled { opacity: 0.6; }
+.value-inputs__money { display: flex; align-items: center; gap: 8px; color: var(--ink-muted); font-size: 14px; }
+.value-inputs__saved { font-size: 13.5px; color: var(--ink); border: 1px solid var(--rule); background: var(--bg-deep); padding: 10px 14px; max-width: 420px; }
+.value-inputs__owner-note { margin: 0; font-size: 12.5px; color: var(--ink-soft); font-style: italic; }

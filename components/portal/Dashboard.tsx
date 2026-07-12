@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Automation, CaughtIssue, PortalHighlight, RoadmapItem } from '@/lib/types'
 import { HAIRCUT, formatDollars, formatHours, type ValueTotals } from '@/lib/portal/value'
+import { ValueInputsForm } from '@/components/portal/ValueInputsForm'
 
 /* Server components for the portal home — the ten-second screen.
    Copy rules: plain English, first person singular, no jargon,
@@ -94,10 +95,12 @@ export function HowWeCount({
   automations,
   totals,
   laborRate,
+  viewerIsClient,
 }: {
   automations: Automation[]
   totals: ValueTotals
   laborRate: number
+  viewerIsClient: boolean
 }) {
   const running = automations.filter(a => a.status !== 'paused')
   return (
@@ -120,9 +123,19 @@ export function HowWeCount({
           This month the system handled {totals.monthItems.toLocaleString()} items. I only count
           work someone on your team actually used to do, and I cut the total by {Math.round(HAIRCUT * 100)}%
           so the number stays on the safe side. That leaves the hours you see above. Your blended
-          labor cost is ${laborRate}/hour, and the dollar figure is just hours times that rate.
-          If anything here looks off, tell me and I&rsquo;ll re-measure.
+          labor cost is ${laborRate}/hour — a number you can change below — and the dollar figure
+          is just hours times that rate. If anything here looks off, adjust it yourself or tell me
+          and I&rsquo;ll re-measure.
         </p>
+        <ValueInputsForm
+          rate={laborRate}
+          automations={running.map(a => ({
+            id: a.id,
+            name: a.name,
+            baseline_minutes_per_item: a.baseline_minutes_per_item,
+          }))}
+          viewerIsClient={viewerIsClient}
+        />
       </div>
     </details>
   )

@@ -157,7 +157,7 @@ export default async function PortalHomePage({
         issuesMonth={monthIssuesRes.count ?? 0}
         issuesTotal={totalIssuesRes.count ?? 0}
       />
-      <HowWeCount automations={automations} totals={totals} laborRate={Number(client.blended_labor_rate)} />
+      <HowWeCount automations={automations} totals={totals} laborRate={Number(client.blended_labor_rate)} viewerIsClient={!isOwner} />
 
       <PeaceOfMind highlights={highlights} />
       <CaughtFixedLog issues={resolvedRecent} />

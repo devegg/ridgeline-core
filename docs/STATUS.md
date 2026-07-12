@@ -81,6 +81,14 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   the Magic Link template edit (BACKLOG); cron env (`CRON_SECRET`,
   `SUPABASE_SECRET_KEY`) when the first client is flagged for auto-send.
 
+## Pending merge — client-owned value inputs (PR #29, feature/client-value-inputs)
+
+The client sets the numbers their savings math runs on: "Your numbers" form
+inside the portal's How-I-count panel (blended hourly rate + minutes-per-task
+per automation), through the bounded `set_value_inputs` RPC (D18). Migration
+20260712000000 must be applied (`npm run migrate`) before/with the merge;
+the suite's new checks skip-with-notice until then.
+
 ## Shipped (live in production)
 
 - **Domain**: https://www.ridgelineknows.com (apex 308→www; DNS at
