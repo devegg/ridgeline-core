@@ -145,6 +145,9 @@ if (!signInErr) {
       ok("prospect_visits: client sees zero rows", (vData ?? []).length === 0, `leaked ${(vData ?? []).length}`);
       const { error: insErr } = await client.from("prospects").insert({ business_name: "forged prospect" });
       ok("prospects: client insert refused", !!insErr);
+
+      const { data: cardList, error: cardErr } = await client.storage.from("cards").list();
+      ok("cards bucket: client sees nothing", !!cardErr || (cardList ?? []).length === 0, `leaked ${(cardList ?? []).length}`);
     }
   }
 

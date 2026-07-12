@@ -326,6 +326,9 @@ export interface Prospect {
   status: ProspectStatus
   notes: string | null
   lead_id: string | null
+  contact_name: string | null
+  email: string | null
+  card_photo_path: string | null
 }
 
 export interface ProspectVisit {
