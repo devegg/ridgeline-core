@@ -59,6 +59,8 @@ export function IndustryLanding({ entry }: { entry: LandingIndustry }) {
                     <p className="lede">
                       Every client gets a private portal: what ran, what it saved, and the math
                       behind the number. You will never wonder what you&rsquo;re paying for.
+                      And when something breaks — things break — you see it caught and fixed,
+                      not silence.
                     </p>
                   </Reveal>
                   <Reveal delay={2}>

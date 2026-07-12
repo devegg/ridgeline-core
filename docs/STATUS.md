@@ -97,8 +97,12 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   contact form with per-industry dropdown + page attribution (lead notes
   "Page:" + email line). Aliases + any-case 308 to canonical; unknown words
   hit the 404 word net; /customer-pulse-check is the generic 13th page.
-  ALL 12 verticals carry researched copy (2026-07-11, from the reports in
-  `_inbox/research/landing/`): trust-account/license angles, speed-to-lead,
+  ALL 13 verticals carry researched copy (2026-07-11, from the reports in
+  `_inbox/research/landing/` — plumbing got its own page + word once its
+  report landed; /plumbing no longer redirects to /home). The dashboard
+  mock grew the portal's non-marketing proof: health line, since-we-started
+  cumulative line, a 2-entry caught-and-fixed log per industry, and one
+  in-progress item (the request→shipped loop). Researched angles: trust-account/license angles, speed-to-lead,
   draw/lien-waiver mechanics, unbilled-work leakage, eligibility/denials,
   POS↔books reconciliation, quote-speed, time-capture leakage. Discovery
   kits + software landscapes + guardrails from all 12 reports are banked

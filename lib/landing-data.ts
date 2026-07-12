@@ -22,8 +22,17 @@ export type LandingIndustry = {
   headline: string
   lede: string
   pains: { title: string; body: string }[]
-  /** Rows shown in the sample portal dashboard mock. */
-  mock: { hours: string; rows: { label: string; meta: string }[] }
+  /** The sample portal dashboard mock. `since` is the cumulative line
+      (the relationship compounds); `caught` is the caught-and-fixed log
+      (things break, the system catches them — the honesty proof); `next`
+      is one in-progress item (the request→shipped loop, in miniature). */
+  mock: {
+    hours: string
+    since: string
+    rows: { label: string; meta: string }[]
+    caught: { when: string; what: string }[]
+    next: string
+  }
   /** Options for the contact form's "Which is closest" dropdown. */
   situations: string[]
 }
@@ -56,11 +65,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '11.4 hrs',
+      since: '~148 hrs · ~$6,400 since we started',
       rows: [
         { label: 'Owner statement prep & reconciliation', meta: '43 drafts ready for licensed review' },
         { label: 'Turnover board sync', meta: 'Saturday: 14 turns, all assigned' },
         { label: 'Guest message triage', meta: '31 routine handled · 2 flagged to you' },
       ],
+      caught: [
+        { when: 'Jul 8', what: 'Caught 3 reservations that didn’t copy to the books and re-sent them.' },
+        { when: 'Jun 25', what: 'Held a payout that didn’t match its statement for a human look.' },
+      ],
+      next: 'Weekly owner-payout summary email',
     },
     situations: [
       'Month-end statements take days',
@@ -97,11 +112,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '9.7 hrs',
+      since: '~121 hrs · ~$5,200 since we started',
       rows: [
         { label: 'Work-order intake & dispatch', meta: '12 open · status texts sent · audit trail kept' },
         { label: 'Owner statement assembly', meta: 'Drafts ready for your review' },
         { label: 'Dues reminder sequence', meta: '17 sent · 2 escalations flagged to you' },
       ],
+      caught: [
+        { when: 'Jul 2', what: 'Flagged a vendor bill that looked like a duplicate before it was paid twice.' },
+        { when: 'Jun 14', what: 'Caught a bill coded to the wrong property and corrected it.' },
+      ],
+      next: 'Owner statements emailed on the 1st, automatically',
     },
     situations: [
       'Month-end close drags for weeks',
@@ -138,11 +159,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '8.9 hrs',
+      since: '~104 hrs · ~$4,700 since we started',
       rows: [
         { label: 'Contract-to-close checklists', meta: '7 active files · deadlines auto-calculated' },
         { label: 'Lead acknowledgment & routing', meta: 'Sat 9:14p inquiry · answered in 90 seconds' },
         { label: 'Commission & CDA prep', meta: 'Draft ready for broker sign-off' },
       ],
+      caught: [
+        { when: 'Jul 6', what: 'Flagged a file missing its inspection deadline the day the contract landed.' },
+        { when: 'Jun 20', what: 'Caught a Saturday-night lead sitting unanswered and paged the on-call agent.' },
+      ],
+      next: 'Closing checklist built straight from the contract',
     },
     situations: [
       'Deadlines tracked by memory',
@@ -179,11 +206,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '10.2 hrs',
+      since: '~117 hrs · ~$5,600 since we started',
       rows: [
         { label: 'Draw package assembly', meta: 'SOV + waivers + photos · 1 missing waiver flagged' },
         { label: 'Field-to-books job costing', meta: 'Live across 5 jobs · one trending over' },
         { label: 'Punch-list routing', meta: '9 items by trade · 3 closed today' },
       ],
+      caught: [
+        { when: 'Jul 3', what: 'Flagged a draw package missing one sub’s lien waiver before it went out.' },
+        { when: 'Jun 11', what: 'Caught receipts posted to the wrong job and re-coded them.' },
+      ],
+      next: 'Pay-app roll-forward from last month’s schedule of values',
     },
     situations: [
       'Draws bounce and payment waits',
@@ -195,7 +228,7 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
   },
   {
     slug: 'home',
-    aliases: ['hvac', 'plumbing', 'pest', 'pools', 'lawn'],
+    aliases: ['hvac', 'pest', 'pools', 'lawn'],
     name: 'HVAC & home services',
     reviewLabel: 'HVAC and home services',
     headline: 'The work gets done. The money leaks out the seams.',
@@ -221,17 +254,70 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '12.1 hrs',
+      since: '~139 hrs · ~$6,100 since we started',
       rows: [
         { label: 'Job close → same-day invoice', meta: '9 sent today · extras captured at the truck' },
         { label: 'Agreement renewals & card checks', meta: '17 due · 3 expired cards caught' },
         { label: 'Appointment confirmations', meta: '31 confirmed · 1 reschedule caught early' },
       ],
+      caught: [
+        { when: 'Jul 7', what: 'Caught an unbilled after-hours call and added it to the invoice.' },
+        { when: 'Jun 19', what: 'Flagged an expiring card before the maintenance plan lapsed.' },
+      ],
+      next: 'Same-day review requests after job close',
     },
     situations: [
       'Extras never make the invoice',
       'Maintenance plans slip away',
       'Invoices lag and AR piles up',
       'The schedule blows up daily',
+      'Something else',
+    ],
+  },
+  {
+    slug: 'plumbing',
+    aliases: ['plumber'],
+    name: 'Plumbing',
+    headline: 'You’re a plumber, not a paper-pusher. The invoices shouldn’t wait for Sunday night.',
+    lede:
+      'Summer on the coast means the phone rings all day — service calls, rental turnovers, water heaters that picked July to quit — and a share of those calls ring out to the guy down the road while your dispatcher rebuilds the morning. Meanwhile the money sits in the truck and the maintenance agreements quietly lapse. I build systems that carry the office side, so the wrench work is the whole job.',
+    pains: [
+      {
+        title: 'The schedule blows up by 8 a.m.',
+        body: 'One emergency call and the dispatcher spends the morning on the phone rebuilding the whole board — while new calls ring out and land with whoever answers first.',
+      },
+      {
+        title: 'Money sits in the truck.',
+        body: 'The job wraps Monday, the paperwork rides around all week, and the invoice goes out Sunday night — then you’re chasing the check. Work you already did, cash you’re still waiting on.',
+      },
+      {
+        title: 'A shoebox of signed maintenance agreements, and no idea whose card just bounced.',
+        body: 'The steadiest revenue you have: inspections nobody books, renewals nobody tracks, cards that quietly expired. It cancels itself while everyone’s under a house.',
+      },
+      {
+        title: 'Your reviews are stale, and the competition’s aren’t.',
+        body: 'Every happy customer is a five-star review you never asked for, because asking is one more manual step at the end of a long day.',
+      },
+    ],
+    mock: {
+      hours: '11.8 hrs',
+      since: '~132 hrs · ~$5,900 since we started',
+      rows: [
+        { label: 'Job close → same-day invoice', meta: '8 sent today · extras captured at the truck' },
+        { label: 'Agreement renewals & card checks', meta: '12 due · 2 expired cards caught' },
+        { label: 'Review request after job close', meta: '6 asked · 2 new five-stars' },
+      ],
+      caught: [
+        { when: 'Jul 9', what: 'Caught a finished job that never became an invoice; billed it same day.' },
+        { when: 'Jun 21', what: 'Flagged an expired card before the maintenance plan quietly lapsed.' },
+      ],
+      next: 'Missed-call text-back, so voicemail stops losing jobs',
+    },
+    situations: [
+      'The schedule blows up by 8 a.m.',
+      'Money sits in the truck',
+      'Maintenance plans quietly lapse',
+      'Reviews are stale',
       'Something else',
     ],
   },
@@ -262,11 +348,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '9.3 hrs',
+      since: '~112 hrs · ~$5,000 since we started',
       rows: [
         { label: 'Eligibility pre-check', meta: 'Tomorrow verified · 2 coverage gaps flagged' },
         { label: 'Recall & no-show outreach', meta: '31 reminders sent · 5 rebooked' },
         { label: 'Digital intake → chart', meta: '22 patients · 0 retyped forms' },
       ],
+      caught: [
+        { when: 'Jul 9', what: 'Caught a coverage gap the night before the visit, not after the claim.' },
+        { when: 'Jun 26', what: 'Flagged a claim missing a code before it went out the door.' },
+      ],
+      next: 'Recall outreach for overdue hygiene patients',
     },
     situations: [
       'Verification eats the morning',
@@ -303,11 +395,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '8.6 hrs',
+      since: '~98 hrs · ~$4,300 since we started',
       rows: [
         { label: 'POS → books nightly sync', meta: 'Ran 3:00a · deposit matched' },
         { label: 'Invoice capture → food cost', meta: '18 invoices read · price creep flagged' },
         { label: 'Schedule draft from sales pattern', meta: 'Next week drafted · 2 gaps flagged' },
       ],
+      caught: [
+        { when: 'Jul 5', what: 'Caught a vendor price jump on your top item, inside the invoice.' },
+        { when: 'Jun 17', what: 'Flagged a deposit that didn’t match Tuesday’s close.' },
+      ],
+      next: 'Schedule draft from last July’s sales pattern',
     },
     situations: [
       'The schedule eats a workday',
@@ -344,11 +442,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '7.8 hrs',
+      since: '~89 hrs · ~$4,000 since we started',
       rows: [
         { label: 'Slip renewal & billing run', meta: '9 renewals out · 6 signed · 2 nudged' },
         { label: 'Work order → same-day invoice', meta: '11 open · 3 billed at pickup' },
         { label: 'Ops ↔ QuickBooks sync', meta: 'Month-end tied out · 0 mismatches' },
       ],
+      caught: [
+        { when: 'Jul 1', what: 'Flagged a slip renewal still unsigned two weeks before season.' },
+        { when: 'Jun 9', what: 'Caught a work order finished but never billed.' },
+      ],
+      next: 'Haul-out priority list wired to the storm watch',
     },
     situations: [
       'Spring renewals are a fire drill',
@@ -385,11 +489,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '6.9 hrs',
+      since: '~76 hrs · ~$3,300 since we started',
       rows: [
         { label: 'POS → books nightly', meta: 'Ran 11:30p · deposit matched' },
         { label: 'Counter ↔ online inventory', meta: 'Synced hourly · 0 oversells' },
         { label: 'Reorder drafts from sell-through', meta: '2 POs ready for review' },
       ],
+      caught: [
+        { when: 'Jul 4', what: 'Caught an online oversell before the order confirmed.' },
+        { when: 'Jun 22', what: 'Traced a drawer variance to one shift on one register.' },
+      ],
+      next: 'Reorder drafts from this week’s sell-through',
     },
     situations: [
       'Bank never matches the register',
@@ -426,11 +536,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '13.5 hrs',
+      since: '~162 hrs · ~$7,400 since we started',
       rows: [
         { label: 'Quote drafts from RFQ intake', meta: '4 RFQs in · 3 drafts ready for pricing' },
         { label: 'Live job tracking', meta: '17 jobs on floor · statuses current' },
         { label: 'Cert package assembly', meta: 'Ship-ready in minutes · full trail' },
       ],
+      caught: [
+        { when: 'Jul 8', what: 'Flagged a PO-to-invoice mismatch before it stalled payment.' },
+        { when: 'Jun 24', what: 'Caught a cert missing from tomorrow’s shipment package.' },
+      ],
+      next: 'Quote drafts straight from incoming RFQ emails',
     },
     situations: [
       'Quoting eats my nights',
@@ -467,11 +583,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '10.8 hrs',
+      since: '~127 hrs · ~$5,700 since we started',
       rows: [
         { label: 'Document chase & intake', meta: '28 requested · 21 in · 7 auto-nudged' },
         { label: 'Statement extraction', meta: '143 transactions coded for your review' },
         { label: 'Client status board', meta: '9 waiting on client · 3 on you' },
       ],
+      caught: [
+        { when: 'Jul 10', what: 'Caught a client’s missing statement five days before the 20th.' },
+        { when: 'Jun 27', what: 'Flagged 14 uncategorized transactions before the close.' },
+      ],
+      next: 'Auto-nudge for missing client documents',
     },
     situations: [
       'Half my day is circling back',
@@ -508,11 +630,17 @@ export const LANDING_INDUSTRIES: LandingIndustry[] = [
     ],
     mock: {
       hours: '8.2 hrs',
+      since: '~95 hrs · ~$4,500 since we started',
       rows: [
         { label: 'Time capture from calendar & email', meta: 'Draft entries ready for review' },
         { label: 'Intake → conflicts → letter', meta: '6 matters opened clean' },
         { label: 'Client status updates', meta: '34 sent · 0 check-in calls today' },
       ],
+      caught: [
+        { when: 'Jul 7', what: 'Caught six calendar entries that never became time entries.' },
+        { when: 'Jun 30', what: 'Flagged an old client’s name in a new document draft.' },
+      ],
+      next: 'Status updates that send before clients ask',
     },
     situations: [
       'Hours leak before billing',
@@ -548,11 +676,17 @@ export const PULSE_CHECK: LandingIndustry = {
   ],
   mock: {
     hours: '9.5 hrs',
+    since: '~110 hrs · ~$4,900 since we started',
     rows: [
       { label: 'The weekly report', meta: 'Ran 6:00a · in your inbox' },
       { label: 'Form intake → your system', meta: '17 entries · 0 retyped' },
       { label: 'Follow-up reminders', meta: '12 sent · nothing forgotten' },
     ],
+    caught: [
+      { when: 'Jul 8', what: 'Flagged a bill that looked like a duplicate before it was paid twice.' },
+      { when: 'Jun 25', what: 'Caught a form entry that didn’t copy over and re-sent it.' },
+    ],
+    next: 'The weekly report, without the copy-paste',
   },
   situations: [
     'A report eats hours every week',
