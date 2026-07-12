@@ -132,6 +132,40 @@ if (!signInErr) {
   const { error: tierErr } = await client.from("clients").update({ plan_tier: "own" }).eq("id", DEMO);
   const { data: tierAfter } = await client.from("clients").select("plan_tier").eq("id", DEMO).single();
   ok("client cannot change own tier", !!tierErr || tierAfter?.plan_tier !== "own");
+
+  // set_value_inputs — the client-owned savings inputs (migration 20260712000000).
+  // Skips (without failing) until the migration is applied.
+  const { data: rateBefore } = await client.from("clients").select("blended_labor_rate").eq("id", DEMO).single();
+  const probe = await client.rpc("set_value_inputs", { p_rate: 60 });
+  const missing = probe.error && /could not find|does not exist|schema cache/i.test(probe.error.message);
+  if (missing) {
+    console.log("  ~ set_value_inputs checks SKIPPED — run `npm run migrate` first");
+  } else {
+    ok("client can set own rate", !probe.error, probe.error?.message);
+    const { data: rateNow } = await client.from("clients").select("blended_labor_rate").eq("id", DEMO).single();
+    ok("rate change landed", Number(rateNow?.blended_labor_rate) === 60, `got ${rateNow?.blended_labor_rate}`);
+
+    const { error: oobErr } = await client.rpc("set_value_inputs", { p_rate: 9000 });
+    ok("out-of-bounds rate refused", !!oobErr);
+
+    const { error: crossAuto } = await client.rpc("set_value_inputs", { p_automation: randomUUID(), p_minutes: 10 });
+    ok("minutes on foreign/unknown automation refused", !!crossAuto);
+
+    const { data: ownAutos } = await client.from("automations").select("id, baseline_minutes_per_item").eq("client_id", DEMO).limit(1);
+    if (ownAutos?.length) {
+      const auto = ownAutos[0];
+      const orig = Number(auto.baseline_minutes_per_item);
+      const { error: minErr } = await client.rpc("set_value_inputs", { p_automation: auto.id, p_minutes: orig + 1 });
+      const { data: minNow } = await client.from("automations").select("baseline_minutes_per_item").eq("id", auto.id).single();
+      ok("client can set own task minutes", !minErr && Number(minNow?.baseline_minutes_per_item) === orig + 1, minErr?.message);
+      await admin.from("automations").update({ baseline_minutes_per_item: orig }).eq("id", auto.id);
+    }
+    // restore the demo rate exactly as found
+    await admin.from("clients").update({ blended_labor_rate: rateBefore?.blended_labor_rate ?? 45 }).eq("id", DEMO);
+
+    const anonVi = await anon.rpc("set_value_inputs", { p_rate: 60 });
+    ok("set_value_inputs without session refused", !!anonVi.error);
+  }
 }
 
 // ============================================================
