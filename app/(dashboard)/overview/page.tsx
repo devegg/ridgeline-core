@@ -14,6 +14,7 @@ export default async function OverviewPage() {
     { data: outstandingInvoices, error: invoicesError },
     { data: recentClients, error: recentClientsError },
     { data: recentProjects, error: recentProjectsError },
+    { data: followUps, error: followUpsError },
   ] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('status', 'active'),
     supabase.from('projects').select('*', { count: 'exact', head: true }).in('status', ['active', 'on_hold']),
@@ -21,6 +22,11 @@ export default async function OverviewPage() {
     supabase.from('invoices').select('total, status').in('status', ['sent', 'overdue']),
     supabase.from('clients').select('id, name, status, created_at').neq('status', 'scheduled_delete').order('created_at', { ascending: false }).limit(5),
     supabase.from('projects').select('id, name, status, created_at').neq('status', 'scheduled_delete').order('created_at', { ascending: false }).limit(5),
+    supabase.from('leads').select('id, business_name, contact_name, stage, follow_up_date')
+      .not('follow_up_date', 'is', null)
+      .not('stage', 'in', '(won,lost)')
+      .lte('follow_up_date', new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10))
+      .order('follow_up_date'),
   ])
 
   const clientCountFailed = queryFailed('clients', clientCountError)
@@ -29,6 +35,8 @@ export default async function OverviewPage() {
   const invoicesFailed = queryFailed('invoices', invoicesError)
   const recentClientsFailed = queryFailed('clients', recentClientsError)
   const recentProjectsFailed = queryFailed('projects', recentProjectsError)
+  const followUpsFailed = queryFailed('leads', followUpsError)
+  const today = new Date().toISOString().slice(0, 10)
 
   const outstanding = (outstandingInvoices ?? []).reduce((s, i) => s + Number(i.total), 0)
   const overdueCount = (outstandingInvoices ?? []).filter(i => i.status === 'overdue').length
@@ -74,6 +82,33 @@ export default async function OverviewPage() {
           warn={invoicesFailed || overdueCount > 0}
         />
       </div>
+
+      {/* Follow-ups due — the written follow-up is the sales engine. */}
+      {!followUpsFailed && (followUps ?? []).length > 0 && (
+        <div className="section-card" style={{ marginTop: 32 }}>
+          <div className="section-card__head">
+            <span className="section-card__label">Follow-ups due</span>
+            <Link href="/leads" style={{ fontSize: 12, color: 'var(--ink-soft)' }}>All →</Link>
+          </div>
+          <div className="section-card__body">
+            <table className="data-table">
+              <tbody>
+                {(followUps ?? []).map(f => (
+                  <tr key={f.id}>
+                    <td>
+                      <Link href={`/leads/${f.id}`}>{f.business_name}</Link>
+                      {f.contact_name && <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}> · {f.contact_name}</span>}
+                    </td>
+                    <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 12, color: f.follow_up_date < today ? '#B14B3C' : 'var(--amber-deep)' }}>
+                      {f.follow_up_date < today ? `overdue · ${f.follow_up_date}` : f.follow_up_date === today ? 'today' : f.follow_up_date}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Recent activity */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginTop: 32 }}>
