@@ -23,16 +23,13 @@ export function DownloadMarkdownButton({ documentName, content }: DownloadButton
   )
 }
 
-// PDF download — stub until PDF generation is implemented
+/** Real at last: prints just the document (print CSS isolates .doc-viewer),
+    and every browser's print dialog offers "Save as PDF" — brand typography
+    intact, zero dependencies. */
 export function DownloadPdfButton() {
   return (
-    <button
-      className="btn-outline"
-      disabled
-      title="PDF export coming soon"
-      style={{ fontSize: 13, opacity: 0.5, cursor: 'not-allowed' }}
-    >
-      Download PDF
+    <button className="btn-outline" onClick={() => window.print()} style={{ fontSize: 13 }}>
+      Print / PDF
     </button>
   )
 }

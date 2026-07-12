@@ -1527,3 +1527,27 @@ details:not([open]) > *:not(summary) { display: none; }
   background: rgba(224, 133, 115, 0.08);
 }
 .dash-layout[data-theme="dark"] .error-state__title { color: #E08573; }
+
+/* ============================================================
+   Print: a document page prints as just the document — app chrome,
+   actions, and dark mode all step aside. "Save as PDF" in the print
+   dialog is the PDF export.
+   ============================================================ */
+@media print {
+  body:has(.doc-viewer) * { visibility: hidden; }
+  body:has(.doc-viewer) .doc-viewer,
+  body:has(.doc-viewer) .doc-viewer * { visibility: visible; }
+  body:has(.doc-viewer) .doc-viewer {
+    position: absolute; left: 0; top: 0; width: 100%;
+    padding: 0; margin: 0;
+  }
+  .doc-viewer__actions { display: none !important; }
+  /* Paper is white no matter the screen theme. */
+  .dash-layout, .dash-layout[data-theme="dark"], .portal-layout, .portal-layout[data-theme="dark"] {
+    --bg: #FFFFFF; --bg-deep: #FFFFFF; --paper: #FFFFFF;
+    --ink: #1B1A17; --ink-muted: #444036; --ink-soft: #6B6558;
+    --rule: #D9CFB9; --rule-soft: #E5DCC7;
+  }
+  .dash-layout { height: auto; overflow: visible; }
+  .dash-content { overflow: visible !important; }
+}
