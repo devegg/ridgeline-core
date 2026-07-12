@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from '@/components/portal/ThemeToggle'
 import {
+  Mail,
   LayoutDashboard,
   Users,
   UserPlus,
@@ -49,6 +50,7 @@ const NAV_BILLING: NavItem[] = [
 const NAV_TOOLS: NavItem[] = []
 
 const NAV_STUBS: NavItem[] = [
+  { href: '/templates', label: 'Templates', icon: Mail },
   { href: '/documents', label: 'Documents', icon: File },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
