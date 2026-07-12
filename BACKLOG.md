@@ -11,43 +11,33 @@ pages; only the content-drafts sweep remained and moved below).
 
 ---
 
-## Now — the field kit (in progress 2026-07-11, feature/field-kit)
+## Shipped 2026-07-12 (overnight batch, PRs #34–#39)
 
-- [ ] **Networking contacts — card drops** [solo] — prospects log: business,
-  industry, address, visits with date + which card word was handwritten,
-  notes. Imports the "Grand Strand Drop-Ins" Google My Map (KML export).
-  Promote a warm prospect to a Lead (source: card drop) in one click.
-- [ ] **Quick capture** [solo] — logging a drop from the phone in the parking
-  lot in under 10 seconds. V1 lives on the prospects page; a global
-  quick-add can follow.
-- [ ] **Mobile-optimized views** [solo] — prospects page ships mobile-first;
-  client detail and lead entry get a pass next.
+- [x] Card drops + My Maps KML import + promote-to-lead ✅ (PR #31, D19)
+- [x] Business-card scan: photo, in-browser OCR, confirm, save ✅ (PR #34, D20)
+- [x] Follow-ups-due panel on Overview ✅ (PR #35)
+- [x] Email templates (5 house emails, fill once, copy) ✅ (PR #36)
+- [x] Document PDF: dead button → Print / PDF ✅ (PR #37)
+- [x] Referral field on new-lead form + proposal win rate + content
+      location sweep ✅ (PR #38)
+- [x] Meeting notes on client detail ✅ (PR #39)
+- [x] Lead funnel finish — discovered ALREADY BUILT (LeadDetail wires
+      advance/convert/lost-with-reason); removed, nothing to do.
 
-## Next — the follow-up engine
+## Next
 
-- [ ] **Follow-up reminders** [solo] — `leads.follow_up_date` already exists;
-  surface a "Follow-ups due" list on Overview and add follow-up dates to
-  Clients and Proposals. The research is blunt: written follow-up is the
-  sales engine.
-- [ ] **Email templates** [solo] — field-day thank-you, proposal follow-up,
-  assessment confirmation, invoice reminder. Fill-in + copy to mail client.
-- [ ] **Lead funnel finish** [solo] — stages and inbound wiring exist; add
-  won→client conversion and lost-with-reason archiving.
+- [ ] **Mobile pass on client detail + lead entry** [solo] — prospects
+  shipped phone-first; these two get the same treatment.
+- [ ] **Global quick capture** [solo] — prospects quick-add exists on its
+  page; a from-anywhere version can follow.
 - [ ] **Leads admin screen polish** [input] — owner idea 2026-07-04,
   specifics still TBD; inbound submissions land here so it earns a pass
   once he lists what bugs him.
-
-## Soon — paper out the door
-
-- [ ] **Markdown document PDF export** [solo] — the document viewer's
-  "Download PDF" button is stubbed today: build it or hide it. Brand
-  typography (Newsreader, IBM Plex Sans).
-- [ ] **Invoice PDF export** [solo] — downloadable PDF from an invoice;
-  portal download button.
-- [ ] **Meeting notes** [solo] — timestamped running log on a client or
-  project (distinct from evergreen relationship notes).
-- [ ] **Referral tracking** [solo] — `leads.referred_by` exists; surface it
-  (who sends work, who to thank) and add it to Clients.
+- [ ] **Invoice PDF export** [solo] — same Print/PDF treatment as documents,
+  or a real renderer if pixel-perfect matters.
+- [ ] **Map export back to My Maps** [solo] — generate a CSV/KML layer of
+  visited/interested prospects to hand-import into the map (My Maps has no
+  write API; owner asked 2026-07-12).
 
 ## When there's data to show
 

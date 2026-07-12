@@ -148,6 +148,13 @@ if (!signInErr) {
 
       const { data: cardList, error: cardErr } = await client.storage.from("cards").list();
       ok("cards bucket: client sees nothing", !!cardErr || (cardList ?? []).length === 0, `leaked ${(cardList ?? []).length}`);
+
+      const { data: mnData, error: mnErr } = await client.from("meeting_notes").select("id").limit(1);
+      if (mnErr && /does not exist|schema cache/i.test(mnErr.message)) {
+        console.log("  ~ meeting_notes check SKIPPED — run `npm run migrate` first");
+      } else {
+        ok("meeting_notes: client sees zero rows", (mnData ?? []).length === 0, `leaked ${(mnData ?? []).length}`);
+      }
     }
   }
 
