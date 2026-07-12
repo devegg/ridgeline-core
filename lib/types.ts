@@ -305,3 +305,34 @@ export type ActionState = {
   errors?: Record<string, string>
   message?: string
 } | null
+
+// ============================================================
+// Field kit — prospects & card drops
+// ============================================================
+
+export type ProspectStatus = 'untouched' | 'visited' | 'interested' | 'lead' | 'archived'
+
+export interface Prospect {
+  id: string
+  created_at: string
+  business_name: string
+  industry: string | null
+  address: string | null
+  lat: number | null
+  lng: number | null
+  phone: string | null
+  website: string | null
+  source: 'manual' | 'map_import'
+  status: ProspectStatus
+  notes: string | null
+  lead_id: string | null
+}
+
+export interface ProspectVisit {
+  id: string
+  created_at: string
+  prospect_id: string
+  visited_on: string
+  card_word: string | null
+  note: string | null
+}

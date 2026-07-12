@@ -89,6 +89,14 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
+## Pending merge — field kit v1 (PR #31, feature/field-kit)
+
+Card Drops in the dashboard nav (/prospects, phone-first): quick add,
+KML import of the Drop-Ins My Map, visit log with card word, promote to
+Lead (D19). BACKLOG.md re-sorted and pruned per owner review 2026-07-11.
+Migration 20260712010000 must apply (`npm run migrate`) before the page
+loads; new suite checks skip-with-notice until then.
+
 ## Shipped (live in production)
 
 - **Domain**: https://www.ridgelineknows.com (apex 308→www; DNS at

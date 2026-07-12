@@ -133,6 +133,21 @@ if (!signInErr) {
   const { data: tierAfter } = await client.from("clients").select("plan_tier").eq("id", DEMO).single();
   ok("client cannot change own tier", !!tierErr || tierAfter?.plan_tier !== "own");
 
+  // Field-kit tables are owner-only — a client login must see nothing at all.
+  // Skips (without failing) until migration 20260712010000 is applied.
+  {
+    const { data: pData, error: pErr } = await client.from("prospects").select("id").limit(1);
+    if (pErr && /does not exist|schema cache/i.test(pErr.message)) {
+      console.log("  ~ prospects checks SKIPPED — run `npm run migrate` first");
+    } else {
+      ok("prospects: client sees zero rows", (pData ?? []).length === 0, `leaked ${(pData ?? []).length}`);
+      const { data: vData } = await client.from("prospect_visits").select("id").limit(1);
+      ok("prospect_visits: client sees zero rows", (vData ?? []).length === 0, `leaked ${(vData ?? []).length}`);
+      const { error: insErr } = await client.from("prospects").insert({ business_name: "forged prospect" });
+      ok("prospects: client insert refused", !!insErr);
+    }
+  }
+
   // set_value_inputs — the client-owned savings inputs (migration 20260712000000).
   // Skips (without failing) until the migration is applied.
   const { data: rateBefore } = await client.from("clients").select("blended_labor_rate").eq("id", DEMO).single();
