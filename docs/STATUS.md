@@ -105,6 +105,15 @@ own storage key (rk-dash-theme), pre-paint script, same warm-dark tokens
 scoped to .dash-layout. Extends D6's portal-only scope by owner request;
 marketing + login stay light.
 
+## Shipped 2026-07-12 — overnight backlog batch (PRs #34–#39)
+
+Business-card scan (photo → in-browser OCR → confirm → private bucket +
+prospect, D20) · Follow-ups-due on Overview · /templates (5 house emails)
+· document Print/PDF (dead button fixed) · referral field + proposal win
+rate + content sweep · meeting notes on client detail. Lead-funnel finish
+found already built. Migrations 20260712020000 + 20260712030000 applied;
+suite at 47 checks, green against production.
+
 ## Shipped (live in production)
 
 - **Domain**: https://www.ridgelineknows.com (apex 308→www; DNS at

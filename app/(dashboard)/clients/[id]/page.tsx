@@ -7,6 +7,7 @@ import { archiveClientAction, updateClientAction } from '@/app/actions/clients'
 import { scheduleDeleteAction } from '@/app/actions/cleanup'
 import { ContactList } from '@/components/clients/ContactList'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { MeetingNotesPanel } from '@/components/dashboard/MeetingNotes'
 import { queryFailed } from '@/lib/supabase/errors'
 import type { Client, Contact, Project } from '@/lib/types'
 
@@ -26,10 +27,12 @@ export default async function ClientDetailPage({
     { data: client, error: clientError },
     { data: projects, error: projectsError },
     { data: contacts, error: contactsError },
+    { data: meetingNotes },
   ] = await Promise.all([
     supabase.from('clients').select('*').eq('id', id).single(),
     supabase.from('projects').select('id, name, status').eq('client_id', id).order('created_at', { ascending: false }),
     supabase.from('contacts').select('*').eq('client_id', id).order('role').order('name'),
+    supabase.from('meeting_notes').select('id, noted_on, note').eq('client_id', id).order('noted_on', { ascending: false }),
   ])
 
   if (queryFailed('clients', clientError)) return <ErrorState title="Couldn't load this client" />
@@ -87,6 +90,8 @@ export default async function ClientDetailPage({
           )}
         </div>
       )}
+
+      <MeetingNotesPanel clientId={id} notes={meetingNotes ?? []} />
 
       {/* Contacts */}
       <div className="section-card">
