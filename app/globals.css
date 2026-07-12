@@ -1456,3 +1456,42 @@ details:not([open]) > *:not(summary) { display: none; }
 .value-inputs__money { display: flex; align-items: center; gap: 8px; color: var(--ink-muted); font-size: 14px; }
 .value-inputs__saved { font-size: 13.5px; color: var(--ink); border: 1px solid var(--rule); background: var(--bg-deep); padding: 10px 14px; max-width: 420px; }
 .value-inputs__owner-note { margin: 0; font-size: 12.5px; color: var(--ink-soft); font-style: italic; }
+
+/* Field kit — prospects & card drops (phone-first) */
+.prospect-tools { margin-bottom: 10px; border: 1px solid var(--rule-soft); background: var(--paper); }
+.prospect-tools summary {
+  cursor: pointer; padding: 12px 16px; font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber-deep); list-style: none;
+}
+.prospect-tools summary::-webkit-details-marker { display: none; }
+.prospect-tools summary::after { content: ' ▸'; }
+.prospect-tools[open] summary::after { content: ' ▾'; }
+.prospect-tools__body { padding: 4px 16px 16px; }
+
+.prospect-industries { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 12px 0 4px; }
+.prospect-industries a {
+  font-size: 12.5px; color: var(--ink-soft); text-decoration: none;
+  padding: 4px 10px; border: 1px solid var(--rule-soft); border-radius: 99px; white-space: nowrap;
+}
+.prospect-industries a.is-active { color: var(--ink); border-color: var(--amber); background: var(--paper); }
+
+.prospect-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.prospect-card { border: 1px solid var(--rule-soft); background: var(--paper); }
+.prospect-card summary {
+  cursor: pointer; padding: 13px 16px; list-style: none;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.prospect-card summary::-webkit-details-marker { display: none; }
+.prospect-card__name { font-family: var(--serif); font-size: 16.5px; color: var(--ink); }
+.prospect-card__meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--ink-soft); align-items: baseline; }
+.prospect-card__status { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.prospect-card__status--untouched { color: var(--ink-soft); }
+.prospect-card__status--visited { color: var(--blue); }
+.prospect-card__status--interested { color: var(--amber-deep); }
+.prospect-card__status--lead { color: var(--green); }
+.prospect-card__status--archived { color: var(--ink-soft); }
+.prospect-card__body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--rule-soft); padding-top: 12px; }
+.prospect-card__visits { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.prospect-card__visits li { font-size: 12.5px; color: var(--ink-muted); display: flex; gap: 10px; flex-wrap: wrap; }
+.prospect-card__visits li > span:first-child { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
+.prospect-card__word { font-family: var(--mono); font-size: 11.5px; color: var(--blue); }

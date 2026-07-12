@@ -17,6 +17,7 @@ import {
   Settings,
   Trash2,
   MessageSquare,
+  MapPin,
 } from 'lucide-react'
 
 interface NavItem {
@@ -28,6 +29,7 @@ interface NavItem {
 
 const NAV_MAIN: NavItem[] = [
   { href: '/overview', label: 'Overview', icon: LayoutDashboard },
+  { href: '/prospects', label: 'Card Drops', icon: MapPin },
   { href: '/leads', label: 'Leads', icon: UserPlus },
   { href: '/clients', label: 'Clients', icon: Users },
   { href: '/projects', label: 'Projects', icon: FolderOpen },
