@@ -29,7 +29,7 @@ I come in, learn exactly how your operation works, and build something that clos
 
 ## WHO I WORK WITH
 
-I focus on small businesses in the Murrells Inlet and Myrtle Beach area where the owner is close enough to the operation to feel every inefficiency personally. I also work with clients anywhere when the fit is right.
+I focus on small businesses along the South Carolina coast — from the Lowcountry to Myrtle Beach — where the owner is close enough to the operation to feel every inefficiency personally. I also work with clients anywhere when the fit is right.
 
 Real estate agencies. Medical and dental offices. Property management companies. Small contractors and trade businesses. Independent insurance agencies.
 
