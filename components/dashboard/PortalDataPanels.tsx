@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import {
   addActivityAction, addHighlightAction, addIssueAction, addRoadmapAction,
   draftCaseStudyAction, rotateIngestKeyAction, saveAutomationAction, savePortalSettingsAction,
@@ -190,9 +190,42 @@ export function HighlightForm({ clientId }: { clientId: string }) {
 }
 
 // ------------------------------------------------------------
+/** Copy-to-clipboard with visible confirmation. The reveal is one-time, so
+    selection-by-hand must never be the only path (owner finding, 2026-07-11:
+    the wrapped key + adjacent sample copied as one 5-line blob). */
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+  return (
+    <button
+      type="button"
+      className="btn-outline"
+      style={{ fontSize: 12, padding: '6px 14px', whiteSpace: 'nowrap' }}
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text)
+          setCopied(true)
+          setTimeout(() => setCopied(false), 2000)
+        } catch {
+          // Clipboard blocked (rare, e.g. non-HTTPS): leave the button label
+          // unchanged so nobody believes a copy that didn't happen.
+        }
+      }}
+    >
+      {copied ? 'Copied ✓' : label}
+    </button>
+  )
+}
+
 export function IngestKeyPanel({ clientId, createdAt }: { clientId: string; createdAt: string | null }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(rotateIngestKeyAction, null)
   const freshKey = state?.message // plaintext, shown once
+
+  const exampleCurl = freshKey
+    ? `curl -X POST https://www.ridgelineknows.com/api/ingest/activity \\
+  -H "Authorization: Bearer ${freshKey}" \\
+  -H "Content-Type: application/json" \\
+  -d '{"automation_id":"<uuid>","items_processed":42}'`
+    : ''
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -204,15 +237,27 @@ export function IngestKeyPanel({ clientId, createdAt }: { clientId: string; crea
       </p>
       {state?.errors?._root && <div className="login-error">{state.errors._root}</div>}
       {freshKey && (
-        <div style={{ padding: '14px 18px', border: '1px solid var(--amber)', background: 'var(--paper)' }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--amber-deep)', marginBottom: 8 }}>
+        <div style={{ padding: '14px 18px', border: '1px solid var(--amber)', background: 'var(--paper)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--amber-deep)' }}>
             Copy this now — it will not be shown again
           </div>
-          <code style={{ fontFamily: 'var(--mono)', fontSize: 13, wordBreak: 'break-all' }}>{freshKey}</code>
-          <pre style={{ marginTop: 12, fontFamily: 'var(--mono)', fontSize: 11.5, whiteSpace: 'pre-wrap', color: 'var(--ink-muted)' }}>{`curl -X POST https://www.ridgelineknows.com/api/ingest/activity \\
-  -H "Authorization: Bearer ${freshKey}" \\
-  -H "Content-Type: application/json" \\
-  -d '{"automation_id":"<uuid>","items_processed":42}'`}</pre>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <code style={{ fontFamily: 'var(--mono)', fontSize: 13, whiteSpace: 'nowrap', overflowX: 'auto', display: 'block', flex: 1, padding: '8px 10px', border: '1px solid var(--rule)', background: 'var(--bg-deep)' }}>{freshKey}</code>
+            <CopyButton text={freshKey} label="Copy key" />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+            In n8n&rsquo;s Header Auth credential: Name <code style={{ fontFamily: 'var(--mono)' }}>Authorization</code>,
+            Value <code style={{ fontFamily: 'var(--mono)' }}>Bearer </code> + the key.
+          </div>
+          <div style={{ borderTop: '1px solid var(--rule-soft)', paddingTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-soft)' }}>
+                Example call — for reference, not part of the key
+              </div>
+              <CopyButton text={exampleCurl} label="Copy example" />
+            </div>
+            <pre style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: 11.5, whiteSpace: 'pre-wrap', color: 'var(--ink-muted)' }}>{exampleCurl}</pre>
+          </div>
         </div>
       )}
       <form action={formAction}>
