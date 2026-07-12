@@ -18,12 +18,17 @@ export function IndustryLanding({ entry }: { entry: LandingIndustry }) {
           <section className="hero landing-hero" id="top">
             <div className="container">
               <Reveal className="hero__meta">
-                <span>{entry.name}</span>
+                <span>Operations &amp; automation</span>
                 <i />
                 <span>The Lowcountry to Myrtle Beach and beyond</span>
               </Reveal>
               <Reveal delay={1}>
-                <h1 className="landing-hero__title">{entry.headline}</h1>
+                {/* The industry IS the headline act — a broker landing on /real
+                    must see "Real estate" before anything else. */}
+                <h1 className="landing-hero__title">
+                  <span className="landing-hero__industry">{entry.name}.</span>
+                  <span className="landing-hero__hook">{entry.headline}</span>
+                </h1>
               </Reveal>
               <Reveal delay={2}>
                 <p className="hero__pitch landing-hero__pitch">{entry.lede}</p>
@@ -54,6 +59,8 @@ export function IndustryLanding({ entry }: { entry: LandingIndustry }) {
                     <p className="lede">
                       Every client gets a private portal: what ran, what it saved, and the math
                       behind the number. You will never wonder what you&rsquo;re paying for.
+                      And when something breaks — things break — you see it caught and fixed,
+                      not silence.
                     </p>
                   </Reveal>
                   <Reveal delay={2}>
