@@ -144,3 +144,61 @@ export async function importKmlAction(_prev: ActionState, formData: FormData): P
   revalidatePath('/prospects')
   return { message: `Imported ${imported} pin${imported === 1 ? '' : 's'}${skipped ? `, skipped ${skipped} already here` : ''}.` }
 }
+
+export async function saveCardAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await ownerClient()
+  if (!supabase) return { errors: { _root: 'Owner only.' } }
+
+  const business_name = String(formData.get('business_name') ?? '').trim()
+  if (!business_name) return { errors: { _root: 'Business name is required — fix the guess if OCR missed it.' } }
+
+  const attachTo = String(formData.get('attach_to') ?? '').trim() // existing prospect id, or ''
+  const fields = {
+    contact_name: String(formData.get('contact_name') ?? '').trim() || null,
+    email: String(formData.get('email') ?? '').trim() || null,
+    phone: String(formData.get('phone') ?? '').trim() || null,
+    website: String(formData.get('website') ?? '').trim() || null,
+    notes: String(formData.get('notes') ?? '').trim() || null,
+  }
+
+  // Photo first, so a failed upload never leaves a prospect without its card.
+  let card_photo_path: string | null = null
+  const photo = formData.get('photo')
+  if (photo instanceof File && photo.size > 0) {
+    if (photo.size > 12 * 1024 * 1024) return { errors: { _root: 'Photo too large — 12 MB max.' } }
+    const ext = photo.type === 'image/png' ? 'png' : photo.type === 'image/webp' ? 'webp' : 'jpg'
+    card_photo_path = `card-${crypto.randomUUID()}.${ext}`
+    const { error: upErr } = await supabase.storage.from('cards').upload(card_photo_path, photo, { contentType: photo.type || 'image/jpeg' })
+    if (upErr) {
+      console.error('[prospects] card upload failed:', upErr.message)
+      return { errors: { _root: 'Photo upload failed — try again.' } }
+    }
+  }
+
+  if (attachTo) {
+    // Attach to an existing prospect: fill only what's blank, photo always wins.
+    const { data: existing, error: readErr } = await supabase.from('prospects').select('*').eq('id', attachTo).single()
+    if (readErr || !existing) return { errors: { _root: 'That prospect was not found.' } }
+    const patch: Record<string, unknown> = { card_photo_path: card_photo_path ?? existing.card_photo_path }
+    for (const [k, v] of Object.entries(fields)) {
+      if (v && !existing[k]) patch[k] = v
+    }
+    const { error } = await supabase.from('prospects').update(patch).eq('id', attachTo)
+    if (error) return { errors: { _root: 'Saving failed — refresh and try again.' } }
+    revalidatePath('/prospects')
+    return { message: `Card attached to ${existing.business_name}.` }
+  }
+
+  const { error } = await supabase.from('prospects').insert({ business_name, ...fields, card_photo_path })
+  if (error) {
+    return {
+      errors: {
+        _root: error.message.includes('prospects_dedupe_idx')
+          ? 'That business is already in the list — pick it in "Attach to" instead.'
+          : 'Saving failed — refresh and try again.',
+      },
+    }
+  }
+  revalidatePath('/prospects')
+  return { message: 'Prospect created from the card.' }
+}

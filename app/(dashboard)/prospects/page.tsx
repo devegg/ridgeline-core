@@ -4,6 +4,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
 import { KmlImport, ProspectCard, ProspectQuickAdd } from '@/components/dashboard/ProspectPanels'
+import { CardScan } from '@/components/dashboard/CardScan'
 import type { Prospect, ProspectVisit } from '@/lib/types'
 
 const TABS = [
@@ -49,6 +50,19 @@ export default async function ProspectsPage({
   }
   const industries = [...new Set((industriesRes.data ?? []).map(r => r.industry as string))].sort()
 
+  // Card photos live in a private bucket — short-lived signed URLs, only for
+  // rows that have one.
+  const photoUrls = new Map<string, string>()
+  const withPhotos = prospects.filter(p => p.card_photo_path)
+  if (withPhotos.length > 0) {
+    const { data: signed } = await supabase.storage
+      .from('cards')
+      .createSignedUrls(withPhotos.map(p => p.card_photo_path as string), 3600)
+    signed?.forEach((s, i) => {
+      if (s.signedUrl) photoUrls.set(withPhotos[i].id, s.signedUrl)
+    })
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -60,6 +74,12 @@ export default async function ProspectsPage({
         </p>
       </div>
 
+      <details className="prospect-tools">
+        <summary>Scan a business card</summary>
+        <div className="prospect-tools__body">
+          <CardScan prospects={prospects.map(p => ({ id: p.id, business_name: p.business_name }))} />
+        </div>
+      </details>
       <details className="prospect-tools">
         <summary>Add a prospect</summary>
         <div className="prospect-tools__body"><ProspectQuickAdd industries={industries} /></div>
@@ -94,7 +114,7 @@ export default async function ProspectsPage({
       ) : (
         <div className="prospect-list">
           {prospects.map(p => (
-            <ProspectCard key={p.id} prospect={p} visits={visitsByProspect.get(p.id) ?? []} />
+            <ProspectCard key={p.id} prospect={p} visits={visitsByProspect.get(p.id) ?? []} photoUrl={photoUrls.get(p.id)} />
           ))}
         </div>
       )}

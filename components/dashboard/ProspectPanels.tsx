@@ -140,7 +140,7 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 /** One prospect, phone-first: everything stacks, actions inside a details fold. */
-export function ProspectCard({ prospect, visits }: { prospect: Prospect; visits: ProspectVisit[] }) {
+export function ProspectCard({ prospect, visits, photoUrl }: { prospect: Prospect; visits: ProspectVisit[]; photoUrl?: string }) {
   return (
     <details className="prospect-card">
       <summary>
@@ -154,6 +154,12 @@ export function ProspectCard({ prospect, visits }: { prospect: Prospect; visits:
         </span>
       </summary>
       <div className="prospect-card__body">
+        {prospect.contact_name && <div style={{ fontSize: 13.5 }}>{prospect.contact_name}</div>}
+        {prospect.email && (
+          <div style={{ fontSize: 13.5 }}>
+            <a href={`mailto:${prospect.email}`}>{prospect.email}</a>
+          </div>
+        )}
         {prospect.address && <div style={{ fontSize: 13.5, color: 'var(--ink-muted)' }}>{prospect.address}</div>}
         {(prospect.lat !== null || prospect.address) && (
           <div style={{ fontSize: 13.5 }}>
@@ -176,6 +182,12 @@ export function ProspectCard({ prospect, visits }: { prospect: Prospect; visits:
           </div>
         )}
         {prospect.notes && <div style={{ fontSize: 13.5, color: 'var(--ink-muted)' }}>{prospect.notes}</div>}
+        {photoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <a href={photoUrl} target="_blank" rel="noopener noreferrer">
+            <img src={photoUrl} alt={`Business card — ${prospect.business_name}`} style={{ maxWidth: 220, border: '1px solid var(--rule-soft)', display: 'block' }} />
+          </a>
+        )}
         {visits.length > 0 && (
           <ul className="prospect-card__visits">
             {visits.map(v => (
