@@ -1495,3 +1495,35 @@ details:not([open]) > *:not(summary) { display: none; }
 .prospect-card__visits li { font-size: 12.5px; color: var(--ink-muted); display: flex; gap: 10px; flex-wrap: wrap; }
 .prospect-card__visits li > span:first-child { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); }
 .prospect-card__word { font-family: var(--mono); font-size: 11.5px; color: var(--blue); }
+
+/* ============================================================
+   Dashboard dark mode (owner request 2026-07-12: screen fatigue).
+   Same softened-dark tokens as the portal, scoped to .dash-layout.
+   ============================================================ */
+.dash-layout[data-theme="dark"] {
+  --bg: #211E1A;
+  --bg-deep: #1B1916;
+  --paper: #2A2721;
+  --ink: #E8E1D1;
+  --ink-muted: #B0A793;
+  --ink-soft: #948C7A;
+  --rule: #3E3930;
+  --rule-soft: #332F28;
+  --blue: #7FAEDB;
+  --blue-deep: #A5C6E8;
+  --blue-soft: #6FA0CF;
+  --amber: #C99C58;
+  --amber-deep: #D9B073;
+  --amber-soft: #B58439;
+}
+
+/* Hard-coded light-mode colors that need dark counterparts */
+.dash-layout[data-theme="dark"] .dash-nav__item:hover { background: rgba(232, 225, 209, 0.06); color: var(--ink); }
+.dash-layout[data-theme="dark"] .dash-nav__item.active { background: rgba(127, 174, 219, 0.12); }
+.dash-layout[data-theme="dark"] .data-table tbody tr:hover td { background: rgba(42, 39, 33, 0.85); }
+.dash-layout[data-theme="dark"] .login-error {
+  color: #E08573;
+  border-color: #7A4A40;
+  background: rgba(224, 133, 115, 0.08);
+}
+.dash-layout[data-theme="dark"] .error-state__title { color: #E08573; }

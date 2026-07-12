@@ -97,6 +97,14 @@ Lead (D19). BACKLOG.md re-sorted and pruned per owner review 2026-07-11.
 Migration 20260712010000 must apply (`npm run migrate`) before the page
 loads; new suite checks skip-with-notice until then.
 
+## Pending merge — dashboard dark mode (PR #32, feature/dashboard-dark)
+
+The portal's softened-dark theme now also covers the owner dashboard
+(owner request 2026-07-12, screen fatigue): toggle in the sidebar footer,
+own storage key (rk-dash-theme), pre-paint script, same warm-dark tokens
+scoped to .dash-layout. Extends D6's portal-only scope by owner request;
+marketing + login stay light.
+
 ## Shipped (live in production)
 
 - **Domain**: https://www.ridgelineknows.com (apex 308→www; DNS at

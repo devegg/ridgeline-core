@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ThemeToggle } from '@/components/portal/ThemeToggle'
 import {
   LayoutDashboard,
   Users,
@@ -113,7 +114,10 @@ export function Sidebar({ role = 'owner' }: { role?: string }) {
         )}
       </nav>
 
-      <div className="dash-sidebar__footer">Ridgeline · Internal</div>
+      <div className="dash-sidebar__footer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+        <span>Ridgeline · Internal</span>
+        <ThemeToggle rootSelector=".dash-layout" storageKey="rk-dash-theme" />
+      </div>
     </aside>
   )
 }
