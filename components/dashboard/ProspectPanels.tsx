@@ -155,6 +155,21 @@ export function ProspectCard({ prospect, visits }: { prospect: Prospect; visits:
       </summary>
       <div className="prospect-card__body">
         {prospect.address && <div style={{ fontSize: 13.5, color: 'var(--ink-muted)' }}>{prospect.address}</div>}
+        {(prospect.lat !== null || prospect.address) && (
+          <div style={{ fontSize: 13.5 }}>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${
+                prospect.lat !== null
+                  ? `${prospect.lat},${prospect.lng}`
+                  : encodeURIComponent(`${prospect.business_name} ${prospect.address}`)
+              }`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in Maps →
+            </a>
+          </div>
+        )}
         {prospect.phone && (
           <div style={{ fontSize: 13.5 }}>
             <a href={`tel:${prospect.phone.replace(/\D/g, '')}`}>{prospect.phone}</a>
