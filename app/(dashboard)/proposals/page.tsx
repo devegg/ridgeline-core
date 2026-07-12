@@ -26,12 +26,19 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
   const { data: proposals, error } = await query
   const loadFailed = queryFailed('proposals', error)
 
+  // Win rate over decided proposals — pending ones aren't wins or losses yet.
+  const { data: allForRate } = await supabase.from('proposals').select('status')
+  const won = (allForRate ?? []).filter(p => p.status === 'approved').length
+  const lost = (allForRate ?? []).filter(p => p.status === 'rejected').length
+  const decided = won + lost
+  const rateLine = decided > 0 ? ` · ${won} won of ${decided} decided (${Math.round((won / decided) * 100)}%)` : ''
+
   return (
     <div>
       <div className="page-header">
         <div className="page-eyebrow">Proposals</div>
         <h1 className="page-title">All Proposals</h1>
-        <p className="page-description">{proposals?.length ?? 0} proposal{proposals?.length !== 1 ? 's' : ''}</p>
+        <p className="page-description">{proposals?.length ?? 0} proposal{proposals?.length !== 1 ? 's' : ''}{rateLine}</p>
       </div>
 
       <div className="page-actions">

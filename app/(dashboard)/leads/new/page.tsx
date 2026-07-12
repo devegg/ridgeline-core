@@ -72,6 +72,13 @@ export default function NewLeadPage() {
 
         <div className="field-row">
           <div className="field">
+            <label htmlFor="l-referred">Referred by (who to thank)</label>
+            <input id="l-referred" name="referred_by" type="text" placeholder="Name or business" />
+          </div>
+        </div>
+
+        <div className="field-row">
+          <div className="field">
             <label htmlFor="l-industry">Industry</label>
             <input id="l-industry" name="industry" type="text" />
           </div>
