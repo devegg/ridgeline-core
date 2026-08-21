@@ -89,7 +89,74 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
-## Shipped 2026-08-21 — on-site visit estimator (feature/visit-estimator)
+## Shipped 2026-08-21 — field kit, hardened by a real field run (PRs #41–#50)
+
+The estimator (#40) met an actual drop-in. Everything below came from Brian
+using it on his phone, in front of people, and is recorded because most of it
+was invisible from a desk.
+
+**The phone path** — `/visit` (PR #41): a full-bleed field home with a real
+camera button, client-side search over the working list, and a tap into the
+estimator. Built because `/prospects` is unusable on a phone: the dashboard
+layout has a fixed 220px sidebar and no mobile collapse (~170px of content at
+390px). Desktop `/prospects` is untouched apart from a link across.
+
+**Card capture, made to actually work:**
+- Saving a scanned card crashed with a bare "client-side exception" and saved
+  nothing. Next caps Server Action bodies at 1 MB by default and that was
+  never raised, so a 3–6 MB camera photo was rejected before the action ran
+  (#43). Photos are now downscaled in the browser first
+  (`lib/field/downscale.ts`), the limit is 12 MB as a backstop, and
+  `app/(field)/error.tsx` replaces the bare crash screen.
+- `<input capture>` hands off to the phone's camera app, where no framing
+  guide can be drawn, so cards arrived surrounded by desk. `CardCamera`
+  (#48) owns the preview: the guide rectangle and the crop are the same
+  region by construction. `GUIDE_WIDTH` and the CSS width must stay equal —
+  at 0.9 the clamp fires on a 16:9 stream and silently shrinks the crop.
+- Scanning a card now opens that business's visit screen (#47), like the
+  manual add already did.
+- A business already promoted to a Lead was filtered out of the "attach to"
+  picker, so re-scanning its card failed with advice that could not be
+  followed (#49). Attach targets now come from their own unfiltered query.
+- Failed saves used to strand the uploaded photo in storage; every failure
+  path now drops it (#50).
+
+**Honesty and copy:**
+- The fee is charged once on the first year's savings. The row said `/yr`,
+  which read as recurring — wrong in the client's disfavour (#47).
+- The estimate panel took ~40% of the phone screen. Collapsed to two rows,
+  cost and fee, with the recovered figure and the full disclaimer one tap
+  away; the "Rough estimate" tag never hides (#44, D21).
+- LastPass opened over the task-name field. The placeholder contained the
+  word "email" — password managers classify by surrounding words, and on
+  Android they run as OS autofill services where `data-lpignore` is never
+  seen (#42, #45). `lib/field/no-autofill.ts` carries both halves: the
+  desktop attributes and the copy rule.
+
+**Lead pipeline** (#47): whole rows are clickable (`cursor: pointer` had been
+promising that while only the first cell was a link — fixes every dashboard
+table); "Move to Meeting Scheduled" books a date into `follow_up_date`; and
+every stage is reachable from a Set stage control, because a stage moved by
+accident used to be a dead end for anything but a lost lead.
+
+**Dark mode** (#50): `body { color: var(--ink) }` resolves at `body`, where
+`--ink` is still the light value — the dark tokens are scoped to a
+descendant. `.portal-layout` and `.dash-layout` set a background but no
+colour, so anything without its own colour inherited dark ink onto dark. One
+declaration per themed container. Verified on the live invoice: inheriting
+cells went from ~26 to 225 luminance against a background of 30.
+
+**ESLint** (#40, #46): flat config added (`eslint.config.mjs`), `npm run lint`
+is the ESLint CLI now that `next lint` is deprecated, and the build gates on
+it again after the seven pre-existing errors were cleared. Note the
+`@next/next` rules double-report when run from a worktree nested under the
+main checkout — they walk candidate page roots and find two `app/` dirs.
+
+Also added `npm run test:estimate` (19 checks, math + database) and
+`allowImportingTsExtensions` so the suite imports the real `.ts` modules
+through node's type stripper rather than duplicating the math.
+
+## Shipped 2026-08-21 — on-site visit estimator (PR #40, feature/visit-estimator)
 
 `/visit/[id]`, a phone-first screen for pricing a prospect's repetitive tasks
 out loud during a drop-in while the owner watches the annual figure build.
