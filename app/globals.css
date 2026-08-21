@@ -800,8 +800,15 @@ section {
   white-space: nowrap;
 }
 .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--rule-soft); font-size: 14px; vertical-align: middle; }
-.data-table tbody tr { transition: background 120ms; cursor: pointer; }
+/* The whole row is clickable, not just the business name. cursor:pointer on
+   the row promised that long before it was true — the first cell's link is
+   stretched across the row so the promise holds, with no JS and no loss of
+   keyboard focus (the anchor is still a real anchor). Links in other cells
+   sit above the overlay so mailto:/tel: still work. */
+.data-table tbody tr { transition: background 120ms; cursor: pointer; position: relative; }
 .data-table tbody tr:hover td { background: rgba(251, 247, 236, 0.8); }
+.data-table tbody td:first-child > a::after { content: ''; position: absolute; inset: 0; }
+.data-table tbody td:not(:first-child) a { position: relative; z-index: 1; }
 .data-table td:first-child { font-family: var(--serif); font-size: 16px; color: var(--ink); }
 .data-table a { text-decoration: none; color: inherit; }
 .data-table a:hover td:first-child { color: var(--blue); }
