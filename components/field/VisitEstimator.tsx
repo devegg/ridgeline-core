@@ -60,7 +60,7 @@ export function VisitEstimator({
   return (
     <div className="field-screen">
       <header className="field-head">
-        <Link href="/prospects" className="field-back">&larr; Card drops</Link>
+        <Link href="/visit" className="field-back">&larr; Card drops</Link>
         <h1 className="field-title">{prospect.business_name}</h1>
         <p className="field-sub">
           {prospect.contact_name ?? 'No contact name yet'}

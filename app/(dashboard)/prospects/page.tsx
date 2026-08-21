@@ -72,6 +72,10 @@ export default async function ProspectsPage({
           Businesses you&rsquo;ve visited or plan to visit. Log each drop with the card word you
           handwrote; promote the warm ones to Leads.
         </p>
+        <p className="page-sub">
+          On your phone, use <a href="/visit">the field list</a> instead — no sidebar, a camera
+          button for cards, and a tap straight into the visit estimator.
+        </p>
       </div>
 
       <details className="prospect-tools">
