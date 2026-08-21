@@ -41,6 +41,7 @@ What is missing is only the **task pricing** and the **screen to do it on**.
 | 3 | Show two numbers: raw annual cost, then the post-haircut recoverable figure. Both labeled. | Raw only (reads as a promise, portal undercuts it later); haircut only (loses the "this is bleeding you" moment) |
 | 4 | Screen only, saved to the prospect. Nothing emailed, nothing handed over. | Emailed recap; auto-drafted proposal. Both commit to a number in writing on day one. The card's job is to book 15 minutes, not to close. |
 | 5 | Dedicated route in a new `(field)` route group, outside `(dashboard)`. | Inline on the prospect card (crowds a 214-line component, poor on-site flow); standalone public calculator (new unauthenticated surface on a deny-by-default app) |
+| 6 | The on-site number is a **rough estimate**, labeled as such on screen. No commission or fee is shown or stored. The proposal carries the firm rate. | Showing the fee live (invites a negotiation before anything is scoped); presenting the estimate as a quote |
 
 ## The math
 
@@ -119,6 +120,12 @@ figures for the whole visit, plus the standing line: *"30% held back — I'd
 rather beat the number than miss it."* This is what the owner watches. It
 recalculates on every keystroke.
 
+The total block carries a permanent **"Rough estimate"** label — not a
+dismissible hint, not fine print. The owner is watching this number get
+built and will remember it; the screen must never let it read as a quote.
+The firm rate lives in the proposal (decision 6). No fee or commission
+figure appears anywhere on this screen.
+
 Below the fold: the visit rate, a notes field, and Save.
 
 ## Routing and layout
@@ -191,6 +198,7 @@ behaves differently, the field types change, not the design.
 - A public, unauthenticated calculator (decision 5)
 - Collapsing the dashboard sidebar (logged as a follow-up)
 - Editing tasks after save — v1 captures; corrections happen at the desk
+- Any commission or fee math, on screen or in the schema (decision 6)
 
 ## Risks
 
@@ -198,5 +206,6 @@ behaves differently, the field types change, not the design.
 |---|---|
 | Gboard mic absent on the text fields too, gutting the "voice" premise | Verified on the real handset before merge. The screen still works as a fast tap-form; the live total is the actual demo. |
 | Owner hears the raw cost as a savings promise | Both numbers are labeled on screen and the haircut line is always visible. |
+| Owner treats the on-site figure as a firm quote | Permanent "Rough estimate" label on the total block; the fee never appears on screen; the proposal is the only place a firm rate is stated (decision 6). |
 | A visit is priced against the wrong prospect | The route is prospect-scoped; the header shows the business name and card photo throughout. |
 | Two or three tasks still fall short of $10k | Expected and fine. The number is what it is — never inflate inputs to clear the bar. |
