@@ -1,6 +1,6 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-07-11. Code is ground truth; this reconciles to it.
+Last updated: 2026-08-21. Code is ground truth; this reconciles to it.
 
 ## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
 
@@ -81,7 +81,7 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   the Magic Link template edit (BACKLOG); cron env (`CRON_SECRET`,
   `SUPABASE_SECRET_KEY`) when the first client is flagged for auto-send.
 
-## Pending merge — client-owned value inputs (PR #29, feature/client-value-inputs)
+## Shipped 2026-07-12 — client-owned value inputs (PR #29, feature/client-value-inputs)
 
 The client sets the numbers their savings math runs on: "Your numbers" form
 inside the portal's How-I-count panel (blended hourly rate + minutes-per-task
@@ -89,7 +89,40 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
-## Pending merge — field kit v1 (PR #31, feature/field-kit)
+## Shipped 2026-08-21 — on-site visit estimator (feature/visit-estimator)
+
+`/visit/[id]`, a phone-first screen for pricing a prospect's repetitive tasks
+out loud during a drop-in while the owner watches the annual figure build.
+Per docs/plans/DESIGN-BRIEF-visit-estimator.md (six locked decisions) and
+BUILD-PLAN-visit-estimator.md.
+
+- New `(field)` route group with its own full-bleed layout — the dashboard's
+  fixed 220px sidebar has no mobile collapse, leaving ~170px of content at
+  390px. Same owner-only auth gate, duplicated rather than shared.
+- `visit_tasks` (migration 20260820000000, applied): label, who, minutes each,
+  times per week, hourly rate. CHECK bounds mirror `set_value_inputs`
+  ($5–$500/hr, 0.5–480 min). Owner-only RLS, no client policies (D8). **No
+  dollar amounts stored** — money is derived on read.
+- `lib/field/estimate.ts` imports `HAIRCUT` and `formatDollars` from
+  `lib/portal/value.ts`; a test asserts it IS the portal's constant, so the
+  field number and the portal number cannot drift.
+- Three money lines: costs now, recovered after the 30% haircut, and the 25%
+  fee — with a permanent "Rough estimate" tag and a note separating the
+  estimated figures from the firm rate (D21).
+- `saveVisitEstimateAction` writes a visit plus its tasks all-or-nothing
+  (deletes the visit if the tasks fail) and never walks a status backward.
+- `scripts/test-estimate.mjs` (`npm run test:estimate`) — 19 checks, math and
+  database. Imports the real `.ts` modules via node's `--experimental-strip-types`.
+- ESLint 9 flat config added (`eslint.config.mjs`); `npm run lint` is the
+  ESLint CLI now that `next lint` is deprecated. **Build gating deliberately
+  off** (`eslint.ignoreDuringBuilds`) — 11 pre-existing errors in shipped
+  files would fail production deploys the moment the config landed.
+- Verified end to end at 390px against a real prospect: no horizontal
+  overflow, no sidebar, sticky total, ~$5,800 / ~$4,100 / ~$1,000 on the
+  worked example, two tasks summing to ~$7,800, a real save that flipped the
+  prospect to `interested`. Test data removed and the prospect restored.
+
+## Shipped 2026-07-12 — field kit v1 (PR #31, feature/field-kit)
 
 Card Drops in the dashboard nav (/prospects, phone-first): quick add,
 KML import of the Drop-Ins My Map, visit log with card word, promote to
@@ -97,7 +130,7 @@ Lead (D19). BACKLOG.md re-sorted and pruned per owner review 2026-07-11.
 Migration 20260712010000 must apply (`npm run migrate`) before the page
 loads; new suite checks skip-with-notice until then.
 
-## Pending merge — dashboard dark mode (PR #32, feature/dashboard-dark)
+## Shipped 2026-07-12 — dashboard dark mode (PR #32, feature/dashboard-dark)
 
 The portal's softened-dark theme now also covers the owner dashboard
 (owner request 2026-07-12, screen fatigue): toggle in the sidebar footer,

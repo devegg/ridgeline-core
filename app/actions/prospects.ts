@@ -63,6 +63,92 @@ export async function logVisitAction(_prev: ActionState, formData: FormData): Pr
   return { message: 'Visit logged.' }
 }
 
+/** Bounds are enforced in three places on purpose: the browser input, here,
+    and the CHECK constraints. The form is the only one a person can bypass. */
+const BOUNDS = {
+  minutes_each: [0.5, 480],
+  times_per_week: [0.1, 500],
+  hourly_rate: [5, 500],
+} as const
+
+export async function saveVisitEstimateAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await ownerClient()
+  if (!supabase) return { errors: { _root: 'Owner only.' } }
+
+  const prospect_id = String(formData.get('prospect_id') ?? '')
+  if (!prospect_id) return { errors: { _root: 'Missing prospect.' } }
+
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(String(formData.get('tasks') ?? '[]'))
+  } catch {
+    return { errors: { _root: 'Could not read the tasks — nothing was saved.' } }
+  }
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    return { errors: { _root: 'Add at least one priced task before saving.' } }
+  }
+
+  const rows = []
+  for (const [i, raw] of parsed.entries()) {
+    const t = raw as Record<string, unknown>
+    const label = String(t.label ?? '').trim()
+    if (!label) return { errors: { _root: `Task ${i + 1} needs a name.` } }
+
+    const nums: Record<string, number> = {}
+    for (const [field, [lo, hi]] of Object.entries(BOUNDS)) {
+      const n = Number(t[field])
+      if (!Number.isFinite(n) || n < lo || n > hi) {
+        return { errors: { _root: `Task ${i + 1}: ${field.replace(/_/g, ' ')} must be between ${lo} and ${hi}.` } }
+      }
+      nums[field] = n
+    }
+
+    rows.push({
+      prospect_id,
+      label,
+      who: String(t.who ?? '').trim() || null,
+      minutes_each: nums.minutes_each,
+      times_per_week: nums.times_per_week,
+      hourly_rate: nums.hourly_rate,
+      sort_order: i,
+    })
+  }
+
+  const { data: visit, error: visitErr } = await supabase
+    .from('prospect_visits')
+    .insert({
+      prospect_id,
+      visited_on: new Date().toISOString().slice(0, 10),
+      card_word: String(formData.get('card_word') ?? '').trim() || null,
+      note: String(formData.get('note') ?? '').trim() || null,
+    })
+    .select('id')
+    .single()
+
+  if (visitErr || !visit) return { errors: { _root: 'Saving the visit failed — nothing was saved. Try again.' } }
+
+  const { error: tasksErr } = await supabase
+    .from('visit_tasks')
+    .insert(rows.map(r => ({ ...r, visit_id: visit.id })))
+
+  if (tasksErr) {
+    // All-or-nothing: a half-saved visit is worse than a failed one, because
+    // it looks complete when you come back to it.
+    await supabase.from('prospect_visits').delete().eq('id', visit.id)
+    return { errors: { _root: 'Saving the tasks failed — nothing was saved. Try again.' } }
+  }
+
+  // Never walk a status backward — same guard as logVisitAction.
+  await supabase
+    .from('prospects')
+    .update({ status: 'interested' })
+    .eq('id', prospect_id)
+    .in('status', ['untouched', 'visited'])
+
+  revalidatePath('/prospects')
+  return { message: `Saved — ${rows.length} task${rows.length === 1 ? '' : 's'} on this visit.` }
+}
+
 export async function setProspectStatusAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await ownerClient()
   if (!supabase) return { errors: { _root: 'Owner only.' } }

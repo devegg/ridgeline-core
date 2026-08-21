@@ -154,6 +154,11 @@ export function ProspectCard({ prospect, visits, photoUrl }: { prospect: Prospec
         </span>
       </summary>
       <div className="prospect-card__body">
+        {/* Primary field action — first in the body so it's the easy tap
+            when you're standing in the parking lot about to walk in. */}
+        <div style={{ fontSize: 13.5, marginBottom: 4 }}>
+          <a href={`/visit/${prospect.id}`}>Start a visit &rarr;</a>
+        </div>
         {prospect.contact_name && <div style={{ fontSize: 13.5 }}>{prospect.contact_name}</div>}
         {prospect.email && (
           <div style={{ fontSize: 13.5 }}>

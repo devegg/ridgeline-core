@@ -6,9 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "migrate": "node scripts/run-migration.mjs",
-    "test:portal": "node scripts/test-portal.mjs"
+    "test:portal": "node scripts/test-portal.mjs",
+    "test:estimate": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-estimate.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.0",
