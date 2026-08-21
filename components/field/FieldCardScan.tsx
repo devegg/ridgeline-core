@@ -106,6 +106,8 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
         </p>
       )}
 
+      <input type="hidden" name="go_to_visit" value="1" />
+
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={URL.createObjectURL(photo)} alt="Business card" className="field-cardimg" />
@@ -142,7 +144,7 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
       </label>
 
       <button type="submit" className="field-submit" disabled={pending}>
-        {pending ? 'Saving…' : 'Save card'}
+        {pending ? 'Saving…' : 'Save and start the visit'}
       </button>
       <button type="button" className="field-linkbtn" onClick={reset}>Start over</button>
     </form>
