@@ -106,7 +106,7 @@ export function VisitEstimator({
             <label className="field-label">
               What is it?
               <input
-                type="text" className="field-input" {...noAutofill} placeholder="Retyping vendor invoices from email"
+                type="text" className="field-input" {...noAutofill} placeholder="Retyping vendor invoices by hand"
                 value={d.label} onChange={e => set(d.key, { label: e.target.value })}
               />
             </label>
@@ -114,7 +114,7 @@ export function VisitEstimator({
             <label className="field-label">
               Who does it?
               <input
-                type="text" className="field-input" {...noAutofill} placeholder="Sherri, office admin"
+                type="text" className="field-input" {...noAutofill} placeholder="Sherri at the front desk"
                 value={d.who} onChange={e => set(d.key, { who: e.target.value })}
               />
             </label>
