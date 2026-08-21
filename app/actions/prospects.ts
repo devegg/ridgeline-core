@@ -341,11 +341,27 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
     .select('id')
     .single()
   if (error) {
+    if (!error.message.includes('prospects_dedupe_idx')) {
+      return { errors: { _root: 'Saving failed — refresh and try again.' } }
+    }
+    // "Already in the list" was misleading for a business that had been
+    // promoted: it was filtered out of the working list AND out of the
+    // "attach to" picker, so the advice pointed at a dropdown it wasn't in.
+    // Say where the record actually went.
+    const { data: clash } = await supabase
+      .from('prospects')
+      .select('status')
+      .eq('business_name', business_name)
+      .maybeSingle()
+
+    const where =
+      clash?.status === 'lead' ? 'already promoted to a Lead'
+      : clash?.status === 'archived' ? 'archived'
+      : 'already on your list'
+
     return {
       errors: {
-        _root: error.message.includes('prospects_dedupe_idx')
-          ? 'That business is already in the list — pick it in "Attach to" instead.'
-          : 'Saving failed — refresh and try again.',
+        _root: `${business_name} is on file — ${where}. Pick it under "Attach to" to put this card on that record.`,
       },
     }
   }

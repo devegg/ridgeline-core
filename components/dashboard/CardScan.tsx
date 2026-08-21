@@ -9,7 +9,9 @@ import type { ActionState } from '@/lib/types'
 /** Snap → OCR (in the browser, free) → confirm the guesses → save.
     The photo rides along and attaches to the prospect; OCR guesses are
     never saved without human eyes on them. */
-export function CardScan({ prospects }: { prospects: { id: string; business_name: string }[] }) {
+const WORKING = ['untouched', 'visited', 'interested']
+
+export function CardScan({ prospects }: { prospects: { id: string; business_name: string; status: string }[] }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(saveCardAction, null)
   const [phase, setPhase] = useState<'idle' | 'reading' | 'confirm'>('idle')
   const [progress, setProgress] = useState(0)
@@ -133,7 +135,16 @@ export function CardScan({ prospects }: { prospects: { id: string; business_name
         <label>Attach to an existing prospect (or leave as new)</label>
         <select name="attach_to" defaultValue="">
           <option value="">— create a new prospect —</option>
-          {prospects.map(p => <option key={p.id} value={p.id}>{p.business_name}</option>)}
+          {prospects.filter(p => WORKING.includes(p.status)).map(p => (
+            <option key={p.id} value={p.id}>{p.business_name}</option>
+          ))}
+          {prospects.some(p => !WORKING.includes(p.status)) && (
+            <optgroup label="Already promoted or archived">
+              {prospects.filter(p => !WORKING.includes(p.status)).map(p => (
+                <option key={p.id} value={p.id}>{p.business_name} ({p.status})</option>
+              ))}
+            </optgroup>
+          )}
         </select>
       </div>
       <div style={{ display: 'flex', gap: 10 }}>

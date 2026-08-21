@@ -19,7 +19,14 @@ const STATUS_LABEL: Record<string, string> = {
  * the working list is short and a round-trip per keystroke in a parking lot
  * with one bar is worse than filtering in memory.
  */
-export function FieldHome({ prospects }: { prospects: Prospect[] }) {
+type Attachable = Pick<Prospect, 'id' | 'business_name' | 'status'>
+
+export function FieldHome({
+  prospects, attachable,
+}: {
+  prospects: Prospect[]
+  attachable: Attachable[]
+}) {
   const [q, setQ] = useState('')
 
   const shown = useMemo(() => {
@@ -41,7 +48,7 @@ export function FieldHome({ prospects }: { prospects: Prospect[] }) {
         </p>
       </header>
 
-      <FieldCardScan prospects={prospects.map(p => ({ id: p.id, business_name: p.business_name }))} />
+      <FieldCardScan prospects={attachable} />
 
       <FieldQuickAdd />
 

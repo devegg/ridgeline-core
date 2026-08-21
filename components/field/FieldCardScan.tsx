@@ -18,7 +18,15 @@ import type { ActionState } from '@/lib/types'
  * Two triggers on purpose: the camera for a card in your hand, and the
  * library for one you already photographed.
  */
-export function FieldCardScan({ prospects }: { prospects: { id: string; business_name: string }[] }) {
+type Attachable = { id: string; business_name: string; status: string }
+
+/** Businesses already promoted or archived are still valid attach targets —
+    a second card from the same place should land on the record that exists,
+    not create a duplicate the dedupe index will reject anyway. They sit in
+    their own group so the working set stays the obvious choice. */
+const WORKING = ['untouched', 'visited', 'interested']
+
+export function FieldCardScan({ prospects }: { prospects: Attachable[] }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(saveCardAction, null)
   const [phase, setPhase] = useState<'idle' | 'camera' | 'reading' | 'confirm'>('idle')
   const [progress, setProgress] = useState(0)
@@ -156,7 +164,18 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
         Attach to a business already on the list?
         <select name="attach_to" className="field-input" defaultValue="">
           <option value="">— create a new one —</option>
-          {prospects.map(p => <option key={p.id} value={p.id}>{p.business_name}</option>)}
+          {prospects.filter(p => WORKING.includes(p.status)).map(p => (
+            <option key={p.id} value={p.id}>{p.business_name}</option>
+          ))}
+          {prospects.some(p => !WORKING.includes(p.status)) && (
+            <optgroup label="Already promoted or archived">
+              {prospects.filter(p => !WORKING.includes(p.status)).map(p => (
+                <option key={p.id} value={p.id}>
+                  {p.business_name} ({p.status === 'lead' ? 'lead' : p.status})
+                </option>
+              ))}
+            </optgroup>
+          )}
         </select>
       </label>
 
