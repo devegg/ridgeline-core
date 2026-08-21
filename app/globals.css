@@ -1659,3 +1659,16 @@ details:not([open]) > *:not(summary) { display: none; }
   font: inherit; font-size: 14.5px; color: var(--ink);
   background: none; border: 1px solid var(--rule); border-radius: 8px; cursor: pointer;
 }
+
+/* In-page card camera. The guide is the crop — pixels outside it are never
+   saved — so the frame has to sit exactly where drawImage will cut. */
+.field-cam { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; margin-bottom: 22px; }
+.field-cam__stage { position: relative; width: 100%; background: #000; border-radius: 8px; overflow: hidden; }
+.field-cam__video { display: block; width: 100%; background: #000; }
+.field-cam__guide {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 86%; aspect-ratio: 3.5 / 2;  /* must equal GUIDE_WIDTH in CardCamera.tsx */
+  border: 2px solid rgba(255, 255, 255, 0.95); border-radius: 6px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}

@@ -4,6 +4,7 @@ import { useActionState, useRef, useState } from 'react'
 import { saveCardAction } from '@/app/actions/prospects'
 import { parseCardText, type CardGuess } from '@/lib/card-parse'
 import { downscaleImage } from '@/lib/field/downscale'
+import { CardCamera } from '@/components/field/CardCamera'
 import { noAutofill } from '@/lib/field/no-autofill'
 import type { ActionState } from '@/lib/types'
 
@@ -19,7 +20,7 @@ import type { ActionState } from '@/lib/types'
  */
 export function FieldCardScan({ prospects }: { prospects: { id: string; business_name: string }[] }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(saveCardAction, null)
-  const [phase, setPhase] = useState<'idle' | 'reading' | 'confirm'>('idle')
+  const [phase, setPhase] = useState<'idle' | 'camera' | 'reading' | 'confirm'>('idle')
   const [progress, setProgress] = useState(0)
   const [guess, setGuess] = useState<CardGuess | null>(null)
   const [photo, setPhoto] = useState<File | null>(null)
@@ -37,10 +38,16 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const picked = e.target.files?.[0]
     if (!picked) return
+    await read(picked)
+  }
+
+  async function read(picked: File) {
     setPhase('reading')
     setProgress(0)
     // Shrink first: a raw camera photo is megabytes and blew the Server
     // Action body limit on save. OCR is faster on the smaller image too.
+    // A frame from CardCamera is already cropped and sized, so this is a
+    // no-op for that path.
     const file = await downscaleImage(picked)
     setPhoto(file)
     try {
@@ -59,6 +66,16 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
     setPhase('confirm')
   }
 
+  if (phase === 'camera') {
+    return (
+      <CardCamera
+        onCapture={f => { void read(f) }}
+        onCancel={() => setPhase('idle')}
+        onFallback={() => { setPhase('idle'); cameraRef.current?.click() }}
+      />
+    )
+  }
+
   if (phase === 'reading') {
     return <div className="field-scan__reading">Reading the card… {progress}%</div>
   }
@@ -66,7 +83,7 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
   if (phase === 'idle') {
     return (
       <div className="field-scan">
-        <button type="button" className="field-camera" onClick={() => cameraRef.current?.click()}>
+        <button type="button" className="field-camera" onClick={() => setPhase('camera')}>
           <span className="field-camera__icon" aria-hidden="true">📷</span>
           Take a photo of a card
         </button>
