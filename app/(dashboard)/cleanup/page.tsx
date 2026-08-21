@@ -72,7 +72,7 @@ export default async function CleanupPage() {
       ) : totalFlagged === 0 ? (
         <div style={{ marginTop: 40, padding: '48px 32px', border: '1px solid var(--rule)', background: 'var(--paper)', textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--ink)', marginBottom: 10 }}>All clear</div>
-          <p style={{ fontSize: 14, color: 'var(--ink-muted)' }}>No records are scheduled for deletion. Use "Schedule delete" on any detail page to flag a record for review here.</p>
+          <p style={{ fontSize: 14, color: 'var(--ink-muted)' }}>No records are scheduled for deletion. Use &ldquo;Schedule delete&rdquo; on any detail page to flag a record for review here.</p>
         </div>
       ) : (
         <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 28 }}>

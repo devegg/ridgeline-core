@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Reveal } from './Reveal'
 
 const PRODUCTS = [
@@ -115,7 +116,7 @@ export function Stories() {
         <Reveal delay={1}>
           <p className="lede" style={{ marginTop: 56 }}>
             And four products of my own — built, shipped, and running today. The full
-            portfolio, with the stories behind each build, lives at <a href="/work">/work</a>:
+            portfolio, with the stories behind each build, lives at <Link href="/work">/work</Link>:
           </p>
         </Reveal>
 
@@ -152,7 +153,7 @@ export function Stories() {
         <Reveal delay={1}>
           <p className="lede" style={{ marginTop: 56 }}>
             The full write-ups — what was actually wrong, what I built, and what changed —
-            live in the <a href="/papers">papers</a>.
+            live in the <Link href="/papers">papers</Link>.
           </p>
         </Reveal>
       </div>
