@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { SiteHeader } from '@/components/home/SiteHeader'
 import { SiteFooter } from '@/components/home/SiteFooter'
 import { Reveal } from '@/components/home/Reveal'
@@ -38,7 +39,7 @@ export function IndustryLanding({ entry }: { entry: LandingIndustry }) {
                   Let&rsquo;s Talk
                   <span className="arrow" />
                 </a>
-                <a href="/#how" className="btn-quiet">How I work</a>
+                <Link href="/#how" className="btn-quiet">How I work</Link>
               </Reveal>
             </div>
           </section>
@@ -154,7 +155,7 @@ export function IndustryLanding({ entry }: { entry: LandingIndustry }) {
               </Reveal>
               <Reveal delay={2}>
                 <p className="lede" style={{ marginTop: 28 }}>
-                  The longer version, and the work behind it, is on the <a href="/">home page</a>.
+                  The longer version, and the work behind it, is on the <Link href="/">home page</Link>.
                 </p>
               </Reveal>
             </div>

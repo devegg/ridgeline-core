@@ -27,7 +27,7 @@ export function ApproveProposal({ proposalId }: { proposalId: string }) {
       </div>
       <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: 0 }}>
         Approving records your go-ahead with a timestamp. Questions first? Use Requests —
-        nothing moves until you're comfortable.
+        nothing moves until you&rsquo;re comfortable.
       </p>
     </form>
   )
