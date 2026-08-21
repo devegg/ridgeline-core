@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState } from 'react'
 import { saveCardAction } from '@/app/actions/prospects'
 import { parseCardText, type CardGuess } from '@/lib/card-parse'
+import { noAutofill } from '@/lib/field/no-autofill'
 import type { ActionState } from '@/lib/types'
 
 /**
@@ -110,23 +111,23 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
 
       <label className="field-label">
         Business
-        <input name="business_name" className="field-input" defaultValue={guess?.business_name ?? ''} required />
+        <input name="business_name" className="field-input" {...noAutofill} defaultValue={guess?.business_name ?? ''} required />
       </label>
       <label className="field-label">
         Person
-        <input name="contact_name" className="field-input" defaultValue={guess?.contact_name ?? ''} />
+        <input name="contact_name" className="field-input" {...noAutofill} defaultValue={guess?.contact_name ?? ''} />
       </label>
       <label className="field-label">
         Phone
-        <input name="phone" className="field-input" defaultValue={guess?.phone ?? ''} />
+        <input name="phone" className="field-input" {...noAutofill} defaultValue={guess?.phone ?? ''} />
       </label>
       <label className="field-label">
         Email
-        <input name="email" type="email" className="field-input" defaultValue={guess?.email ?? ''} />
+        <input name="email" type="email" className="field-input" {...noAutofill} defaultValue={guess?.email ?? ''} />
       </label>
       <label className="field-label">
         Notes
-        <input name="notes" className="field-input" placeholder="Who you met, what they said" />
+        <input name="notes" className="field-input" {...noAutofill} placeholder="Who you met, what they said" />
       </label>
       <label className="field-label field-label--muted">
         Attach to a business already on the list?
