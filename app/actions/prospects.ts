@@ -138,6 +138,14 @@ export async function saveVisitEstimateAction(_prev: ActionState, formData: Form
     return { errors: { _root: 'Saving the tasks failed — nothing was saved. Try again.' } }
   }
 
+  // A name typed on the visit screen is a deliberate correction, so unlike
+  // the card scan (where OCR guesses never overwrite) this one wins. Blank
+  // still never clobbers an existing name.
+  const contact_name = String(formData.get('contact_name') ?? '').trim()
+  if (contact_name) {
+    await supabase.from('prospects').update({ contact_name }).eq('id', prospect_id)
+  }
+
   // Never walk a status backward — same guard as logVisitAction.
   await supabase
     .from('prospects')

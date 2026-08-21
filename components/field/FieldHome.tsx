@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { FieldCardScan } from '@/components/field/FieldCardScan'
+import { noAutofill } from '@/lib/field/no-autofill'
 import type { Prospect } from '@/lib/types'
 
 const STATUS_LABEL: Record<string, string> = {
@@ -43,7 +44,7 @@ export function FieldHome({ prospects }: { prospects: Prospect[] }) {
 
       <input
         type="search"
-        className="field-input field-search"
+        className="field-input field-search" {...noAutofill}
         placeholder="Find a business"
         value={q}
         onChange={e => setQ(e.target.value)}

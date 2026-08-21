@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { saveVisitEstimateAction } from '@/app/actions/prospects'
 import { annualCost, annualRecovered, visitTotals, type EstimateInput } from '@/lib/field/estimate'
 import { formatDollars } from '@/lib/portal/value'
+import { noAutofill } from '@/lib/field/no-autofill'
 import type { ActionState, Prospect } from '@/lib/types'
 
 /** One task in progress. Strings, not numbers — an in-progress field is "" or
@@ -42,6 +43,7 @@ export function VisitEstimator({
   const [visitRate, setVisitRate] = useState('')
   const [drafts, setDrafts] = useState<Draft[]>([emptyDraft(1)])
   const [note, setNote] = useState('')
+  const [contact, setContact] = useState(prospect.contact_name ?? '')
   const [showCard, setShowCard] = useState(false)
 
   const set = (key: number, patch: Partial<Draft>) =>
@@ -62,10 +64,15 @@ export function VisitEstimator({
       <header className="field-head">
         <Link href="/visit" className="field-back">&larr; Card drops</Link>
         <h1 className="field-title">{prospect.business_name}</h1>
-        <p className="field-sub">
-          {prospect.contact_name ?? 'No contact name yet'}
-          {lastCardWord ? ` · card word: ${lastCardWord}` : ''}
-        </p>
+        {lastCardWord && <p className="field-sub">Card word: {lastCardWord}</p>}
+        <label className="field-label">
+          Who are you talking to?
+          <input
+            type="text" className="field-input" {...noAutofill}
+            placeholder="Name on the card, or who met you at the desk"
+            value={contact} onChange={e => setContact(e.target.value)}
+          />
+        </label>
         {(photoUrl || prospect.phone) && (
           <button type="button" className="field-linkbtn" onClick={() => setShowCard(v => !v)}>
             {showCard ? 'Hide card' : 'Show card'}
@@ -84,7 +91,7 @@ export function VisitEstimator({
         What does an hour of their time cost? (loaded)
         <input
           type="number" inputMode="decimal" min="5" max="500" placeholder="28"
-          className="field-input field-input--num"
+          className="field-input field-input--num" {...noAutofill}
           value={visitRate} onChange={e => setVisitRate(e.target.value)}
         />
       </label>
@@ -98,7 +105,7 @@ export function VisitEstimator({
             <label className="field-label">
               What is it?
               <input
-                type="text" className="field-input" placeholder="Retyping vendor invoices from email"
+                type="text" className="field-input" {...noAutofill} placeholder="Retyping vendor invoices from email"
                 value={d.label} onChange={e => set(d.key, { label: e.target.value })}
               />
             </label>
@@ -106,7 +113,7 @@ export function VisitEstimator({
             <label className="field-label">
               Who does it?
               <input
-                type="text" className="field-input" placeholder="Sherri, office admin"
+                type="text" className="field-input" {...noAutofill} placeholder="Sherri, office admin"
                 value={d.who} onChange={e => set(d.key, { who: e.target.value })}
               />
             </label>
@@ -116,7 +123,7 @@ export function VisitEstimator({
                 Minutes each
                 <input
                   type="number" inputMode="decimal" min="0.5" max="480" placeholder="4"
-                  className="field-input field-input--num"
+                  className="field-input field-input--num" {...noAutofill}
                   value={d.minutes_each} onChange={e => set(d.key, { minutes_each: e.target.value })}
                 />
               </label>
@@ -124,7 +131,7 @@ export function VisitEstimator({
                 Times per week
                 <input
                   type="number" inputMode="decimal" min="0.1" max="500" placeholder="60"
-                  className="field-input field-input--num"
+                  className="field-input field-input--num" {...noAutofill}
                   value={d.times_per_week} onChange={e => set(d.key, { times_per_week: e.target.value })}
                 />
               </label>
@@ -134,7 +141,7 @@ export function VisitEstimator({
               Different rate for this one?
               <input
                 type="number" inputMode="decimal" min="5" max="500" placeholder={visitRate || 'same as above'}
-                className="field-input field-input--num"
+                className="field-input field-input--num" {...noAutofill}
                 value={d.rate_override} onChange={e => set(d.key, { rate_override: e.target.value })}
               />
             </label>
@@ -170,7 +177,7 @@ export function VisitEstimator({
       <label className="field-label">
         Notes
         <textarea
-          className="field-input" rows={3} placeholder="Who I spoke to, what happens next"
+          className="field-input" {...noAutofill} rows={3} placeholder="Who I spoke to, what happens next"
           value={note} onChange={e => setNote(e.target.value)}
         />
       </label>
@@ -178,6 +185,7 @@ export function VisitEstimator({
       <form action={formAction} className="field-save">
         <input type="hidden" name="prospect_id" value={prospect.id} />
         <input type="hidden" name="note" value={note} />
+        <input type="hidden" name="contact_name" value={contact} />
         <input type="hidden" name="card_word" value={lastCardWord ?? ''} />
         <input type="hidden" name="tasks" value={JSON.stringify(payload)} />
         <button type="submit" className="field-submit" disabled={pending || payload.length === 0}>
