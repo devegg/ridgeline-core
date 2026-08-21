@@ -11,6 +11,26 @@ pages; only the content-drafts sweep remained and moved below).
 
 ---
 
+## Next up — from the visit estimator build (2026-08-21)
+
+- **[solo] Collapse `.dash-sidebar` under ~820px.** The field kit is billed as
+  phone-first but `app/(dashboard)/layout.tsx` has a fixed 220px sidebar with
+  no mobile collapse — ~170px of usable content at 390px. The visit estimator
+  sidesteps it with its own `(field)` layout; Card Drops and the rest of the
+  dashboard do not. Touches all 15 dashboard pages, so it wants its own branch.
+- **[solo] Fix the 11 ESLint errors, then turn build gating back on.**
+  `next.config.ts` sets `eslint.ignoreDuringBuilds` because these would fail
+  production deploys today: `components/home/Stories.tsx` (4),
+  `components/landing/IndustryLanding.tsx` (4), `app/(dashboard)/cleanup/page.tsx`
+  (2), `components/portal/ApproveProposal.tsx` (1). Mostly `<a>` where `<Link>`
+  belongs — a real navigation-behaviour change on shipped marketing pages,
+  which is why it was kept out of the estimator branch. Delete the
+  `eslint` block from next.config.ts once they're clean.
+- **[owner] Confirm the Gboard mic split on the handset.** Decision 2 assumes
+  the mic key appears on "What is it?"/"Who does it?" and not on the numeric
+  fields. Untested on the real phone. If it's missing from the text fields,
+  the design needs revisiting, not a workaround.
+
 ## Shipped 2026-07-12 (overnight batch, PRs #34–#39)
 
 - [x] Card drops + My Maps KML import + promote-to-lead ✅ (PR #31, D19)
