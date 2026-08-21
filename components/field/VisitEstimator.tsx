@@ -220,14 +220,16 @@ export function VisitEstimator({
         )}
 
         <div className="field-total__row field-total__row--fee">
-          <span>My fee (25% of that)</span><strong>{formatDollars(totals.fee)}/yr</strong>
+          <span>My fee &mdash; one time</span><strong>{formatDollars(totals.fee)}</strong>
         </div>
 
         {showMath && (
           <p className="field-total__note">
-            30% held back — I&rsquo;d rather beat the number than miss it. The numbers are
-            estimates until we count the real thing. The 25% rate is not — it&rsquo;s firm as
-            long as these counts hold up. New work later is a change order we price together.
+            30% held back — I&rsquo;d rather beat the number than miss it. The yearly
+            numbers are estimates until we count the real thing. My fee is 25% of the
+            first year&rsquo;s savings, charged once, not every year — and that rate is
+            firm as long as these counts hold up. New work later is a change order we
+            price together.
           </p>
         )}
       </button>

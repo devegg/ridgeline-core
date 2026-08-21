@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useActionState, useState, useEffect } from 'react'
+import { useActionState, useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { updateLeadAction, advanceStageAction, setStageAction, convertToClientAction, deleteLeadAction } from '@/app/actions/leads'
+import { updateLeadAction, advanceStageAction, setStageAction, scheduleMeetingAction, convertToClientAction, deleteLeadAction } from '@/app/actions/leads'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { safeHttpUrl } from '@/lib/safe-url'
 import type { Lead, LeadStage, ActionState } from '@/lib/types'
@@ -84,6 +84,7 @@ export function LeadDetail({ lead }: { lead: Lead }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [lostReason, setLostReason] = useState('')
   const [showLostForm, setShowLostForm] = useState(false)
+  const [correcting, startCorrecting] = useTransition()
 
   const currentIndex = STAGE_ORDER.indexOf(lead.stage)
   const canAdvance = currentIndex >= 0 && currentIndex < STAGE_ORDER.length - 1
@@ -154,7 +155,24 @@ export function LeadDetail({ lead }: { lead: Lead }) {
             ))}
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-            {canAdvance && nextStage && (
+            {canAdvance && nextStage === 'meeting_scheduled' && (
+              <form action={scheduleMeetingAction.bind(null, lead.id)} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <label style={{ fontFamily: 'var(--mono)', fontSize: 10.5, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ink-soft)' }}>
+                  Meeting on
+                </label>
+                <input
+                  type="date"
+                  name="follow_up_date"
+                  defaultValue={lead.follow_up_date ?? ''}
+                  min={today}
+                  style={{ fontFamily: 'var(--mono)', fontSize: 13, border: '1px solid var(--rule)', background: 'transparent', padding: '5px 8px', color: 'var(--ink)' }}
+                />
+                <button type="submit" className="btn-primary">
+                  Move to Meeting Scheduled <span className="arrow" />
+                </button>
+              </form>
+            )}
+            {canAdvance && nextStage && nextStage !== 'meeting_scheduled' && (
               <form action={advanceStageAction.bind(null, lead.id, lead.stage)}>
                 <button type="submit" className="btn-primary">
                   Move to {STAGE_LABELS[nextStage]} <span className="arrow" />
@@ -166,6 +184,28 @@ export function LeadDetail({ lead }: { lead: Lead }) {
                 {converting ? 'Converting…' : '✓ Convert to client'}
               </button>
             )}
+            {/* Every stage reachable in one control. Advancing is a button so the
+                happy path stays one tap; this is the correction path, because
+                a stage moved by accident used to be a dead end for everyone
+                except a lost lead. */}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 10.5, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ink-soft)' }}>
+                Set stage
+              </span>
+              <select
+                value={lead.stage}
+                disabled={correcting}
+                onChange={e => {
+                  const next = e.target.value as LeadStage
+                  if (next !== lead.stage) startCorrecting(() => { setStageAction(lead.id, next) })
+                }}
+                style={{ fontFamily: 'var(--sans)', fontSize: 13, border: '1px solid var(--rule)', background: 'transparent', padding: '5px 8px', color: 'var(--ink)' }}
+              >
+                {(Object.keys(STAGE_LABELS) as LeadStage[]).map(st => (
+                  <option key={st} value={st}>{STAGE_LABELS[st]}</option>
+                ))}
+              </select>
+            </label>
             {!showLostForm ? (
               <button className="btn-outline" onClick={() => setShowLostForm(true)}>Mark as lost</button>
             ) : (

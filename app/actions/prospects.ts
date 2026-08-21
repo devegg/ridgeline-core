@@ -293,6 +293,10 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
   if (!business_name) return { errors: { _root: 'Business name is required — fix the guess if OCR missed it.' } }
 
   const attachTo = String(formData.get('attach_to') ?? '').trim() // existing prospect id, or ''
+  // The field flow scans a card in order to start pricing that business, so it
+  // asks to be dropped straight into the visit screen. The dashboard flow is
+  // desk work — it stays put and shows a confirmation instead.
+  const goToVisit = formData.get('go_to_visit') === '1'
   const fields = {
     contact_name: String(formData.get('contact_name') ?? '').trim() || null,
     email: String(formData.get('email') ?? '').trim() || null,
@@ -327,10 +331,15 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
     if (error) return { errors: { _root: 'Saving failed — refresh and try again.' } }
     revalidatePath('/prospects')
     revalidatePath('/visit')
+    if (goToVisit) redirect(`/visit/${attachTo}`)
     return { message: `Card attached to ${existing.business_name}.` }
   }
 
-  const { error } = await supabase.from('prospects').insert({ business_name, ...fields, card_photo_path })
+  const { data: created, error } = await supabase
+    .from('prospects')
+    .insert({ business_name, ...fields, card_photo_path })
+    .select('id')
+    .single()
   if (error) {
     return {
       errors: {
@@ -342,5 +351,6 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
   }
   revalidatePath('/prospects')
   revalidatePath('/visit')
+  if (goToVisit) redirect(`/visit/${created.id}`)
   return { message: 'Prospect created from the card.' }
 }

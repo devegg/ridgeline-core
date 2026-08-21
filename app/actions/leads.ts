@@ -83,10 +83,30 @@ export async function advanceStageAction(id: string, currentStage: LeadStage) {
 
 export async function setStageAction(id: string, stage: LeadStage, lostReason?: string) {
   const supabase = await createSupabase()
-  const { error } = await supabase.from('leads').update({
-    stage,
-    lost_reason: lostReason ?? null,
-  }).eq('id', id)
+  const patch: Record<string, unknown> = { stage }
+  // Moving off 'lost' clears the reason; moving TO 'lost' without one leaves
+  // whatever was there, so correcting a stage by hand can't silently wipe it.
+  if (stage !== 'lost') patch.lost_reason = null
+  else if (lostReason !== undefined) patch.lost_reason = lostReason || null
+
+  const { error } = await supabase.from('leads').update(patch).eq('id', id)
+  queryFailed('leads', error)
+  revalidatePath(`/leads/${id}`)
+  revalidatePath('/leads')
+}
+
+/**
+ * "Move to Meeting scheduled" used to change a label and nothing else — there
+ * was no way to record WHEN. This books the date at the same time, into the
+ * follow_up_date the leads list already sorts and flags overdue on.
+ */
+export async function scheduleMeetingAction(id: string, formData: FormData) {
+  const when = String(formData.get('follow_up_date') ?? '').trim()
+  const supabase = await createSupabase()
+  const { error } = await supabase
+    .from('leads')
+    .update({ stage: 'meeting_scheduled', follow_up_date: when || null })
+    .eq('id', id)
   queryFailed('leads', error)
   revalidatePath(`/leads/${id}`)
   revalidatePath('/leads')
