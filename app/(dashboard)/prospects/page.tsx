@@ -31,10 +31,13 @@ export default async function ProspectsPage({
   else query = query.eq('status', current)
   if (industry) query = query.eq('industry', industry)
 
-  const [prospectsRes, visitsRes, industriesRes] = await Promise.all([
+  const [prospectsRes, visitsRes, industriesRes, attachRes] = await Promise.all([
     query,
     supabase.from('prospect_visits').select('*').order('visited_on', { ascending: false }),
     supabase.from('prospects').select('industry').not('industry', 'is', null),
+    // Attach targets are not the filtered view: a card can belong to a
+    // business on any tab, including one already promoted to a Lead.
+    supabase.from('prospects').select('id, business_name, status').order('business_name'),
   ])
 
   if (queryFailed('prospects', prospectsRes.error)) {
@@ -82,7 +85,7 @@ export default async function ProspectsPage({
       <details className="prospect-tools">
         <summary>Scan a business card</summary>
         <div className="prospect-tools__body">
-          <CardScan prospects={prospects.map(p => ({ id: p.id, business_name: p.business_name }))} />
+          <CardScan prospects={(attachRes.data ?? []) as { id: string; business_name: string; status: string }[]} />
         </div>
       </details>
       <details className="prospect-tools">
