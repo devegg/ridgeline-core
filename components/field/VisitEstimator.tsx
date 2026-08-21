@@ -45,6 +45,7 @@ export function VisitEstimator({
   const [note, setNote] = useState('')
   const [contact, setContact] = useState(prospect.contact_name ?? '')
   const [showCard, setShowCard] = useState(false)
+  const [showMath, setShowMath] = useState(false)
 
   const set = (key: number, patch: Partial<Draft>) =>
     setDrafts(ds => ds.map(d => (d.key === key ? { ...d, ...patch } : d)))
@@ -195,23 +196,41 @@ export function VisitEstimator({
         {state?.message && <p className="field-ok">{state.message}</p>}
       </form>
 
-      <div className="field-total">
-        <div className="field-total__tag">Rough estimate</div>
-        <div className="field-total__row">
+      <button
+        type="button"
+        className="field-total"
+        onClick={() => setShowMath(v => !v)}
+        aria-expanded={showMath}
+      >
+        <div className="field-total__tag">
+          Rough estimate
+          <span className="field-total__hint">{showMath ? 'tap to close' : 'tap for the math'}</span>
+        </div>
+
+        <div className="field-total__row field-total__row--lead">
           <span>Costs you now</span><strong>{formatDollars(totals.cost)}/yr</strong>
         </div>
-        <div className="field-total__row field-total__row--lead">
-          <span>I&rsquo;d realistically recover</span><strong>{formatDollars(totals.recovered)}/yr</strong>
-        </div>
+
+        {/* The middle number lives behind the tap. Two rows read as one clear
+            gap in the owner's favour; three rows invite arithmetic. */}
+        {showMath && (
+          <div className="field-total__row field-total__row--mid">
+            <span>I&rsquo;d realistically recover</span><strong>{formatDollars(totals.recovered)}/yr</strong>
+          </div>
+        )}
+
         <div className="field-total__row field-total__row--fee">
           <span>My fee (25% of that)</span><strong>{formatDollars(totals.fee)}/yr</strong>
         </div>
-        <p className="field-total__note">
-          30% held back — I&rsquo;d rather beat the number than miss it. The numbers are
-          estimates until we count the real thing. The 25% rate is not — it&rsquo;s firm as
-          long as these counts hold up. New work later is a change order we price together.
-        </p>
-      </div>
+
+        {showMath && (
+          <p className="field-total__note">
+            30% held back — I&rsquo;d rather beat the number than miss it. The numbers are
+            estimates until we count the real thing. The 25% rate is not — it&rsquo;s firm as
+            long as these counts hold up. New work later is a change order we price together.
+          </p>
+        )}
+      </button>
     </div>
   )
 }

@@ -1598,16 +1598,26 @@ details:not([open]) > *:not(summary) { display: none; }
 
 /* The number the owner watches. Pinned so it survives the keyboard opening. */
 .field-total {
-  position: sticky; bottom: 0; margin: 0 -16px; padding: 14px 16px 18px;
-  background: var(--bg-deep); border-top: 1px solid var(--rule);
+  position: sticky; bottom: 0; margin: 0 -16px; padding: 12px 16px 14px;
+  width: calc(100% + 32px);
+  background: var(--bg-deep); border: none; border-top: 1px solid var(--rule);
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  display: block;
 }
-.field-total__tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber-deep); margin-bottom: 8px; }
+.field-total__tag {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--amber-deep); margin-bottom: 7px;
+}
+.field-total__hint { letter-spacing: 0.1em; color: var(--ink-soft); }
 .field-total__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--ink-muted); }
-.field-total__row strong { font-family: var(--mono); font-size: 19px; color: var(--ink); }
-.field-total__row--lead strong { font-size: 25px; color: var(--blue); }
-.field-total__row--fee { margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--rule); }
-.field-total__row--fee strong { color: var(--amber-deep); }
-.field-total__note { font-size: 11.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.5; }
+.field-total__row strong { font-family: var(--mono); font-size: 20px; color: var(--ink); }
+.field-total__row--mid { margin-top: 3px; }
+.field-total__row--mid strong { font-size: 17px; }
+.field-total__row--lead strong { font-size: 27px; color: var(--blue); }
+.field-total__row--fee { margin-top: 5px; padding-top: 7px; border-top: 1px dashed var(--rule); }
+.field-total__row--fee strong { font-size: 18px; color: var(--amber-deep); }
+.field-total__note { font-size: 11.5px; color: var(--ink-soft); margin: 9px 0 0; line-height: 1.5; }
 
 /* Field home — the phone list and card capture. */
 .field-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
@@ -1637,3 +1647,8 @@ details:not([open]) > *:not(summary) { display: none; }
 
 .field-empty { font-size: 14px; color: var(--ink-muted); padding: 20px 0; }
 .field-foot { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-soft); }
+.field-addbiz {
+  width: 100%; padding: 13px; margin-bottom: 20px;
+  font: inherit; font-size: 14.5px; color: var(--ink);
+  background: none; border: 1px solid var(--rule); border-radius: 8px; cursor: pointer;
+}
