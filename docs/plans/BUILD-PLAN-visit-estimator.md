@@ -32,7 +32,7 @@
 | `scripts/test-estimate.mjs` | **Create.** Node test script, house pattern (`scripts/test-portal.mjs`) |
 | `package.json` | **Modify.** Add the `test:estimate` script |
 | `app/(field)/layout.tsx` | **Create.** Owner gate + theme pre-paint, full-bleed, no sidebar |
-| `app/(field)/prospects/[id]/visit/page.tsx` | **Create.** Server page: loads the prospect, its last visit, signed card-photo URL |
+| `app/(field)/visit/[id]/page.tsx` | **Create.** Server page: loads the prospect, its last visit, signed card-photo URL |
 | `components/field/VisitEstimator.tsx` | **Create.** The interactive task list and sticky running total |
 | `app/actions/prospects.ts` | **Modify.** Add `saveVisitEstimateAction` after `logVisitAction` (~line 66) |
 | `middleware.ts` | **Modify.** Add the field path to `DASHBOARD_PATHS` (line 5) |
@@ -378,7 +378,7 @@ Replace with:
 const DASHBOARD_PATHS = /^\/(overview|leads|clients|projects|proposals|assessments|deliverables|billing|requests|documents|settings|cleanup|prospects)(\/|$)/
 ```
 
-`prospects` was missing — the field kit has been gated by its layout alone since it shipped. The layout redirect is real protection, so this is defense in depth, not a fix for a hole. It covers both `/prospects` and the new `/prospects/[id]/visit`.
+`prospects` was missing — the field kit has been gated by its layout alone since it shipped. The layout redirect is real protection, so this is defense in depth, not a fix for a hole. It covers `/prospects`; `visit` is added alongside it for the new route.
 
 - [ ] **Step 3: Typecheck and commit**
 
@@ -393,17 +393,17 @@ git commit -m "feat: (field) route group — full-bleed owner-gated shell for on
 ### Task 4: The visit page (server)
 
 **Files:**
-- Create: `app/(field)/prospects/[id]/visit/page.tsx`
+- Create: `app/(field)/visit/[id]/page.tsx`
 
 **Interfaces:**
 - Consumes: `Prospect`, `ProspectVisit` from `lib/types`; `VisitEstimator` from Task 5
-- Produces: the route `/prospects/[id]/visit`
+- Produces: the route `/visit/[id]`
 
 > Task 5 creates `VisitEstimator`. If executing strictly in order, this task will not typecheck until Task 5 lands — that is expected. Run Task 4 step 3 after Task 5 step 2 if you are executing sequentially, or implement Tasks 4 and 5 together and commit once.
 
 - [ ] **Step 1: Create the page**
 
-Create `app/(field)/prospects/[id]/visit/page.tsx`:
+Create `app/(field)/visit/[id]/page.tsx`:
 
 ```tsx
 import { notFound } from 'next/navigation'
@@ -451,13 +451,13 @@ export default async function VisitPage({ params }: { params: Promise<{ id: stri
 
 - [ ] **Step 2: Verify the route resolves**
 
-There is no path collision: `app/(dashboard)/prospects/page.tsx` serves `/prospects`, and this serves `/prospects/[id]/visit`. Different URLs, different groups — legal in Next.js App Router.
+Shipped as `/visit/[id]`. The first draft nested it under `/prospects/[id]/visit`; that was moved during the build, and the 404s that prompted the move turned out to be the preview tool serving the main checkout, not a route-group conflict. The shorter path was kept on its own merits.
 
 - [ ] **Step 3: Typecheck and commit** (after Task 5 exists)
 
 ```bash
 npx tsc --noEmit
-git add "app/(field)/prospects/[id]/visit/page.tsx"
+git add "app/(field)/visit/[id]/page.tsx"
 git commit -m "feat: visit page — loads the prospect, its last card word, signed card photo"
 ```
 
@@ -866,7 +866,7 @@ Expected: exits 0.
 - [ ] **Step 3: Commit Tasks 4, 5 and 6 together**
 
 ```bash
-git add "app/(field)/prospects/[id]/visit/page.tsx" components/field/VisitEstimator.tsx app/actions/prospects.ts app/globals.css
+git add "app/(field)/visit/[id]/page.tsx" components/field/VisitEstimator.tsx app/actions/prospects.ts app/globals.css
 git commit -m "feat: on-site visit estimator — live totals, all-or-nothing save"
 ```
 

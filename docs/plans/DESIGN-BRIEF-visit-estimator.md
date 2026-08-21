@@ -97,7 +97,11 @@ Applied with `npm run migrate`. Never hand-pasted into the Supabase editor.
 
 ## The screen
 
-Route: `/prospects/[id]/visit`. One scrolling column, phone width first.
+Route: `/visit/[id]`. One scrolling column, phone width first.
+
+(Shipped at `/visit/[id]`, not the `/prospects/[id]/visit` first drafted here —
+shorter to type on a phone, and it keeps the `prospects` URL segment owned by
+one route group.)
 
 **Header** — business name, contact name, card word from the most recent
 visit. Collapsed by default; expands to the card photo and a tap-to-call
