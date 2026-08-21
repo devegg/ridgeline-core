@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { FieldCardScan } from '@/components/field/FieldCardScan'
+import { FieldQuickAdd } from '@/components/field/FieldQuickAdd'
 import { noAutofill } from '@/lib/field/no-autofill'
 import type { Prospect } from '@/lib/types'
 
@@ -41,6 +42,8 @@ export function FieldHome({ prospects }: { prospects: Prospect[] }) {
       </header>
 
       <FieldCardScan prospects={prospects.map(p => ({ id: p.id, business_name: p.business_name }))} />
+
+      <FieldQuickAdd />
 
       <input
         type="search"

@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { parseKml } from '@/lib/kml'
 import type { ActionState } from '@/lib/types'
@@ -38,6 +39,51 @@ export async function addProspectAction(_prev: ActionState, formData: FormData):
   }
   revalidatePath('/prospects')
   return { message: 'Added.' }
+}
+
+/**
+ * Add a business by hand, from the field. Most of the people Brian talks to
+ * have no card — someone meets him at the desk, gives a name, and that is all
+ * he gets. On success this drops straight into that business's visit screen,
+ * because the reason he is typing it in is that he is about to price their
+ * tasks.
+ */
+export async function addFieldProspectAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await ownerClient()
+  if (!supabase) return { errors: { _root: 'Owner only.' } }
+
+  const business_name = String(formData.get('business_name') ?? '').trim()
+  if (!business_name) return { errors: { _root: 'A business name is the one thing I need.' } }
+
+  const { data, error } = await supabase
+    .from('prospects')
+    .insert({
+      business_name,
+      contact_name: String(formData.get('contact_name') ?? '').trim() || null,
+      phone: String(formData.get('phone') ?? '').trim() || null,
+      email: String(formData.get('email') ?? '').trim() || null,
+      notes: String(formData.get('notes') ?? '').trim() || null,
+      status: 'visited',
+    })
+    .select('id')
+    .single()
+
+  if (error) {
+    // The dedupe index means it is already on the list — say so rather than
+    // leaving him wondering why nothing happened.
+    return {
+      errors: {
+        _root: error.message.includes('prospects_dedupe_idx')
+          ? `${business_name} is already on your list — find it below instead.`
+          : 'Saving failed — try again.',
+      },
+    }
+  }
+
+  revalidatePath('/prospects')
+  revalidatePath('/visit')
+  // Outside any try/catch on purpose: this signals by throwing.
+  redirect(`/visit/${data.id}`)
 }
 
 export async function logVisitAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
