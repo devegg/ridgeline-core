@@ -41,7 +41,7 @@ What is missing is only the **task pricing** and the **screen to do it on**.
 | 3 | Show two numbers: raw annual cost, then the post-haircut recoverable figure. Both labeled. | Raw only (reads as a promise, portal undercuts it later); haircut only (loses the "this is bleeding you" moment) |
 | 4 | Screen only, saved to the prospect. Nothing emailed, nothing handed over. | Emailed recap; auto-drafted proposal. Both commit to a number in writing on day one. The card's job is to book 15 minutes, not to close. |
 | 5 | Dedicated route in a new `(field)` route group, outside `(dashboard)`. | Inline on the prospect card (crowds a 214-line component, poor on-site flow); standalone public calculator (new unauthenticated surface on a deny-by-default app) |
-| 6 | The on-site number is a **rough estimate**, labeled as such on screen. No commission or fee is shown or stored. The proposal carries the firm rate. | Showing the fee live (invites a negotiation before anything is scoped); presenting the estimate as a quote |
+| 6 | The on-site **dollar figure** is a rough estimate, labeled as such on screen — its inputs are verbal approximations, so it cannot be firm regardless of how costs are handled. The **rate structure** (25% of verified savings + third-party costs passed through at cost) is firm and can be stated aloud, but is never displayed on this screen. The proposal is the only written quote. | Showing a fee figure live (invites a negotiation before anything is scoped); treating the estimate as a quote because the pass-through costs are known — that firms up Brian's side of the math, not the client's inputs |
 
 ## The math
 
@@ -206,6 +206,6 @@ behaves differently, the field types change, not the design.
 |---|---|
 | Gboard mic absent on the text fields too, gutting the "voice" premise | Verified on the real handset before merge. The screen still works as a fast tap-form; the live total is the actual demo. |
 | Owner hears the raw cost as a savings promise | Both numbers are labeled on screen and the haircut line is always visible. |
-| Owner treats the on-site figure as a firm quote | Permanent "Rough estimate" label on the total block; the fee never appears on screen; the proposal is the only place a firm rate is stated (decision 6). |
+| Owner treats the on-site figure as a firm quote | Permanent "Rough estimate" label on the total block; no fee figure on screen; the proposal is the only written quote (decision 6). The inputs are verbal approximations — a 20% error in "how often" moves the total 20%, which is why the figure firms up only after the task is observed and counted. |
 | A visit is priced against the wrong prospect | The route is prospect-scoped; the header shows the business name and card photo throughout. |
 | Two or three tasks still fall short of $10k | Expected and fine. The number is what it is — never inflate inputs to clear the bar. |
