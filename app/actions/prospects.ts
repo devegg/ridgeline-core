@@ -306,6 +306,9 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
   }
 
   // Photo first, so a failed upload never leaves a prospect without its card.
+  // The cost of that order is an orphan if the row write then fails, so every
+  // early return past this point drops the object it uploaded. One real
+  // orphan turned up in storage from the Server Action body-limit crash.
   let card_photo_path: string | null = null
   const photo = formData.get('photo')
   if (photo instanceof File && photo.size > 0) {
@@ -319,16 +322,29 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
     }
   }
 
+  /** Drop a just-uploaded card when the row write fails, so storage doesn't
+      collect a file nothing points at. Best-effort: the caller's error is
+      what matters, not this cleanup. */
+  const dropPhoto = async () => {
+    if (card_photo_path) await supabase.storage.from('cards').remove([card_photo_path])
+  }
+
   if (attachTo) {
     // Attach to an existing prospect: fill only what's blank, photo always wins.
     const { data: existing, error: readErr } = await supabase.from('prospects').select('*').eq('id', attachTo).single()
-    if (readErr || !existing) return { errors: { _root: 'That prospect was not found.' } }
+    if (readErr || !existing) {
+      await dropPhoto()
+      return { errors: { _root: 'That prospect was not found.' } }
+    }
     const patch: Record<string, unknown> = { card_photo_path: card_photo_path ?? existing.card_photo_path }
     for (const [k, v] of Object.entries(fields)) {
       if (v && !existing[k]) patch[k] = v
     }
     const { error } = await supabase.from('prospects').update(patch).eq('id', attachTo)
-    if (error) return { errors: { _root: 'Saving failed — refresh and try again.' } }
+    if (error) {
+      await dropPhoto()
+      return { errors: { _root: 'Saving failed — refresh and try again.' } }
+    }
     revalidatePath('/prospects')
     revalidatePath('/visit')
     if (goToVisit) redirect(`/visit/${attachTo}`)
@@ -341,6 +357,7 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
     .select('id')
     .single()
   if (error) {
+    await dropPhoto()
     if (!error.message.includes('prospects_dedupe_idx')) {
       return { errors: { _root: 'Saving failed — refresh and try again.' } }
     }
