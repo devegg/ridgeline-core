@@ -17,7 +17,7 @@
 - **`npx tsc --noEmit` before any commit that changes code.** Run the full `npm run build` only with the dev server stopped (they share `.next`).
 - **Owner-only, deny-by-default (D8).** New tables get RLS with `role = 'owner'` policies and NO `role='client'` policies at all.
 - **Money math is inherited, never reinvented.** Import `HAIRCUT` and `formatDollars` from `lib/portal/value.ts`. `HAIRCUT = 0.3`. Never redefine either.
-- **No fee or commission figure** appears on screen or in the schema (decision 6).
+- **The fee is shown on screen, derived, never stored.** 25% of the recovered figure, beside a note separating the estimated numbers from the firm rate (decision 6). No dollar amount of any kind is written to the database.
 - **Voice = the phone keyboard's own mic.** No in-app speech recognition code (decision 1). Verified working on Brian's Android handset 2026-08-20 after granting Gboard microphone permission.
 - **Copy voice:** plain English, short sentences, first person singular. Banned words: leverage, seamless, game-changer, unlock, empower, robust, synergy, deep dive.
 - Branch `feature/visit-estimator` → PR to `master`. Merged ≠ shipped.
@@ -155,7 +155,9 @@ git commit -m "feat: visit_tasks table — priced tasks from a drop-in visit"
 - Produces:
   - `annualCost(minutesEach: number, timesPerWeek: number, hourlyRate: number): number`
   - `annualRecovered(minutesEach: number, timesPerWeek: number, hourlyRate: number): number`
-  - `visitTotals(tasks: EstimateInput[]): { cost: number; recovered: number }`
+  - `commission(minutesEach: number, timesPerWeek: number, hourlyRate: number): number`
+  - `visitTotals(tasks: EstimateInput[]): { cost: number; recovered: number; fee: number }`
+  - `COMMISSION_RATE = 0.25`
   - `type EstimateInput = { minutes_each: number; times_per_week: number; hourly_rate: number }`
 
 - [ ] **Step 1: Write the failing test**
@@ -174,7 +176,7 @@ Create `scripts/test-estimate.mjs`:
  * deletes everything it made. Exit code 0 = all green.
  */
 import { HAIRCUT, formatDollars } from "../lib/portal/value.ts";
-import { annualCost, annualRecovered, visitTotals } from "../lib/field/estimate.ts";
+import { annualCost, annualRecovered, commission, visitTotals } from "../lib/field/estimate.ts";
 
 let pass = 0, fail = 0;
 const ok = (name, cond, detail = "") => {
@@ -204,6 +206,13 @@ const totals = visitTotals([
 ok("visitTotals sums cost", totals.cost === 5824 + 1950, `got ${totals.cost}`);
 ok("visitTotals sums recovered", totals.recovered === (5824 + 1950) * 0.7, `got ${totals.recovered}`);
 ok("visitTotals of [] is zero", visitTotals([]).cost === 0);
+
+// The fee rides on what's recovered, not on the raw cost — Brian is paid on
+// savings, and the conservative number is the defensible one.
+const fee = commission(4, 60, 28);
+ok("commission is 25% of recovered", fee === recovered * 0.25, `got ${fee}`);
+ok("fee displays as ~$1,000", formatDollars(fee) === "~$1,000", `got ${formatDollars(fee)}`);
+ok("visitTotals fee matches", totals.fee === totals.recovered * 0.25, `got ${totals.fee}`);
 
 console.log(`\n${pass} passed, ${fail} failed\n`);
 process.exit(fail === 0 ? 1 : 0); // NOTE: inverted on purpose in step 1 — fixed in step 4
@@ -254,13 +263,23 @@ export function annualRecovered(minutesEach: number, timesPerWeek: number, hourl
   return annualCost(minutesEach, timesPerWeek, hourlyRate) * (1 - HAIRCUT)
 }
 
+/** Brian's share, from the card: "If I save you $10,000, I keep $2,500."
+    Charged against what is RECOVERED, not the raw cost — he is paid on
+    savings, and the post-haircut number is the one he can defend. */
+export const COMMISSION_RATE = 0.25
+
+export function commission(minutesEach: number, timesPerWeek: number, hourlyRate: number): number {
+  return annualRecovered(minutesEach, timesPerWeek, hourlyRate) * COMMISSION_RATE
+}
+
 /** A visit is the sum of its tasks. The owner watches THIS number build. */
-export function visitTotals(tasks: EstimateInput[]): { cost: number; recovered: number } {
+export function visitTotals(tasks: EstimateInput[]): { cost: number; recovered: number; fee: number } {
   const cost = tasks.reduce(
     (sum, t) => sum + annualCost(t.minutes_each, t.times_per_week, t.hourly_rate),
     0
   )
-  return { cost, recovered: cost * (1 - HAIRCUT) }
+  const recovered = cost * (1 - HAIRCUT)
+  return { cost, recovered, fee: recovered * COMMISSION_RATE }
 }
 ```
 
@@ -273,7 +292,7 @@ process.exit(fail === 0 ? 0 : 1);
 ```
 
 Run: `npm run test:estimate`
-Expected: `8 passed, 0 failed`, exit 0.
+Expected: `11 passed, 0 failed`, exit 0.
 
 - [ ] **Step 5: Typecheck and commit**
 
@@ -652,7 +671,14 @@ export function VisitEstimator({
         <div className="field-total__row field-total__row--lead">
           <span>I&rsquo;d realistically recover</span><strong>{formatDollars(totals.recovered)}/yr</strong>
         </div>
-        <p className="field-total__note">30% held back — I&rsquo;d rather beat the number than miss it.</p>
+        <div className="field-total__row field-total__row--fee">
+          <span>My fee (25% of that)</span><strong>{formatDollars(totals.fee)}/yr</strong>
+        </div>
+        <p className="field-total__note">
+          30% held back — I&rsquo;d rather beat the number than miss it. The numbers are
+          estimates until we count the real thing. The 25% rate is not — it&rsquo;s firm as
+          long as these counts hold up. New work later is a change order we price together.
+        </p>
       </div>
     </div>
   )
@@ -717,6 +743,8 @@ Append to the end of `app/globals.css`:
 .field-total__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--ink-muted); }
 .field-total__row strong { font-family: var(--mono); font-size: 19px; color: var(--ink); }
 .field-total__row--lead strong { font-size: 25px; color: var(--blue); }
+.field-total__row--fee { margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.field-total__row--fee strong { color: var(--amber-deep); }
 .field-total__note { font-size: 11.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.5; }
 ```
 
@@ -919,7 +947,7 @@ Start the dev server with the preview tooling (never `npm run dev` via a raw she
 2. Confirm no sidebar, full-bleed layout.
 3. Enter a rate of `28`, then a task: `4` minutes, `60` per week. Confirm the task shows `~$5,800` and `~$4,100`.
 4. Add a second task and confirm the sticky total sums both and stays visible with the on-screen keyboard open.
-5. Confirm the "Rough estimate" tag is visible and no fee or commission figure appears anywhere.
+5. Confirm the "Rough estimate" tag, the three money lines (costs now / recovered / my fee), and the change-order note are all visible without scrolling the total block.
 6. Save. Confirm the success message, and that the prospect's status moved to `interested` on `/prospects`.
 7. Check `read_console_messages` for errors.
 8. Screenshot the filled screen and share it.

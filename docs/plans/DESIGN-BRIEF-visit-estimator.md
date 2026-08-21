@@ -41,7 +41,7 @@ What is missing is only the **task pricing** and the **screen to do it on**.
 | 3 | Show two numbers: raw annual cost, then the post-haircut recoverable figure. Both labeled. | Raw only (reads as a promise, portal undercuts it later); haircut only (loses the "this is bleeding you" moment) |
 | 4 | Screen only, saved to the prospect. Nothing emailed, nothing handed over. | Emailed recap; auto-drafted proposal. Both commit to a number in writing on day one. The card's job is to book 15 minutes, not to close. |
 | 5 | Dedicated route in a new `(field)` route group, outside `(dashboard)`. | Inline on the prospect card (crowds a 214-line component, poor on-site flow); standalone public calculator (new unauthenticated surface on a deny-by-default app) |
-| 6 | The on-site **dollar figure** is a rough estimate, labeled as such on screen — its inputs are verbal approximations, so it cannot be firm regardless of how costs are handled. The **rate structure** (25% of verified savings + third-party costs passed through at cost) is firm and can be stated aloud, but is never displayed on this screen. The proposal is the only written quote. | Showing a fee figure live (invites a negotiation before anything is scoped); treating the estimate as a quote because the pass-through costs are known — that firms up Brian's side of the math, not the client's inputs |
+| 6 | Separate the two. The **dollar figures are estimates** — their inputs are verbal approximations, so they firm up only once the task is observed and counted. The **25% rate is firm**, shown on screen alongside the estimated fee, conditional on the counts holding and no new work being added. Scope growth is a change order priced together, not a silent revision. | Hiding the fee entirely (my earlier recommendation — withdrawn: the change-order mechanism means an on-site figure was never a commitment to a total, so showing it commits nothing); presenting the dollar figures as firm |
 
 ## The math
 
@@ -122,9 +122,17 @@ recalculates on every keystroke.
 
 The total block carries a permanent **"Rough estimate"** label — not a
 dismissible hint, not fine print. The owner is watching this number get
-built and will remember it; the screen must never let it read as a quote.
-The firm rate lives in the proposal (decision 6). No fee or commission
-figure appears anywhere on this screen.
+built and will remember it.
+
+Three lines, in this order: what it costs them now, what I'd recover, and
+my fee at 25% of what I recover. The standing note underneath draws the
+distinction the whole screen depends on:
+
+> The numbers are estimates until we count the real thing. The 25% rate
+> is not — it's firm as long as these counts hold up. New work later is a
+> change order we price together.
+
+Estimated figures, firm rate. The screen must never blur those two.
 
 Below the fold: the visit rate, a notes field, and Save.
 
@@ -198,7 +206,7 @@ behaves differently, the field types change, not the design.
 - A public, unauthenticated calculator (decision 5)
 - Collapsing the dashboard sidebar (logged as a follow-up)
 - Editing tasks after save — v1 captures; corrections happen at the desk
-- Any commission or fee math, on screen or in the schema (decision 6)
+- Storing any dollar or fee amount in the schema — the fee is derived on read like every other figure (decision 6)
 
 ## Risks
 
@@ -206,6 +214,7 @@ behaves differently, the field types change, not the design.
 |---|---|
 | Gboard mic absent on the text fields too, gutting the "voice" premise | Verified on the real handset before merge. The screen still works as a fast tap-form; the live total is the actual demo. |
 | Owner hears the raw cost as a savings promise | Both numbers are labeled on screen and the haircut line is always visible. |
-| Owner treats the on-site figure as a firm quote | Permanent "Rough estimate" label on the total block; no fee figure on screen; the proposal is the only written quote (decision 6). The inputs are verbal approximations — a 20% error in "how often" moves the total 20%, which is why the figure firms up only after the task is observed and counted. |
+| Owner treats the estimated figures as a firm quote | Permanent "Rough estimate" label, and a note that separates the estimated numbers from the firm 25% rate (decision 6). A 20% error in "how often" moves the total 20%, which is why the figures firm up only after the task is observed and counted. |
+| Owner anchors on the on-site fee and resists a larger proposal | The change-order framing is stated on screen from the first visit: new work is priced together, not absorbed. |
 | A visit is priced against the wrong prospect | The route is prospect-scoped; the header shows the business name and card photo throughout. |
 | Two or three tasks still fall short of $10k | Expected and fine. The number is what it is — never inflate inputs to clear the bar. |
