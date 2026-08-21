@@ -1608,3 +1608,32 @@ details:not([open]) > *:not(summary) { display: none; }
 .field-total__row--fee { margin-top: 4px; padding-top: 6px; border-top: 1px dashed var(--rule); }
 .field-total__row--fee strong { color: var(--amber-deep); }
 .field-total__note { font-size: 11.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.5; }
+
+/* Field home — the phone list and card capture. */
+.field-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
+
+.field-scan { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; margin-bottom: 22px; }
+.field-scan__reading { font-size: 14px; color: var(--ink-muted); padding: 18px 0; }
+.field-scan__note { font-size: 12px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+.field-camera {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 18px; font: inherit; font-size: 16px; font-weight: 500;
+  color: #fff; background: var(--blue); border: none; border-radius: 8px; cursor: pointer;
+}
+.field-camera__icon { font-size: 20px; line-height: 1; }
+.field-search { margin-bottom: 16px; }
+
+.field-plist { list-style: none; margin: 0; padding: 0; }
+.field-plist__item {
+  display: block; padding: 15px 0; border-top: 1px solid var(--rule);
+  text-decoration: none; color: var(--ink);
+}
+.field-plist__name { display: block; font-size: 16.5px; line-height: 1.3; }
+.field-plist__meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 12.5px; color: var(--ink-soft); }
+.field-plist__addr { display: block; margin-top: 3px; font-size: 12.5px; color: var(--ink-soft); }
+.field-pill { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--rule); }
+.field-pill--interested { color: var(--blue); border-color: var(--blue); }
+.field-pill--visited { color: var(--amber-deep); border-color: var(--amber); }
+
+.field-empty { font-size: 14px; color: var(--ink-muted); padding: 20px 0; }
+.field-foot { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-soft); }
