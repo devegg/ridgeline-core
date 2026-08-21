@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState } from 'react'
 import { saveCardAction } from '@/app/actions/prospects'
 import { parseCardText, type CardGuess } from '@/lib/card-parse'
+import { downscaleImage } from '@/lib/field/downscale'
 import { noAutofill } from '@/lib/field/no-autofill'
 import type { ActionState } from '@/lib/types'
 
@@ -34,11 +35,14 @@ export function FieldCardScan({ prospects }: { prospects: { id: string; business
   }
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setPhoto(file)
+    const picked = e.target.files?.[0]
+    if (!picked) return
     setPhase('reading')
     setProgress(0)
+    // Shrink first: a raw camera photo is megabytes and blew the Server
+    // Action body limit on save. OCR is faster on the smaller image too.
+    const file = await downscaleImage(picked)
+    setPhoto(file)
     try {
       const Tesseract = (await import('tesseract.js')).default
       const result = await Tesseract.recognize(file, 'eng', {

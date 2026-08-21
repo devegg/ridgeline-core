@@ -280,6 +280,7 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
     const { error } = await supabase.from('prospects').update(patch).eq('id', attachTo)
     if (error) return { errors: { _root: 'Saving failed — refresh and try again.' } }
     revalidatePath('/prospects')
+    revalidatePath('/visit')
     return { message: `Card attached to ${existing.business_name}.` }
   }
 
@@ -294,5 +295,6 @@ export async function saveCardAction(_prev: ActionState, formData: FormData): Pr
     }
   }
   revalidatePath('/prospects')
+  revalidatePath('/visit')
   return { message: 'Prospect created from the card.' }
 }

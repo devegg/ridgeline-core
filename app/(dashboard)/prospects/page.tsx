@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { FilterTabs } from '@/components/ui/FilterTabs'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -73,7 +74,7 @@ export default async function ProspectsPage({
           handwrote; promote the warm ones to Leads.
         </p>
         <p className="page-sub">
-          On your phone, use <a href="/visit">the field list</a> instead — no sidebar, a camera
+          On your phone, use <Link href="/visit">the field list</Link> instead — no sidebar, a camera
           button for cards, and a tap straight into the visit estimator.
         </p>
       </div>
