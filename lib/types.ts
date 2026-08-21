@@ -339,3 +339,16 @@ export interface ProspectVisit {
   card_word: string | null
   note: string | null
 }
+
+export interface VisitTask {
+  id: string
+  created_at: string
+  prospect_id: string
+  visit_id: string | null
+  label: string
+  who: string | null
+  minutes_each: number
+  times_per_week: number
+  hourly_rate: number
+  sort_order: number
+}
