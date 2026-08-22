@@ -62,9 +62,9 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   issues (`/api/ingest/issue`); lean plan tiers; case-study draft generator.
   Demo script: docs/extras/demo-walkthrough.md.
 - **Magic link verified end to end** (2026-07-11): Supabase auth email rides
-  Resend SMTP now; link arrived and signed in (same-browser PKCE). The
-  email-template edit that activates the browser-independent /auth/confirm
-  route stays a BACKLOG owner step.
+  Resend SMTP now; link arrived and signed in (same-browser PKCE). **The
+  template edit that activates the browser-independent /auth/confirm route
+  landed 2026-08-22** — links are no longer bound to the requesting browser.
 - **Lifecycle connectors shipped** (D15, same day): assessment→proposal→
   project convert actions, the portal Proposals page with client one-click
   Approve (bounded RPC), request→roadmap checkbox, lifecycle nav order.
@@ -78,7 +78,7 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   form (the action existed, nothing rendered it), document Edit mode,
   settings form padding.
 - Still open (the register in docs/decisions-log.md is the authority):
-  the Magic Link template edit (BACKLOG); `CRON_SECRET` when the first client
+  `CRON_SECRET` when the first client
   is flagged for auto-send. (`SUPABASE_SECRET_KEY` is confirmed present and
   working in Vercel production as of 2026-08-22.)
 
@@ -122,7 +122,8 @@ access meant opening the Supabase dashboard.
 
 **`SUPABASE_SECRET_KEY` is confirmed in Vercel production** (2026-08-22) — it
 has been there 42 days and it authenticates. The BACKLOG item was stale. The
-Magic Link email-template edit is still open and is the real gate on §2.2.
+Magic Link email-template edit is DONE (owner, 2026-08-22, saved and tested),
+which clears the last gate on §2.2.
 
 ## Shipped 2026-08-22 — the field-to-client chain, and RFQ Hunter's process (PRs #52–#57)
 
