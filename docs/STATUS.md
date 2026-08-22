@@ -90,7 +90,7 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
-## Shipped 2026-08-22 — the accounts screen (PR pending, feature/accounts-screen)
+## Shipped 2026-08-22 — the accounts screen (PR #60, feature/accounts-screen)
 
 `/accounts`, owner-only — BUILD-PLAN §2.3. "Does this client have a login?"
 and "have they ever signed in?" needed a SQL query to answer, and revoking
