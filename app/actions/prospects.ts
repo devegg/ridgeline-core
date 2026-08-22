@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { parseKml } from '@/lib/kml'
+import { toHttpUrl } from '@/lib/safe-url'
 import type { ActionState } from '@/lib/types'
 
 /** Field kit actions — owner-only (RLS enforces it; we also gate here). */
@@ -233,6 +234,15 @@ export async function promoteToLeadAction(_prev: ActionState, formData: FormData
       business_name: prospect.business_name,
       industry: prospect.industry,
       location: prospect.address,
+      // Everything the card scan captured travels with the promotion. These
+      // three were dropped here, which quietly made the OCR pointless: the
+      // fields were read off the card, confirmed by hand, and then thrown
+      // away at the one moment the record starts to matter.
+      contact_name: prospect.contact_name,
+      email: prospect.email,
+      // prospects.website takes a bare domain; leads.website has an http(s)
+      // CHECK. Normalize, and never let a bad guess fail the promotion.
+      website: toHttpUrl(prospect.website),
       phone: prospect.phone,
       source: 'card_drop',
       stage: 'identified',
