@@ -22,17 +22,21 @@ on that surface until a paying client is inside it.
 
 ---
 
-## Stage 1 — close the chain (target: 2026-08-29)
+## Stage 1 — close the chain — **COMPLETE 2026-08-22** (PRs #52, #54–#57)
+
+Landed six days ahead of target. All four breaks closed; production verified at
+master HEAD after each merge.
+
 
 Each item is its own branch and PR.
 
-### 1.1 Card fields survive promotion — **done, this PR**
+### 1.1 Card fields survive promotion — **done (#52)**
 `promoteToLeadAction` dropped `contact_name`, `email` and `website`. Fixed, plus
 `toHttpUrl` in `lib/safe-url.ts`: `prospects.website` accepts a bare domain but
 `leads.website` has an http(s) CHECK, so an un-normalized copy would have failed
 the whole promotion on a good website.
 
-### 1.2 The saved estimate is readable
+### 1.2 The saved estimate is readable — **done (#54)**
 A visit's tasks and its total appear on the prospect and on the lead it becomes.
 `visit_tasks` currently has one writer and no readers — the most valuable thirty
 minutes of the sale is unrecoverable after you walk out.
@@ -41,7 +45,7 @@ minutes of the sale is unrecoverable after you walk out.
 - Money still derives on read (D21) — nothing stored.
 - Shows on `/visit/[id]` (last visit), the prospect row, and the lead detail.
 
-### 1.3 The recap email
+### 1.3 The recap email — **done (#55)**
 One button after a saved visit: the recap — their tasks, their numbers, the
 "rough estimate" caveat verbatim.
 
@@ -56,14 +60,21 @@ and an OCR'd email address gets looked at before anything is sent to it.
 - This is the follow-up currently written from memory, and the reason the visit
   is worth saving at all.
 
-### 1.4 Follow-up date on a prospect
+### 1.4 Follow-up date on a prospect — **done (#56)**
 `leads` has `follow_up_date` and the overview already surfaces "follow-ups due".
 `prospects` has nothing, so a warm visit that is not promoted the same day has
 nothing chasing it. One column, one input, one query change.
 
 - Migration. Owner runs `npm run migrate`.
 
-### 1.5 Visit tasks become draft automations at conversion
+### 1.5 Visit tasks carry onto the client at conversion — **done (#57)**
+
+> Shipped differently from the heading this section originally carried
+> ("draft automations"). `automations.status` is running/issue/paused with no
+> "planned", so a row written at conversion would show a client work as LIVE
+> that has not been built. The tasks land on `roadmap_items` — which is what
+> "what's next" means — and the real automation is created when the build
+> ships, with the baseline read off the same visit.
 Lead → client currently creates the client at the default $45 blended rate with
 no automations. Carry the measured rate onto the client and each timed task
 through as a draft automation with a real `baseline_minutes_per_item`.
@@ -78,12 +89,15 @@ through as a draft automation with a real `baseline_minutes_per_item`.
 
 ## Stage 2 — ready for a yes (target: 2026-09-05)
 
-### 2.1 Route order for the field list
-All 88 prospects have lat/lng from the KML import; `/visit` sorts them
-alphabetically, which is no use for a driving day. Sort by distance from current
-location (browser geolocation), with industry as a secondary filter.
+### 2.1 Route order for the field list — ~~CUT~~ (owner, 2026-08-22)
+**Not building this.** The pins are already on Brian's Google Map, and he knows
+the area and its traffic patterns; he will drive whatever is easiest as he goes.
+An app-side "nearest first" sort would be a worse version of a decision he
+already makes better, and it would compete with the tool he actually uses on
+the road.
 
-Day one should open on a route, not a list.
+The alphabetical list stays. What matters on `/visit` is finding a business you
+are standing outside — which the client-side search already does.
 
 ### 2.2 Client-facing notifications with deep links
 Five emails — proposal sent, deliverable released, document shared, invoice
