@@ -4,6 +4,7 @@ import type { User } from '@supabase/supabase-js'
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendNotification } from '@/lib/email'
+import { listAllAuthUsers } from '@/lib/portal/notify'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/lib/types'
 
@@ -208,25 +209,6 @@ function isDisabled(user: { banned_until?: string | null }): boolean {
   if (!until) return false
   const at = Date.parse(until)
   return Number.isFinite(at) && at > Date.now()
-}
-
-/**
- * Every auth user, walked page by page. The three older call sites in this
- * file ask for `perPage: 1000` and silently drop anything past the first
- * thousand; this one cannot, because the whole point of the screen is that
- * nothing is missing from it.
- */
-async function listAllAuthUsers(admin: ReturnType<typeof createAdminClient>) {
-  const PER_PAGE = 200
-  const MAX_PAGES = 50 // 10k users — a guard against looping, not a real ceiling
-  const all: User[] = []
-  for (let page = 1; page <= MAX_PAGES; page++) {
-    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: PER_PAGE })
-    if (error) throw new Error(error.message)
-    all.push(...data.users)
-    if (data.users.length < PER_PAGE) break
-  }
-  return all
 }
 
 /** Owner-gated read behind the accounts screen. One auth call, one clients query. */

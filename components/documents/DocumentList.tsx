@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { NotifyCheckbox } from '@/components/dashboard/NotifyBanner'
 import { useActionState, useState, useRef, useEffect } from 'react'
 import { uploadDocumentAction, toggleShareAction, deleteDocumentAction } from '@/app/actions/documents'
 import type { Document, DocumentEntityType, ActionState } from '@/lib/types'
@@ -129,7 +130,12 @@ export function DocumentList({ documents, entityType, entityId, portalBase }: Do
             >
               View
             </Link>
-            <form action={toggleShareAction.bind(null, doc.id, entityType, entityId, !doc.is_shared)}>
+            <form
+              action={toggleShareAction.bind(null, doc.id, entityType, entityId, !doc.is_shared)}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+            >
+              {/* Only a share is worth an email; un-sharing stays silent. */}
+              {!doc.is_shared && <NotifyCheckbox label="Email them" />}
               <button type="submit" className="btn-outline" style={{ fontSize: 12, padding: '4px 10px' }}>
                 {doc.is_shared ? 'Unshare' : 'Share'}
               </button>

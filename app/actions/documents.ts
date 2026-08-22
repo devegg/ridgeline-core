@@ -2,6 +2,7 @@
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
+import { clientIdForEntity, notifyClient } from '@/lib/portal/notify'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState, DocumentEntityType } from '@/lib/types'
@@ -33,12 +34,29 @@ export async function uploadDocumentAction(_prev: ActionState, formData: FormDat
   return { message: 'Document uploaded.' }
 }
 
-export async function toggleShareAction(documentId: string, entityType: DocumentEntityType, entityId: string, shared: boolean) {
+export async function toggleShareAction(documentId: string, entityType: DocumentEntityType, entityId: string, shared: boolean, formData?: FormData) {
   const supabase = await createSupabase()
+  const { data: doc } = await supabase.from('documents').select('name').eq('id', documentId).single()
+
   const { error } = await supabase.from('documents').update({ is_shared: shared }).eq('id', documentId)
   queryFailed('documents', error)
+
+  // Only a SHARE is worth an email. Un-sharing quietly withdraws something;
+  // announcing that would be worse than silence.
+  let outcome: string | null = null
+  if (shared) {
+    outcome = await notifyClient({
+      clientId: await clientIdForEntity(entityType, entityId),
+      kind: 'document_shared',
+      title: (doc as { name?: string } | null)?.name ?? 'A document',
+      path: `/portal/documents/${documentId}`,
+      notify: formData?.get('notify') === 'on',
+    })
+  }
+
   revalidatePath(`/${entityType}s/${entityId}`)
   revalidatePath('/portal/documents')
+  if (outcome) redirect(`/${entityType}s/${entityId}?notified=${outcome}`)
 }
 
 export async function deleteDocumentAction(documentId: string, entityType: DocumentEntityType, entityId: string) {

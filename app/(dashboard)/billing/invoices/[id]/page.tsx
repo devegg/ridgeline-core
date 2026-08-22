@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { NotifyBanner, NotifyCheckbox } from '@/components/dashboard/NotifyBanner'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
@@ -13,10 +14,10 @@ export default async function InvoiceDetailPage({
   params, searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ mode?: string }>
+  searchParams: Promise<{ mode?: string; notified?: string }>
 }) {
   const { id } = await params
-  const { mode } = await searchParams
+  const { mode, notified } = await searchParams
   const supabase = await createClient()
 
   const [
@@ -43,6 +44,7 @@ export default async function InvoiceDetailPage({
 
   return (
     <div>
+      <NotifyBanner outcome={notified} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 28, flexWrap: 'wrap' }}>
         <div>
           <div className="page-eyebrow">Billing · Invoices · <StatusBadge status={inv.status} /></div>
@@ -56,6 +58,7 @@ export default async function InvoiceDetailPage({
           )}
           {inv.status === 'draft' && (
             <form action={sendInvoiceAction.bind(null, id)}>
+              <NotifyCheckbox />
               <button type="submit" className="btn-primary">Send invoice <span className="arrow" /></button>
             </form>
           )}
