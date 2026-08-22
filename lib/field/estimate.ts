@@ -45,3 +45,26 @@ export function visitTotals(tasks: EstimateInput[]): { cost: number; recovered: 
   const recovered = cost * (1 - HAIRCUT)
   return { cost, recovered, fee: recovered * COMMISSION_RATE }
 }
+
+/**
+ * One blended hourly rate for a client, from the rates measured task by task
+ * on site. Weighted by annual minutes, so the task that eats the most time
+ * carries the most weight — an average of the raw rates would let a rare
+ * $90/hr task drag up a client whose real cost of labour is $28.
+ *
+ * Every input rate is already inside the $5–$500 bounds the form and the
+ * CHECK constraints enforce, so the blend is too: a weighted mean cannot
+ * leave the range of its inputs.
+ */
+export function blendedRate(tasks: EstimateInput[]): number | null {
+  let minutes = 0
+  let weighted = 0
+  for (const t of tasks) {
+    const w = t.minutes_each * t.times_per_week
+    if (w <= 0) continue
+    minutes += w
+    weighted += w * t.hourly_rate
+  }
+  if (minutes === 0) return null
+  return Math.round((weighted / minutes) * 100) / 100
+}

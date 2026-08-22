@@ -4,7 +4,18 @@ import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { blendedRate } from '@/lib/field/estimate'
 import type { ActionState, LeadStage } from '@/lib/types'
+
+/** Only the columns the carry-across selects — not the whole VisitTask row,
+    so the type cannot claim fields the query did not ask for. */
+type CarriedTask = {
+  label: string
+  minutes_each: number
+  times_per_week: number
+  hourly_rate: number
+  sort_order: number
+}
 
 const STAGE_ORDER: LeadStage[] = [
   'identified', 'contacted', 'meeting_scheduled', 'proposal_sent', 'won',
@@ -152,6 +163,8 @@ export async function convertToClientAction(id: string): Promise<{ clientId?: st
   }).eq('id', id)
   queryFailed('leads', linkError)
 
+  await carryTheVisitAcross(supabase, id, client.id)
+
   revalidatePath('/leads')
   revalidatePath('/clients')
   return { clientId: client.id }
@@ -163,4 +176,89 @@ export async function deleteLeadAction(id: string) {
   queryFailed('leads', error)
   revalidatePath('/leads')
   redirect('/leads')
+}
+
+/**
+ * Carry the on-site visit's findings onto the new client (build plan 1.5).
+ *
+ * Without this the client is created at the default $45/hr with nothing else,
+ * and the rate and task list measured in the owner's own office — the thing
+ * the whole drop-in existed to produce — have to be typed in again from a
+ * table nothing reads. That is the last break in the chain from card to
+ * portal.
+ *
+ * TWO THINGS DELIBERATELY NOT DONE HERE:
+ *
+ * 1. No `automations` rows. `automations.status` is running/issue/paused —
+ *    there is no "planned", so anything written here would show a client work
+ *    as LIVE that has not been built. The portal's honesty rails forbid that
+ *    more clearly than any schema does. The tasks land on the roadmap, which
+ *    is exactly what "what's next" means, and the automation gets created for
+ *    real when the build goes live (Clients -> Portal data), where the
+ *    baseline can be read off the same visit.
+ *
+ * 2. Nothing is overwritten. A rate is only set if the visit measured one,
+ *    and roadmap items are only added if the client has none — re-running a
+ *    conversion, or converting a second lead onto an existing client, must
+ *    not duplicate the list or reset a rate the client has since corrected
+ *    through the portal (D18: the client owns these inputs).
+ *
+ * Failures here never fail the conversion. The client record is the thing
+ * that matters; a missing roadmap row is a nuisance the owner can fix in
+ * thirty seconds on the portal-data screen.
+ */
+async function carryTheVisitAcross(
+  supabase: Awaited<ReturnType<typeof createSupabase>>,
+  leadId: string,
+  clientId: string,
+): Promise<void> {
+  try {
+    const { data: prospect } = await supabase
+      .from('prospects')
+      .select('id')
+      .eq('lead_id', leadId)
+      .maybeSingle()
+    if (!prospect) return // converted from a lead that never came off a card
+
+    // The most recent visit that actually priced something — same rule as the
+    // visit screen. A bare touchpoint logged later must not hide the estimate.
+    const { data: newest } = await supabase
+      .from('visit_tasks')
+      .select('visit_id')
+      .eq('prospect_id', prospect.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+    const visitId = (newest ?? [])[0]?.visit_id
+    if (!visitId) return
+
+    const { data: taskRows } = await supabase
+      .from('visit_tasks')
+      .select('label, minutes_each, times_per_week, hourly_rate, sort_order')
+      .eq('visit_id', visitId)
+      .order('sort_order')
+    const tasks = (taskRows ?? []) as CarriedTask[]
+    if (tasks.length === 0) return
+
+    const rate = blendedRate(tasks)
+    if (rate !== null) {
+      await supabase.from('clients').update({ blended_labor_rate: rate }).eq('id', clientId)
+    }
+
+    const { count } = await supabase
+      .from('roadmap_items')
+      .select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId)
+    if ((count ?? 0) > 0) return
+
+    await supabase.from('roadmap_items').insert(
+      tasks.map((t, i) => ({
+        client_id: clientId,
+        title: t.label,
+        state: 'next',
+        sort_order: t.sort_order ?? i,
+      })),
+    )
+  } catch (err) {
+    console.error('[leads] carrying the visit across failed:', err)
+  }
 }
