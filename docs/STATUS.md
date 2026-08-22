@@ -78,8 +78,9 @@ docs/plans/BUILD-PLAN-portal-home-dashboard.md. Visually verified end to end
   form (the action existed, nothing rendered it), document Edit mode,
   settings form padding.
 - Still open (the register in docs/decisions-log.md is the authority):
-  the Magic Link template edit (BACKLOG); cron env (`CRON_SECRET`,
-  `SUPABASE_SECRET_KEY`) when the first client is flagged for auto-send.
+  the Magic Link template edit (BACKLOG); `CRON_SECRET` when the first client
+  is flagged for auto-send. (`SUPABASE_SECRET_KEY` is confirmed present and
+  working in Vercel production as of 2026-08-22.)
 
 ## Shipped 2026-07-12 — client-owned value inputs (PR #29, feature/client-value-inputs)
 
@@ -88,6 +89,40 @@ inside the portal's How-I-count panel (blended hourly rate + minutes-per-task
 per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
+
+## Shipped 2026-08-22 — the accounts screen (PR pending, feature/accounts-screen)
+
+`/accounts`, owner-only — BUILD-PLAN §2.3. "Does this client have a login?"
+and "have they ever signed in?" needed a SQL query to answer, and revoking
+access meant opening the Supabase dashboard.
+
+- A row per client whether or not a login exists. Today that is 4 clients and
+  1 login, so "no login" is the state the screen mostly reports.
+- **Accounts with no client get their own table.** They can sign in, but RLS
+  scopes them to a client that is gone or was never set, so the portal shows
+  them nothing — and nothing else in the app surfaces them at all.
+- Revoke is a reversible disable, never a delete (D26). Two guards: you
+  cannot disable your own account, and an owner account is refused.
+- One paginated `listUsers` walk. The three older call sites ask for
+  `perPage: 1000` and silently drop anything beyond the first thousand.
+- `/accounts` added to `DASHBOARD_PATHS` in `middleware.ts` — a dashboard
+  route missing from that regex sits outside the owner gate.
+- No migration. `last_sign_in_at`, `banned_until`, `email` and `created_at`
+  all ride the Supabase auth user object.
+- **Fixed a global that would have broken silently.** `.data-table` stretches
+  the first cell's link across the whole row (#47); the rule lifting other
+  cells back above that overlay named only `a`, which was true of every table
+  that existed when it was written. Every control on this screen is a button,
+  so "Disable access" hovered, looked live, and navigated to the client page
+  instead. Interactive elements are lifted as a class now.
+- Suite at **54 checks, green** (7 new, section F). `banned_until` behaviour
+  was measured on a throwaway account rather than assumed.
+- Verified against production with a throwaway owner account, deleted after;
+  the demo client's login was left exactly as found. No test data written.
+
+**`SUPABASE_SECRET_KEY` is confirmed in Vercel production** (2026-08-22) — it
+has been there 42 days and it authenticates. The BACKLOG item was stale. The
+Magic Link email-template edit is still open and is the real gate on §2.2.
 
 ## Shipped 2026-08-22 — the field-to-client chain, and RFQ Hunter's process (PRs #52–#57)
 
