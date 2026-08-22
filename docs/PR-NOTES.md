@@ -10,9 +10,102 @@
 > `gh`); re-run after merging a PR, as part of the doc-sync pass. Reading GitHub directly means it
 > can never silently drift from what actually shipped.
 
-_Generated 2026-08-22 from 57 merged PRs (#1–#57)._
+_Generated 2026-08-22 from 60 merged PRs (#1–#60)._
 
 ---
+## #60 — feat: the accounts screen — who can sign in, and when they last did
+merged 2026-08-22 · `3157947`
+
+BUILD-PLAN §2.3. `/accounts`, owner-only.
+
+Answering "does this client have a login?" or "have they ever signed in?" needed a SQL query. Revoking access meant opening the Supabase dashboard. Both now live on one page.
+
+## What it shows
+
+- **A row per client whether or not a login exists.** Today that's 4 clients and 1 login, so "no login" is the state the screen mostly reports — with inline Create login reusing the same provisioning action the per-client panel uses.
+- **Accounts that map to no client get their own table.** They can sign in, but RLS scopes them to a client that's gone or was never set, so the portal shows them nothing — and nothing else in the app surfaces them at all. This is the case the screen exists to catch.
+- Last sign-in distinguishes **"Never"** (login exists, unused) from **"—"** (no login).
+
+## Decisions
+
+- **Revoke is a reversible disable, never a delete (D26).** Supabase `ban_duration`. The account and its sign-in history survive, so "were they cut off, and when" stays answerable, and the same button puts it back. Deleting a login is not offered anywhere — the owner dropped it deliberately.
+- Two guards: you cannot disable your own account (locking yourself out of the dashboard has no in-app recovery), and an owner account is refused outright.
+
+## Notes
+
+- **No migration.** `last_sign_in_at`, `banned_until`, `email` and `created_at` all ride the auth user object.
+- **`/accounts` added to `DASHBOARD_PATHS`** in `middleware.ts`. A dashboard route missing from that regex sits outside the owner gate.
+- **One paginated `listUsers` walk.** The three older call sites ask for `perPage: 1000` and silently drop anything past the first thousand. Those are left alone — separate concern.
+
+## A global that would have broken silently
+
+`.data-table` stretches the first cell's link across the whole row (#47). The rule lifting other cells back above that overlay named only `a` — true of every table that existed when it was written. Every control here is a button, so the first click on "Disable access" hovered, looked live, and **navigated to the client page instead**. Interactive elements are now lifted as a class, so the next table with a control in it doesn't rediscover this.
+
+## Verification
+
+- `npm run test:portal` — **54 passed, 0 failed** (7 new checks, section F). `banned_until` behaviour was *measured* on a throwaway account rather than assumed: absent when never banned, a future timestamp while banned (through `listUsers`, not just `updateUserById`), absent again once lifted.
+- `npx tsc --noEmit` clean. `npm run lint` 0 errors (9 pre-existing warnings, none in touched files).
+- Driven against production with a throwaway owner account, deleted after: disable → Access reads Disabled and the button flips to Re-enable → re-enable → back to Active, confirmed at the API. The demo client's login was left exactly as found. No test data written to production.
+
+## Also in this branch
+
+D25 records that **vision-model card reading is deferred and D20 stands** — no documented failing card exists, and the owner cut handwritten job sheets. And `SUPABASE_SECRET_KEY` is confirmed in Vercel production (42 days, authenticating) — it was a stale owner step, and it was **not** what gated §2.2. The Magic Link template edit is, and remains open.
+
+---
+
+## #59 — docs: Stage 1 complete, and route ordering is cut
+merged 2026-08-22 · `12d6fde`
+
+Plan reconciliation at session end.
+
+## Stage 1 is complete
+
+Landed 2026-08-22, six days ahead of the 08-29 target. Each item now carries the PR that shipped it (#52, #54–#57) so the plan stops reading as pending work. Production was verified at `master` HEAD after each merge.
+
+## 1.5's heading was wrong
+
+It said "visit tasks become **draft automations**". What shipped writes **roadmap items**.
+
+`automations.status` is `running | issue | paused` — there is no `planned` — so a row written at conversion would have shown a client work as *live that had not been built*. The heading is corrected and the reason recorded next to it, because a plan describing something other than what shipped is exactly the drift the doc-sync pass exists to catch.
+
+## 2.1 route ordering is CUT
+
+Owner decision, 2026-08-22. The 88 pins are already on Brian's Google Map, and he knows the area and its traffic patterns — he drives whatever is easiest as he goes.
+
+An app-side "nearest first" sort would be a worse version of a decision he already makes better, and it would compete with the tool he actually uses on the road. The alphabetical list stays: what matters on `/visit` is finding the business you're standing outside, which the client-side search already handles.
+
+Stage 2 is now client notifications, the accounts screen, and the owner-only steps.
+
+---
+
+## #58 — docs: session reconciliation — PRs #52–#57, D24
+merged 2026-08-22 · `a30e91b`
+
+The doc-sync pass for today's session. STATUS.md was five PRs behind.
+
+## STATUS.md
+
+New entry covering Stage 1 of the field-to-client chain (#52, #54–#57) and the RFQ Hunter process port (#53). It opens with the finding that drove the work — read from the production database, not the docs:
+
+> 4 client records (2 demos, 1 Ridgeline itself), 6 automations all belonging to demos, **one client-role account that signed in once on 2026-07-11 and never returned**, 88 prospects all `untouched`, zero `visit_tasks`.
+
+Two findings recorded so they aren't rediscovered the hard way:
+
+- the global `section { padding: clamp(72px, 11vw, 140px) }` from the marketing site applies to **every** `<section>` in the app — a new field panel rendered as a 212px box holding one line of text
+- the push guard **always exits 0** and signals denial as JSON on stdout; reading the exit code reports every case as allowed
+
+Also records why #54–#57 landed as merge commits rather than squashes: each branch carried the previous ones, so squashing the first made every follower conflict against a master holding the same changes under a new SHA.
+
+## decisions-log.md
+
+`Last Updated` → today. The **"no baseline, no claim"** open item is marked half-answered: the blended rate now arrives automatically at conversion (#57), weighted by annual minutes from the on-site visit. Only the per-automation baseline still waits for a build to go live — and by then the visit's timings are on the client's roadmap, so it's a read rather than a re-measure.
+
+## PR-NOTES.md
+
+Regenerated — 57 merged PRs. Second run of the generator, first one that includes the work it documents.
+
+---
+
 ## #57 — feat: converting a lead carries the visit onto the client
 merged 2026-08-22 · `cfbc2e3`
 
