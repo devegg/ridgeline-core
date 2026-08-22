@@ -104,20 +104,27 @@ Five emails — proposal sent, deliverable released, document shared, invoice
 issued, report ready — each landing on the item itself. Today the app sends a
 client nothing except a change-request reply.
 
-The portal research names this the third-biggest adoption lever. Blocked on 2.4.
+The portal research names this the third-biggest adoption lever. Blocked on 2.4 — specifically the Magic Link template edit, which is the only
+one of those three that actually gates it.
 
-### 2.3 The accounts screen
-One page: every client, whether a login exists, its email, last sign-in, revoke.
-Revoking access currently means opening the Supabase dashboard, and "has this
-client ever logged in?" needs a SQL query to answer.
+### 2.3 The accounts screen — **done 2026-08-22**
+`/accounts`: every client, whether a login exists, its email, last sign-in, and
+a reversible disable. Shipped with an extra table the plan did not ask for —
+accounts that map to no client, which can sign in and see nothing and are
+invisible everywhere else in the app.
+
+Revoke is a **disable, not a delete** (D26, owner call) — the account and its
+sign-in history survive so the decision stays auditable and reversible. No
+migration was needed; the auth user object already carries every field.
 
 ### 2.4 Owner steps (only Brian can do these)
 - **Magic Link email template edit** — open in BACKLOG since 2026-07-11. Five
   minutes. Until it lands, sign-in links only work in the browser that asked.
   Every item in 2.2 depends on this.
-- **Confirm `SUPABASE_SECRET_KEY` in Vercel production** — present in
-  `.env.local`; unverified in prod. Without it, creating a client login from the
-  live dashboard fails.
+- ~~**Confirm `SUPABASE_SECRET_KEY` in Vercel production**~~ — **DONE, and it
+  was already done**: verified 2026-08-22, present in Vercel Production and
+  Preview for 42 days and authenticating against Supabase Auth. Carried here
+  as an owner step it never actually needed.
 - **Client self-service password change** — `/settings` is owner-only, so a
   client's only recovery path is a magic link somebody has to tell them about.
 

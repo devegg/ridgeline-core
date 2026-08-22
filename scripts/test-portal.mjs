@@ -240,6 +240,52 @@ console.log("E. Light stress (parallel bursts)");
 }
 
 // ============================================================
+console.log("F. Accounts screen");
+{
+  ok("accounts gated 307", (await status("/accounts")) === 307);
+
+  // The Access column reads `banned_until` straight out of listUsers. That
+  // field is absent on a user that was never banned, so the screen's whole
+  // active/disabled distinction rests on how it behaves — prove it on a real
+  // account rather than trusting the shape of the API.
+  const probeEmail = `zz-suite-ban-${Date.now()}@ridgelineknows.com`;
+  const orphanClientId = randomUUID();
+  const { data: probe, error: probeErr } = await admin.auth.admin.createUser({
+    email: probeEmail,
+    password: `rk-${randomBytes(9).toString("base64url")}`,
+    email_confirm: true,
+    app_metadata: { role: "client", client_id: orphanClientId },
+  });
+  ok("ban probe user created", !probeErr, probeErr?.message);
+  const probeId = probe?.user?.id;
+
+  const findProbe = async () =>
+    (await admin.auth.admin.listUsers({ page: 1, perPage: 200 })).data.users.find(u => u.id === probeId);
+
+  if (probeId) {
+    ok("fresh account carries no banned_until", !(await findProbe())?.banned_until);
+
+    await admin.auth.admin.updateUserById(probeId, { ban_duration: "876000h" });
+    const banned = await findProbe();
+    const until = Date.parse(banned?.banned_until ?? "");
+    ok("disabled account shows a FUTURE banned_until via listUsers",
+       Number.isFinite(until) && until > Date.now(), banned?.banned_until ?? "absent");
+
+    await admin.auth.admin.updateUserById(probeId, { ban_duration: "none" });
+    ok("re-enabled account clears banned_until", !(await findProbe())?.banned_until);
+
+    // An account pointing at a client that does not exist is precisely what
+    // the "Accounts with no client" table is for.
+    const { data: cl } = await admin.from("clients").select("id");
+    ok("probe account would be flagged as an orphan",
+       !new Set((cl ?? []).map(c => c.id)).has(orphanClientId));
+
+    await admin.auth.admin.deleteUser(probeId);
+    ok("ban probe user deleted", !(await findProbe()));
+  }
+}
+
+// ============================================================
 if (testUserId) {
   await admin.auth.admin.deleteUser(testUserId);
   console.log("cleanup: ephemeral user deleted");

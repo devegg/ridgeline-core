@@ -48,6 +48,9 @@ export default async function ClientsPage({
           Add client
           <span className="arrow" />
         </Link>
+        <Link href="/accounts" className="btn-outline" style={{ marginLeft: 12 }}>
+          Portal accounts
+        </Link>
       </div>
 
       <div style={{ marginTop: 28 }}>

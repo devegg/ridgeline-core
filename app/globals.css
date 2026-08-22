@@ -804,11 +804,19 @@ section {
    the row promised that long before it was true — the first cell's link is
    stretched across the row so the promise holds, with no JS and no loss of
    keyboard focus (the anchor is still a real anchor). Links in other cells
-   sit above the overlay so mailto:/tel: still work. */
+   sit above the overlay so mailto:/tel: still work.
+
+   That last rule named only `a`, which was true of every table that existed
+   when it was written. The moment a table puts a CONTROL in another cell —
+   a button, an input, a <summary> — the control renders under the overlay
+   and the row link swallows the click: the button looks live, hovers, and
+   does nothing but navigate. Found on /accounts, where every action is a
+   button. Interactive elements are lifted as a class, not one tag at a
+   time, so the next table to add a control does not rediscover this. */
 .data-table tbody tr { transition: background 120ms; cursor: pointer; position: relative; }
 .data-table tbody tr:hover td { background: rgba(251, 247, 236, 0.8); }
 .data-table tbody td:first-child > a::after { content: ''; position: absolute; inset: 0; }
-.data-table tbody td:not(:first-child) a { position: relative; z-index: 1; }
+.data-table tbody td:not(:first-child) :is(a, button, input, select, textarea, label, summary, details) { position: relative; z-index: 1; }
 .data-table td:first-child { font-family: var(--serif); font-size: 16px; color: var(--ink); }
 .data-table a { text-decoration: none; color: inherit; }
 .data-table a:hover td:first-child { color: var(--blue); }

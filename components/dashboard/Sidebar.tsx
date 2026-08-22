@@ -20,6 +20,7 @@ import {
   Trash2,
   MessageSquare,
   MapPin,
+  KeyRound,
 } from 'lucide-react'
 
 interface NavItem {
@@ -52,6 +53,7 @@ const NAV_TOOLS: NavItem[] = []
 const NAV_STUBS: NavItem[] = [
   { href: '/templates', label: 'Templates', icon: Mail },
   { href: '/documents', label: 'Documents', icon: File },
+  { href: '/accounts', label: 'Accounts', icon: KeyRound },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
