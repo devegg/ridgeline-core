@@ -49,8 +49,9 @@
 - [x] ~~Magic-link send test~~ — VERIFIED end to end 2026-07-11 (owner):
       SMTP-via-Resend wired, link arrived, same-browser click signed in as
       designed (PKCE binds a link to the requesting browser). The BACKLOG's
-      Magic Link email-template edit remains open — it activates the deployed
-      /auth/confirm route so links work from ANY browser or email app.
+      Magic Link email-template edit is DONE as of 2026-08-22 — the deployed
+      /auth/confirm route is now what the email points at, so links work from
+      ANY browser or email app.
 - [x] ~~Portal nav overflow below ~900px~~ — DONE 2026-07-11 (PR #5): nav wraps.
 - [x] ~~Activity ingest for real clients~~ — DONE 2026-07-11 (PR #5, D12):
       `POST /api/ingest/activity` (per-client bearer key, authorization inside
@@ -76,11 +77,14 @@
       by a read-only `listUsers` probe). This item was STALE, not open — it
       had been carried as an owner step that was already done. Creating a
       client login from the live dashboard is not blocked.
-- [ ] **Magic Link email-template edit (owner, Supabase dashboard).** Still
-      genuinely open, and it is the one that gates the client-facing
-      notification emails in BUILD-PLAN §2.2 — not the secret key, which was
-      a separate item. Until the template points at `/auth/confirm`, a
-      sign-in link only works in the browser that asked for it.
+- [x] ~~Magic Link email-template edit (owner, Supabase dashboard)~~ — DONE
+      2026-08-22 (owner), saved and tested. The Magic link / OTP template now
+      points at `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+      and Site URL is `https://www.ridgelineknows.com`. Sign-in links now work
+      from any browser, device, or mail app instead of only the browser that
+      requested them. This was the last gate on BUILD-PLAN §2.2. No redirect
+      allow-list entry was needed — the template builds the URL against the
+      site directly, so it never passes through Supabase's allow-list.
 - [ ] PDF export on documents is a stub (Markdown download works).
 - [x] ~~Client provisioning is a manual runbook~~ — AUTOMATED 2026-07-11
       (PR #17): the Portal login panel creates the auth user with the

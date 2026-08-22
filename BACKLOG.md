@@ -90,12 +90,11 @@ was granted to Gboard; the field types split as designed.
 
 ## Owner steps (only Brian can do these)
 
-- [ ] **Magic Link email template edit** [owner] — Supabase → Authentication
-  → Email Templates → Magic Link: replace the ConfirmationURL anchor with
-  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`.
-  Five minutes; it's the one thing between real clients and sign-in links
-  that work from any browser. Then strike the register item in
-  docs/decisions-log.md.
+- [x] ~~**Magic Link email template edit**~~ [owner] — DONE 2026-08-22, saved
+  and tested. The Magic link / OTP template points at
+  `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`; Site
+  URL is `https://www.ridgelineknows.com`. Sign-in links work from any
+  browser, device or mail app now — not just the one that asked.
 - [ ] **Google Workspace migration** [owner] — deferred until paying work
   lands (owner decision 2026-07-11; ~$8/mo). Checklist:
   1. Business Starter for ridgelineknows.com; users `brian@` + `hello@`

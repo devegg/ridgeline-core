@@ -104,8 +104,8 @@ Five emails — proposal sent, deliverable released, document shared, invoice
 issued, report ready — each landing on the item itself. Today the app sends a
 client nothing except a change-request reply.
 
-The portal research names this the third-biggest adoption lever. Blocked on 2.4 — specifically the Magic Link template edit, which is the only
-one of those three that actually gates it.
+The portal research names this the third-biggest adoption lever. **Unblocked 2026-08-22** — the Magic Link template edit was the only one of
+2.4's three items that actually gated this, and it is done.
 
 ### 2.3 The accounts screen — **done 2026-08-22**
 `/accounts`: every client, whether a login exists, its email, last sign-in, and
@@ -118,9 +118,9 @@ sign-in history survive so the decision stays auditable and reversible. No
 migration was needed; the auth user object already carries every field.
 
 ### 2.4 Owner steps (only Brian can do these)
-- **Magic Link email template edit** — open in BACKLOG since 2026-07-11. Five
-  minutes. Until it lands, sign-in links only work in the browser that asked.
-  Every item in 2.2 depends on this.
+- ~~**Magic Link email template edit**~~ — **DONE 2026-08-22** (owner), saved
+  and tested. Open in BACKLOG since 2026-07-11. Sign-in links are no longer
+  bound to the browser that asked, which was the last thing 2.2 depended on.
 - ~~**Confirm `SUPABASE_SECRET_KEY` in Vercel production**~~ — **DONE, and it
   was already done**: verified 2026-08-22, present in Vercel Production and
   Preview for 42 days and authenticating against Supabase Auth. Carried here
