@@ -96,7 +96,8 @@ export async function changePortalEmailAction(_prev: ActionState, formData: Form
       html: `<p>Your portal login is now <strong>${newEmail}</strong>.</p>
 <p>To sign in: go to <a href="${SITE}/login">${SITE.replace('https://', '')}/login</a> and choose
 <em>"Get a sign-in link by email"</em> — no password needed. (If you prefer a password,
-use the sign-in link first, then set one from your account.)</p>
+use the sign-in link first, then set one at
+<a href="${SITE}/portal/account">${SITE.replace('https://', '')}/portal/account</a>.)</p>
 <p>If you didn't expect this change, reply to this email.</p>`,
     })
     // Old address: the security courtesy note.
