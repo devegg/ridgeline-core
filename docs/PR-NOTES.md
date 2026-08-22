@@ -10,9 +10,114 @@
 > `gh`); re-run after merging a PR, as part of the doc-sync pass. Reading GitHub directly means it
 > can never silently drift from what actually shipped.
 
-_Generated 2026-08-22 from 60 merged PRs (#1–#60)._
+_Generated 2026-08-22 from 64 merged PRs (#1–#64)._
 
 ---
+## #64 — feat: a client can set their own portal password (§2.4)
+merged 2026-08-22 · `c3c36f8`
+
+`/portal/account` — the client's sign-in screen: the address they sign in with, and a password they can set or change themselves. **This closes Stage 2**, fourteen days ahead of the 09-05 target.
+
+## How it's built
+
+The same way as the owner's `SettingsPanel`, rather than as a second pattern: `auth.updateUser` on the browser client, 8-character minimum, repeat to confirm. That call acts on **whoever is signed in**, so it can only ever touch the account making the request — no admin key, no `client_id` to get wrong, nothing to aim at somebody else's account. D8's deny-by-default posture is untouched.
+
+**Owner preview is switched off here on purpose.** An owner browsing the portal is in preview (D3), and the password this would change is *theirs*, not the client's — surprising, and not what they came for. The form is disabled with a note pointing at the Accounts screen.
+
+## Copy that was ahead of the code
+
+Changing a client's login email told them: *"use the sign-in link first, then set one from your account."* There was no account screen to do that on. It links to the real page now.
+
+## The urgency this item carried had already expired
+
+The plan called a magic link *"the only recovery path, and somebody has to tell them about it."* That was true until this morning — the Magic Link template edit made sign-in links self-serve on `/login` and usable from any device, so nobody is stranded.
+
+What was actually left is smaller and worth saying plainly: a client who **wants** a password had nowhere to set one, and an email was already promising that screen. That's what this fixes. The plan and STATUS now say so rather than carrying the old framing.
+
+## Verification
+
+- `npm run test:portal` — **63 passed, 0 failed** (4 new, section H). The one worth naming: an ephemeral client account sets a password **on its own session** and then signs in with it.
+- `npx tsc --noEmit` clean, `npm run lint` 0 errors.
+- Owner-preview state driven in the browser with a throwaway owner account, deleted after — form disabled, note shown, nav entry active.
+
+---
+
+## #63 — feat: client-facing notification emails with deep links (§2.2)
+merged 2026-08-22 · `cf11ad0`
+
+BUILD-PLAN §2.2. Four emails, each landing the client on the thing itself: **proposal sent, deliverable delivered, document shared, invoice issued.** Until now the app sent a client nothing except a reply to a change request.
+
+## Four, not the five the plan listed
+
+"Report ready" already exists — [portal-report.ts](app/actions/portal-report.ts) sends the monthly report to the client with an editable recipient (D13). A second "your report is ready" would be two emails about one report.
+
+## The failure mode this is built around
+
+Public sign-ups are disabled (D5) and `signInWithOtp` runs with `shouldCreateUser: false`. So a portal deep link sent to someone **with no account is a dead end they cannot escape** — they click, land on `/login`, ask for a sign-in link, and receive nothing.
+
+So `notifyClient` resolves the **login** address (the one that can actually sign in — not necessarily `clients.email`), and when there is no login, or access is disabled (D26), it sends nothing and reports why. **D27** records this.
+
+That report had nowhere to go: all four actions updated a row, revalidated, and returned void. The outcome now rides back on the query string and `NotifyBanner` says it out loud. This matters more than it looks — an email that never left is indistinguishable from one that did, and the most likely reason is invisible from the page you're standing on.
+
+## Behaviour
+
+- **"Email the client" checkbox, defaulted ON** (owner call). The default covers the normal case; the box exists so a corrected invoice doesn't mail them twice.
+- **Un-sharing a document sends nothing.** Announcing a withdrawal is worse than silence.
+- Each email fires on the **transition into** the state, so re-saving doesn't re-send.
+- `lib/portal/notify.ts` is one place that knows how to talk to a client, and soft-fails like `sendNotification` — marking an invoice sent is never undone because an email bounced.
+
+## Two schema facts the database survey caught, rather than assumed
+
+1. **`deliverables` has no `client_id`** — they reach a client through `project_id`. The first draft selected a column that doesn't exist and would have failed at runtime.
+2. **`documents` have none either.** `clientIdForEntity` mirrors the RLS policy in `20260711000000_portal_value_layer.sql` across all four entity types, with a suite check that fails if a document ever appears with a type the resolver doesn't handle — that combination notifies nobody while reporting success.
+
+Also deduplicates the paginated `listUsers` walk; `portal-users.ts` imports the one in `notify.ts` instead of a second copy.
+
+## Verification
+
+- `npm run test:portal` — **59 passed, 0 failed** (5 new, section G). tsc clean, lint 0 errors.
+- Driven in the real UI against production with a throwaway owner account, deleted after:
+  - Sharing a Salem document (**no login**) → *"No email sent — this client has no portal login yet, so a link would go nowhere."* Nothing sent.
+  - Sharing a temporary document on the Coastal proposal (**has a login**) → *"The client was emailed a link to it"*, which only returns when Resend accepts the send.
+- The temporary document was deleted; the document set is byte-identical to before the test, and the auth table is back to two users.
+
+## Honest limit
+
+**None of this has been exercised by a real client, because there isn't one.** The four client records are Brian's own, a self-preview record, and two demos — only one has a portal login at all. The first honest test is the first person who signs after 2026-09-08.
+
+---
+
+## #62 — docs: the Magic Link template edit is done — §2.2 is unblocked
+merged 2026-08-22 · `76a7948`
+
+Owner completed the Magic Link email-template edit on 2026-08-22 — saved and tested.
+
+The Magic link / OTP template now points at `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`, with Site URL `https://www.ridgelineknows.com`.
+
+**What this changes:** sign-in links were bound to the browser that requested them (PKCE keeps a secret in that browser's local storage). Opening the email on a phone, in a different browser, or in a mail app's in-app browser failed — including on the *same device*, which made it look like a broken link rather than a design constraint. The `/auth/confirm` route carries everything in the URL, so none of that applies now.
+
+Open in BACKLOG since 2026-07-11, and the last real gate on **§2.2, the client-facing notification emails**.
+
+Struck in all four places that carried it — the decisions-log register, BACKLOG's owner steps, STATUS (three mentions, one still reading "still open"), and the build plan.
+
+No redirect allow-list entry was needed: the template builds the URL against the site directly and never passes through Supabase's allow-list.
+
+Docs only.
+
+---
+
+## #61 — docs: post-merge sync — PR #60 recorded, PR log regenerated
+merged 2026-08-22 · `fa12871`
+
+Reconciliation pass after [#60](https://github.com/devegg/ridgeline-core/pull/60) merged. Two drift items:
+
+1. **STATUS said "PR pending"** for work that had already merged — the exact drift pattern the doc-sync skill lists first. Now records PR #60.
+2. **`docs/PR-NOTES.md` regenerated** via `npm run pr-notes` — 60 PRs (#1–#60). It reads GitHub directly so it can't drift on its own; it just has to be re-run after a merge.
+
+Docs only. No code, no migration.
+
+---
+
 ## #60 — feat: the accounts screen — who can sign in, and when they last did
 merged 2026-08-22 · `3157947`
 
