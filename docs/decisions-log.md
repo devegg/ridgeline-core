@@ -7,7 +7,7 @@
 > `docs/decisions/ADR-100-portal-value-layer.md`; this table is the index of
 > record. Workspace-level decisions live in `../docs/decisions/` (ADR-001..003).
 
-**Last Updated:** 2026-07-11
+**Last Updated:** 2026-08-22
 
 ## Locked decisions
 
@@ -61,9 +61,13 @@
       same numbers as the dashboard via `lib/portal/report.ts`; Resend REST,
       sender `reports@`, Reply-To `hello@`. CRON DEFERRED deliberately —
       trigger: the first real care-plan client (register this when it fires).
-- [ ] Real-client prerequisites for the value dashboard: measured
+- [~] Real-client prerequisites for the value dashboard: measured
       `baseline_minutes_per_item` per automation + real `blended_labor_rate`
-      (the audit produces both). No baseline, no claim.
+      (the audit produces both). No baseline, no claim. **Half answered
+      2026-08-22 (#57):** the rate now arrives automatically at conversion,
+      blended from the on-site visit. The per-automation baseline still has to
+      be set when a build goes live — but the visit's timings are on the
+      client's roadmap by then, so it is a read, not a re-measure.
 - [ ] PDF export on documents is a stub (Markdown download works).
 - [x] ~~Client provisioning is a manual runbook~~ — AUTOMATED 2026-07-11
       (PR #17): the Portal login panel creates the auth user with the
