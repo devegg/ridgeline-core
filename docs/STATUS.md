@@ -90,6 +90,44 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
+## Shipped 2026-08-22 — client-facing notification emails (PR pending, feature/client-notifications)
+
+BUILD-PLAN §2.2. Four emails with portal deep links — proposal sent,
+deliverable delivered, document shared, invoice issued. Before this the app
+sent a client nothing but a reply to a change request.
+
+**Four, not five.** "Report ready" already exists as the monthly report itself
+(D13, `portal-report.ts`), so a second notification would be two emails about
+one report.
+
+- `lib/portal/notify.ts` is the single place that knows how to talk to a
+  client. Soft-fails like `sendNotification` — marking an invoice sent is
+  never undone because an email bounced.
+- **D27: nobody is emailed a link they cannot open.** The recipient is the
+  LOGIN address; with no login, or with access disabled (D26), nothing is
+  sent. Public sign-ups are off (D5), so a link to an account-less address is
+  a dead end with no self-service way out.
+- The outcome is reported to the owner (`NotifyBanner`) via the query string.
+  The four actions previously updated a row and returned void, so there was no
+  channel to say anything at all.
+- "Email the client" checkbox, defaulted ON. Un-sharing a document is silent.
+- Two schema facts, found by surveying the database rather than assuming:
+  **deliverables have no `client_id`** (they reach a client through
+  `project_id`) and **documents have none either** — `clientIdForEntity`
+  mirrors the RLS policy across all four entity types, with a suite check that
+  fails if a fifth type ever appears.
+- Suite at **59 checks, green** (5 new, section G).
+- Verified in the real UI against production with a throwaway owner, deleted
+  after: the no-login path refused to send and said why; the send path
+  reported success, which only happens when Resend accepts. A temporary test
+  document was created and deleted; the document set is byte-identical to
+  before.
+
+**Still untested by a real client, because there is no real client.** The four
+client records are Brian's own, a self-preview record, and two demos — only one
+has a portal login at all. The first honest test is the first person who signs
+after 2026-09-08.
+
 ## Shipped 2026-08-22 — the accounts screen (PR #60, feature/accounts-screen)
 
 `/accounts`, owner-only — BUILD-PLAN §2.3. "Does this client have a login?"
