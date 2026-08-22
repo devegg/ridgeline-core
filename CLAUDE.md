@@ -47,6 +47,14 @@ one is not.
 
 ## Database changes are safety-critical
 
+**Who applies what (D24, 2026-08-22 — overrides the workspace CLAUDE.md line
+"owner runs the command"):** Claude applies **additive** migrations directly —
+`add column`, a new table, a new index — because they cannot destroy or rewrite
+data that already exists. Anything that **drops, alters a type, or backfills**
+is written by Claude and then **reviewed and signed off by Brian before Claude
+runs it**. The gate is his review, not his typing. There is still only one
+Supabase project, so every apply is a production apply.
+
 Never run SQL directly against the database, and never hand-paste SQL into
 the Supabase dashboard — including one-off fixes. Every schema or data change
 is a SQL file applied with `scripts/run-migration.mjs` (`npm run migrate` for
