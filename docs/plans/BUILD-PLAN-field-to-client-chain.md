@@ -99,13 +99,16 @@ the road.
 The alphabetical list stays. What matters on `/visit` is finding a business you
 are standing outside — which the client-side search already does.
 
-### 2.2 Client-facing notifications with deep links
-Five emails — proposal sent, deliverable released, document shared, invoice
-issued, report ready — each landing on the item itself. Today the app sends a
-client nothing except a change-request reply.
+### 2.2 Client-facing notifications with deep links — **done 2026-08-22**
+**Four** emails, not five — proposal sent, deliverable delivered, document
+shared, invoice issued. "Report ready" was already shipped as the monthly
+report itself (D13); a second notification would be two emails about one
+report.
 
-The portal research names this the third-biggest adoption lever. **Unblocked 2026-08-22** — the Magic Link template edit was the only one of
-2.4's three items that actually gated this, and it is done.
+D27 governs who gets one: the client's LOGIN address, and nothing at all when
+there is no login or access is disabled — a portal link to an account-less
+address is a dead end, because sign-ups are off (D5). The owner is told the
+outcome either way. "Email the client" is a checkbox defaulted on.
 
 ### 2.3 The accounts screen — **done 2026-08-22**
 `/accounts`: every client, whether a login exists, its email, last sign-in, and

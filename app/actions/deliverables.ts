@@ -3,6 +3,8 @@
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { notifyClient } from '@/lib/portal/notify'
 import type { ActionState } from '@/lib/types'
 
 export async function createDeliverableAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -41,15 +43,32 @@ export async function approveDeliverableAction(id: string) {
   revalidatePath(`/deliverables/${id}`)
 }
 
-export async function deliverToClientAction(id: string) {
+export async function deliverToClientAction(id: string, formData?: FormData) {
   const supabase = await createSupabase()
+  // Deliverables carry no client_id — they hang off a project, which does.
+  const { data: deliverable } = await supabase
+    .from('deliverables')
+    .select('title, project:projects(client_id)')
+    .eq('id', id)
+    .single()
+
   const { error } = await supabase
     .from('deliverables')
     .update({ status: 'delivered', delivered_at: new Date().toISOString() })
     .eq('id', id)
   queryFailed('deliverables', error)
+
+  const outcome = await notifyClient({
+    clientId: (deliverable as { project?: { client_id?: string } | null } | null)?.project?.client_id,
+    kind: 'deliverable_delivered',
+    title: (deliverable as { title?: string } | null)?.title ?? 'Deliverable',
+    path: '/portal/deliverables',
+    notify: formData?.get('notify') === 'on',
+  })
+
   revalidatePath('/deliverables')
   revalidatePath(`/deliverables/${id}`)
+  redirect(`/deliverables/${id}?notified=${outcome}`)
 }
 
 export async function updateDeliverableStatusAction(id: string, status: string) {

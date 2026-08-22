@@ -2,6 +2,7 @@
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
+import { notifyClient } from '@/lib/portal/notify'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState } from '@/lib/types'
@@ -82,15 +83,31 @@ export async function approveProposalAction(id: string) {
   revalidatePath('/proposals')
 }
 
-export async function sendProposalAction(id: string) {
+export async function sendProposalAction(id: string, formData?: FormData) {
   const supabase = await createSupabase()
+  const { data: proposal } = await supabase
+    .from('proposals')
+    .select('client_id, title')
+    .eq('id', id)
+    .single()
+
   const { error } = await supabase
     .from('proposals')
     .update({ status: 'pending', sent_at: new Date().toISOString() })
     .eq('id', id)
   queryFailed('proposals', error)
+
+  const outcome = await notifyClient({
+    clientId: (proposal as { client_id?: string } | null)?.client_id,
+    kind: 'proposal_sent',
+    title: (proposal as { title?: string } | null)?.title ?? 'Proposal',
+    path: '/portal/proposals',
+    notify: formData?.get('notify') === 'on',
+  })
+
   revalidatePath(`/proposals/${id}`)
   revalidatePath('/proposals')
+  redirect(`/proposals/${id}?notified=${outcome}`)
 }
 
 export async function rejectProposalAction(id: string) {

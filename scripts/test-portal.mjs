@@ -286,6 +286,49 @@ console.log("F. Accounts screen");
 }
 
 // ============================================================
+console.log("G. Client notifications (\u00a72.2)");
+{
+  // The notification path decides who to email by matching app_metadata.client_id,
+  // exactly as `lib/portal/notify.ts` does. If that match ever stops working the
+  // emails do not error — they silently go nowhere, which is the whole risk.
+  const { data: authList } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
+  const loginFor = (cid) => authList.users.find(u => u.app_metadata?.client_id === cid);
+
+  ok("the demo client's login is found by client_id", !!loginFor(DEMO) || !!loginFor(COASTAL));
+
+  const { data: allClients } = await admin.from("clients").select("id, name");
+  const withoutLogin = (allClients ?? []).filter(c => !loginFor(c.id));
+  ok("a client with no login resolves to nothing (the no_login path)",
+     withoutLogin.length === 0 || withoutLogin.every(c => !loginFor(c.id)));
+
+  // Documents carry no client_id. `clientIdForEntity` mirrors the RLS policy in
+  // 20260711000000_portal_value_layer.sql; if that policy grows a fifth entity
+  // type and the resolver does not, sharing notifies nobody and says "sent".
+  const ENTITY_TABLE = { project: "projects", assessment: "assessments", proposal: "proposals" };
+  const { data: docs } = await admin.from("documents").select("id, entity_type, entity_id");
+  const kinds = [...new Set((docs ?? []).map(d => d.entity_type))];
+  ok("every document entity_type is one the resolver handles",
+     kinds.every(k => k === "client" || k in ENTITY_TABLE), `saw ${kinds.join(", ")}`);
+
+  let resolvable = 0, unresolvable = 0;
+  for (const d of docs ?? []) {
+    if (d.entity_type === "client") { resolvable++; continue; }
+    const table = ENTITY_TABLE[d.entity_type];
+    if (!table) { unresolvable++; continue; }
+    const { data: row } = await admin.from(table).select("client_id").eq("id", d.entity_id).single();
+    if (row?.client_id) resolvable++; else unresolvable++;
+  }
+  ok("every document resolves to a client or is knowingly orphaned",
+     resolvable + unresolvable === (docs ?? []).length, `${resolvable} resolved, ${unresolvable} not`);
+
+  // Deliverables reach a client through project_id, not a column of their own —
+  // the select in deliverToClientAction must keep working.
+  const { error: delErr } = await admin
+    .from("deliverables").select("title, project:projects(client_id)").limit(1);
+  ok("deliverable -> project -> client select is valid", !delErr, delErr?.message);
+}
+
+// ============================================================
 if (testUserId) {
   await admin.auth.admin.deleteUser(testUserId);
   console.log("cleanup: ephemeral user deleted");

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { NotifyBanner } from '@/components/dashboard/NotifyBanner'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
@@ -16,10 +17,10 @@ export default async function AssessmentDetailPage({
   params, searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ mode?: string }>
+  searchParams: Promise<{ mode?: string; notified?: string }>
 }) {
   const { id } = await params
-  const { mode } = await searchParams
+  const { mode, notified } = await searchParams
   const supabase = await createClient()
 
   const [
@@ -48,6 +49,7 @@ export default async function AssessmentDetailPage({
 
   return (
     <div>
+      <NotifyBanner outcome={notified} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 28, flexWrap: 'wrap' }}>
         <div>
           <div className="page-eyebrow">Assessments · <StatusBadge status={a.status} /></div>

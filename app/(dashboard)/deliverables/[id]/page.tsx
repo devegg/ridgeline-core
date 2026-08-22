@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { NotifyBanner, NotifyCheckbox } from '@/components/dashboard/NotifyBanner'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { StatusBadge } from '@/components/ui/StatusBadge'
@@ -8,8 +9,14 @@ import { ErrorState } from '@/components/ui/ErrorState'
 import { queryFailed } from '@/lib/supabase/errors'
 import type { Deliverable } from '@/lib/types'
 
-export default async function DeliverableDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DeliverableDetailPage({
+  params, searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ notified?: string }>
+}) {
   const { id } = await params
+  const { notified } = await searchParams
   const supabase = await createClient()
 
   const { data: deliverable, error } = await supabase
@@ -24,6 +31,7 @@ export default async function DeliverableDetailPage({ params }: { params: Promis
 
   return (
     <div>
+      <NotifyBanner outcome={notified} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 28, flexWrap: 'wrap' }}>
         <div>
           <div className="page-eyebrow">Deliverables · <StatusBadge status={d.status} /></div>
@@ -37,6 +45,7 @@ export default async function DeliverableDetailPage({ params }: { params: Promis
           )}
           {d.status === 'approved' && (
             <form action={deliverToClientAction.bind(null, id)}>
+              <NotifyCheckbox />
               <button type="submit" className="btn-primary">Mark as delivered <span className="arrow" /></button>
             </form>
           )}

@@ -2,6 +2,7 @@
 
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { queryFailed } from '@/lib/supabase/errors'
+import { notifyClient } from '@/lib/portal/notify'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { ActionState, LineItem } from '@/lib/types'
@@ -77,12 +78,28 @@ export async function updateInvoiceAction(_prev: ActionState, formData: FormData
   return { message: 'Saved.' }
 }
 
-export async function sendInvoiceAction(id: string) {
+export async function sendInvoiceAction(id: string, formData?: FormData) {
   const supabase = await createSupabase()
+  const { data: invoice } = await supabase
+    .from('invoices')
+    .select('client_id, invoice_number')
+    .eq('id', id)
+    .single()
+
   const { error } = await supabase.from('invoices').update({ status: 'sent' }).eq('id', id)
   queryFailed('invoices', error)
+
+  const outcome = await notifyClient({
+    clientId: (invoice as { client_id?: string } | null)?.client_id,
+    kind: 'invoice_sent',
+    title: (invoice as { invoice_number?: string } | null)?.invoice_number ?? 'invoice',
+    path: `/portal/billing/${id}`,
+    notify: formData?.get('notify') === 'on',
+  })
+
   revalidatePath(`/billing/invoices/${id}`)
   revalidatePath('/billing/invoices')
+  redirect(`/billing/invoices/${id}?notified=${outcome}`)
 }
 
 export async function markInvoicePaidAction(id: string) {

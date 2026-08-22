@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { NotifyBanner, NotifyCheckbox } from '@/components/dashboard/NotifyBanner'
 import { createProjectFromProposalAction } from '@/app/actions/proposals'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -18,10 +19,10 @@ export default async function ProposalDetailPage({
   params, searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ mode?: string }>
+  searchParams: Promise<{ mode?: string; notified?: string }>
 }) {
   const { id } = await params
-  const { mode } = await searchParams
+  const { mode, notified } = await searchParams
   const supabase = await createClient()
 
   const [
@@ -46,6 +47,7 @@ export default async function ProposalDetailPage({
 
   return (
     <div>
+      <NotifyBanner outcome={notified} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 28, flexWrap: 'wrap' }}>
         <div>
           <div className="page-eyebrow">Proposals · <StatusBadge status={p.status} /></div>
@@ -59,6 +61,7 @@ export default async function ProposalDetailPage({
           )}
           {p.status === 'draft' && (
             <form action={sendProposalAction.bind(null, id)}>
+              <NotifyCheckbox />
               <button type="submit" className="btn-primary">Send to client <span className="arrow" /></button>
             </form>
           )}
