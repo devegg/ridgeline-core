@@ -1,5 +1,6 @@
 'use server'
 
+import type { User } from '@supabase/supabase-js'
 import { createClient as createSupabase } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendNotification } from '@/lib/email'
@@ -159,7 +160,199 @@ export async function createPortalLoginAction(_prev: ActionState, formData: Form
   if ('error' in result) return { errors: { _root: result.error } }
 
   revalidatePath(`/clients/${clientId}/portal`)
+  revalidatePath('/accounts')
   return {
     message: `Login created for ${email}. One-time password (copy now, it will not be shown again): ${result.password} — magic-link sign-in also works if that address receives mail.`,
+  }
+}
+
+// ============================================================
+// Accounts screen — every client, whether a login exists, and its state.
+// ============================================================
+
+/**
+ * One row of the accounts screen. A row exists for every client (whether or
+ * not it has a login) and for every non-owner auth user that does NOT map to
+ * a client — the second kind is the whole reason this screen is worth having,
+ * because an orphaned account is invisible everywhere else in the app.
+ */
+export interface PortalAccountRow {
+  kind: 'client' | 'orphan'
+  clientId: string | null
+  clientName: string | null
+  clientStatus: string | null
+  userId: string | null
+  email: string | null
+  lastSignInAt: string | null
+  createdAt: string | null
+  disabled: boolean
+  /** Why this auth user has no client: it names one that's gone, or names none. */
+  orphanReason: 'client_missing' | 'no_client_id' | null
+}
+
+export type PortalAccountsResult =
+  | { configured: true; rows: PortalAccountRow[]; ownerCount: number }
+  | { configured: false; reason: 'not_owner' | 'missing_key' | 'key_rejected' }
+
+/**
+ * Measured against a real throwaway user, not inferred: `banned_until` is
+ * ABSENT on a user that has never been banned, carries a FUTURE timestamp
+ * while banned (through `listUsers` as well as `updateUserById`), and is
+ * absent again once the ban is lifted with `ban_duration: 'none'`.
+ *
+ * The comparison against now is therefore belt-and-braces — it also covers a
+ * ban left to expire on its own, which is a case nothing here exercises.
+ */
+function isDisabled(user: { banned_until?: string | null }): boolean {
+  const until = user.banned_until
+  if (!until) return false
+  const at = Date.parse(until)
+  return Number.isFinite(at) && at > Date.now()
+}
+
+/**
+ * Every auth user, walked page by page. The three older call sites in this
+ * file ask for `perPage: 1000` and silently drop anything past the first
+ * thousand; this one cannot, because the whole point of the screen is that
+ * nothing is missing from it.
+ */
+async function listAllAuthUsers(admin: ReturnType<typeof createAdminClient>) {
+  const PER_PAGE = 200
+  const MAX_PAGES = 50 // 10k users — a guard against looping, not a real ceiling
+  const all: User[] = []
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: PER_PAGE })
+    if (error) throw new Error(error.message)
+    all.push(...data.users)
+    if (data.users.length < PER_PAGE) break
+  }
+  return all
+}
+
+/** Owner-gated read behind the accounts screen. One auth call, one clients query. */
+export async function listPortalAccounts(): Promise<PortalAccountsResult> {
+  if (!(await assertOwner())) return { configured: false, reason: 'not_owner' }
+
+  let admin
+  try {
+    admin = createAdminClient()
+  } catch {
+    return { configured: false, reason: 'missing_key' }
+  }
+
+  let users
+  try {
+    users = await listAllAuthUsers(admin)
+  } catch (e) {
+    console.error('[accounts] listUsers failed:', e instanceof Error ? e.message : e)
+    return { configured: false, reason: 'key_rejected' }
+  }
+
+  const supabase = await createSupabase()
+  const { data: clients } = await supabase
+    .from('clients')
+    .select('id, name, status')
+    .order('name')
+
+  const meta = (u: User) =>
+    (u.app_metadata ?? {}) as { role?: string; client_id?: string }
+
+  const byClientId = new Map<string, User>()
+  for (const u of users) {
+    const cid = meta(u).client_id
+    if (cid && !byClientId.has(cid)) byClientId.set(cid, u)
+  }
+
+  const rows: PortalAccountRow[] = []
+
+  for (const c of (clients ?? []) as { id: string; name: string; status: string }[]) {
+    const u = byClientId.get(c.id)
+    rows.push({
+      kind: 'client',
+      clientId: c.id,
+      clientName: c.name,
+      clientStatus: c.status,
+      userId: u?.id ?? null,
+      email: u?.email ?? null,
+      lastSignInAt: u?.last_sign_in_at ?? null,
+      createdAt: u?.created_at ?? null,
+      disabled: u ? isDisabled(u) : false,
+      orphanReason: null,
+    })
+  }
+
+  const clientIds = new Set((clients ?? []).map((c: { id: string }) => c.id))
+  let ownerCount = 0
+  for (const u of users) {
+    const { role, client_id } = meta(u)
+    if (role === 'owner') {
+      ownerCount++
+      continue
+    }
+    if (client_id && clientIds.has(client_id)) continue
+    rows.push({
+      kind: 'orphan',
+      clientId: client_id ?? null,
+      clientName: null,
+      clientStatus: null,
+      userId: u.id,
+      email: u.email ?? null,
+      lastSignInAt: u.last_sign_in_at ?? null,
+      createdAt: u.created_at ?? null,
+      disabled: isDisabled(u),
+      orphanReason: client_id ? 'client_missing' : 'no_client_id',
+    })
+  }
+
+  return { configured: true, rows, ownerCount }
+}
+
+/**
+ * Owner turns a client's portal access off or back on. This is a Supabase Auth
+ * ban with a long duration, NOT a delete: the account and its sign-in history
+ * survive, so "when did we cut them off" stays answerable and the decision is
+ * reversible. Deleting an auth account is not offered anywhere in this screen.
+ */
+export async function setPortalAccessAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await createSupabase()
+  const { data: { user: actor } } = await supabase.auth.getUser()
+  if (!actor || (actor.app_metadata?.role as string | undefined) !== 'owner') {
+    return { errors: { _root: 'Owner only.' } }
+  }
+
+  const userId = (formData.get('user_id') as string) ?? ''
+  const disable = formData.get('disable') === 'true'
+  if (!userId) return { errors: { _root: 'Which account?' } }
+
+  // Two guards that matter more than they look: locking yourself out of the
+  // dashboard has no in-app recovery path, and an owner account is never a
+  // "portal access" question in the first place.
+  if (userId === actor.id) {
+    return { errors: { _root: 'That is your own account — disabling it would lock you out of the dashboard.' } }
+  }
+
+  let admin
+  try {
+    admin = createAdminClient()
+  } catch {
+    return { errors: { _root: 'SUPABASE_SECRET_KEY is not configured — portal access lives in Supabase Auth and needs it.' } }
+  }
+
+  const { data: target, error: readError } = await admin.auth.admin.getUserById(userId)
+  if (readError || !target?.user) return { errors: { _root: 'That account no longer exists.' } }
+  if ((target.user.app_metadata as { role?: string })?.role === 'owner') {
+    return { errors: { _root: 'That is an owner account, not a client portal login.' } }
+  }
+
+  const { error } = await admin.auth.admin.updateUserById(userId, {
+    ban_duration: disable ? '876000h' : 'none', // ~100 years, or lifted
+  })
+  if (error) return { errors: { _root: `Supabase refused: ${error.message}` } }
+
+  revalidatePath('/accounts')
+  return {
+    message: disable
+      ? `Portal access disabled for ${target.user.email ?? 'that account'}. Their sign-in history is kept, and you can re-enable it here.`
+      : `Portal access restored for ${target.user.email ?? 'that account'}.`,
   }
 }
