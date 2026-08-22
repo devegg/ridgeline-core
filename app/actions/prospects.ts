@@ -187,6 +187,15 @@ export async function saveVisitEstimateAction(_prev: ActionState, formData: Form
     return { errors: { _root: 'Saving the tasks failed — nothing was saved. Try again.' } }
   }
 
+  // A follow-up date only ever moves forward from the form; clearing it is
+  // explicit ("none"), never a side effect of saving another visit.
+  const follow_up_raw = String(formData.get('follow_up_date') ?? '').trim()
+  if (follow_up_raw === 'none') {
+    await supabase.from('prospects').update({ follow_up_date: null }).eq('id', prospect_id)
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(follow_up_raw)) {
+    await supabase.from('prospects').update({ follow_up_date: follow_up_raw }).eq('id', prospect_id)
+  }
+
   // A name typed on the visit screen is a deliberate correction, so unlike
   // the card scan (where OCR guesses never overwrite) this one wins. Blank
   // still never clobbers an existing name.

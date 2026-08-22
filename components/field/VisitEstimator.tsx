@@ -41,6 +41,21 @@ function shortDate(iso: string): string {
   return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
+/** Today plus n days as 'YYYY-MM-DD', built from local parts. toISOString()
+    is UTC, which hands back yesterday's date after 8pm on the east coast —
+    i.e. exactly when a field day is being written up. */
+function inDays(n: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() + n)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+const FOLLOW_UPS = [
+  { label: 'In a week', value: () => inDays(7) },
+  { label: 'Two weeks', value: () => inDays(14) },
+  { label: 'A month', value: () => inDays(30) },
+]
+
 export function VisitEstimator({
   prospect, lastCardWord, lastVisitOn, lastTasks, photoUrl,
 }: {
@@ -58,6 +73,7 @@ export function VisitEstimator({
   const [showCard, setShowCard] = useState(false)
   const [showMath, setShowMath] = useState(false)
   const [showPrior, setShowPrior] = useState(false)
+  const [followUp, setFollowUp] = useState<string>(prospect.follow_up_date ?? '')
   const [recap, recapAction, recapPending] = useActionState<ActionState, FormData>(sendVisitRecapAction, null)
 
   const set = (key: number, patch: Partial<Draft>) =>
@@ -247,6 +263,32 @@ export function VisitEstimator({
         + Add another task
       </button>
 
+      <div className="field-label">
+        When should I come back?
+        <div className="field-chips">
+          {FOLLOW_UPS.map(f => {
+            const v = f.value()
+            return (
+              <button
+                key={f.label} type="button"
+                className={`field-chip ${followUp === v ? 'field-chip--on' : ''}`}
+                onClick={() => setFollowUp(followUp === v ? '' : v)}
+              >
+                {f.label}
+              </button>
+            )
+          })}
+          {followUp && (
+            <button type="button" className="field-chip" onClick={() => setFollowUp('none')}>
+              Clear
+            </button>
+          )}
+        </div>
+        {followUp && followUp !== 'none' && (
+          <p className="field-chips__note">Shows up in Follow-ups due on {shortDate(followUp)}.</p>
+        )}
+      </div>
+
       <label className="field-label">
         Notes
         <textarea
@@ -260,6 +302,7 @@ export function VisitEstimator({
         <input type="hidden" name="note" value={note} />
         <input type="hidden" name="contact_name" value={contact} />
         <input type="hidden" name="card_word" value={lastCardWord ?? ''} />
+        <input type="hidden" name="follow_up_date" value={followUp} />
         <input type="hidden" name="tasks" value={JSON.stringify(payload)} />
         <button type="submit" className="field-submit" disabled={pending || payload.length === 0}>
           {pending ? 'Saving…' : `Save visit${payload.length ? ` (${payload.length})` : ''}`}

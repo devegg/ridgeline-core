@@ -15,6 +15,7 @@ export default async function OverviewPage() {
     { data: recentClients, error: recentClientsError },
     { data: recentProjects, error: recentProjectsError },
     { data: followUps, error: followUpsError },
+    { data: prospectFollowUps, error: prospectFollowUpsError },
   ] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('status', 'active'),
     supabase.from('projects').select('*', { count: 'exact', head: true }).in('status', ['active', 'on_hold']),
@@ -27,6 +28,13 @@ export default async function OverviewPage() {
       .not('stage', 'in', '(won,lost)')
       .lte('follow_up_date', new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10))
       .order('follow_up_date'),
+    // Card drops that went well but were not promoted the same day. Same
+    // window as leads; statuses match the partial index on the column.
+    supabase.from('prospects').select('id, business_name, contact_name, follow_up_date')
+      .not('follow_up_date', 'is', null)
+      .in('status', ['untouched', 'visited', 'interested'])
+      .lte('follow_up_date', new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10))
+      .order('follow_up_date'),
   ])
 
   const clientCountFailed = queryFailed('clients', clientCountError)
@@ -36,7 +44,21 @@ export default async function OverviewPage() {
   const recentClientsFailed = queryFailed('clients', recentClientsError)
   const recentProjectsFailed = queryFailed('projects', recentProjectsError)
   const followUpsFailed = queryFailed('leads', followUpsError)
+  const prospectFollowUpsFailed = queryFailed('prospects', prospectFollowUpsError)
   const today = new Date().toISOString().slice(0, 10)
+
+  // One list, two sources. A follow-up is a follow-up; which table it came
+  // from only decides where the link goes.
+  const dueList = [
+    ...(followUpsFailed ? [] : (followUps ?? [])).map(f => ({
+      key: `lead-${f.id}`, href: `/leads/${f.id}`, name: f.business_name,
+      contact: f.contact_name as string | null, date: f.follow_up_date as string, kind: 'Lead',
+    })),
+    ...(prospectFollowUpsFailed ? [] : (prospectFollowUps ?? [])).map(p => ({
+      key: `prospect-${p.id}`, href: `/visit/${p.id}`, name: p.business_name,
+      contact: p.contact_name as string | null, date: p.follow_up_date as string, kind: 'Card drop',
+    })),
+  ].sort((a, b) => a.date.localeCompare(b.date))
 
   const outstanding = (outstandingInvoices ?? []).reduce((s, i) => s + Number(i.total), 0)
   const overdueCount = (outstandingInvoices ?? []).filter(i => i.status === 'overdue').length
@@ -84,7 +106,7 @@ export default async function OverviewPage() {
       </div>
 
       {/* Follow-ups due — the written follow-up is the sales engine. */}
-      {!followUpsFailed && (followUps ?? []).length > 0 && (
+      {dueList.length > 0 && (
         <div className="section-card" style={{ marginTop: 32 }}>
           <div className="section-card__head">
             <span className="section-card__label">Follow-ups due</span>
@@ -93,14 +115,17 @@ export default async function OverviewPage() {
           <div className="section-card__body">
             <table className="data-table">
               <tbody>
-                {(followUps ?? []).map(f => (
-                  <tr key={f.id}>
+                {dueList.map(f => (
+                  <tr key={f.key}>
                     <td>
-                      <Link href={`/leads/${f.id}`}>{f.business_name}</Link>
-                      {f.contact_name && <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}> · {f.contact_name}</span>}
+                      <Link href={f.href}>{f.name}</Link>
+                      {f.contact && <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}> · {f.contact}</span>}
+                      <span style={{ color: 'var(--ink-soft)', fontSize: 11, fontFamily: 'var(--mono)', textTransform: 'uppercase', letterSpacing: '0.08em', marginLeft: 8 }}>
+                        {f.kind}
+                      </span>
                     </td>
-                    <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 12, color: f.follow_up_date < today ? '#B14B3C' : 'var(--amber-deep)' }}>
-                      {f.follow_up_date < today ? `overdue · ${f.follow_up_date}` : f.follow_up_date === today ? 'today' : f.follow_up_date}
+                    <td style={{ textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 12, color: f.date < today ? '#B14B3C' : 'var(--amber-deep)' }}>
+                      {f.date < today ? `overdue · ${f.date}` : f.date === today ? 'today' : f.date}
                     </td>
                   </tr>
                 ))}
