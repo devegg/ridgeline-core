@@ -42,11 +42,17 @@ minutes of the sale is unrecoverable after you walk out.
 - Shows on `/visit/[id]` (last visit), the prospect row, and the lead detail.
 
 ### 1.3 The recap email
-One button after a saved visit: send the owner what you worked out together —
-their tasks, their numbers, the "rough estimate" caveat verbatim, your name.
+One button after a saved visit: the recap — their tasks, their numbers, the
+"rough estimate" caveat verbatim.
 
-- Resend, house sender convention (`hello@` reply-to).
+**Decided 2026-08-21: it goes to Brian, who forwards it.** Not to the prospect
+directly. A human stays between an on-site conversation and a stranger's inbox,
+and an OCR'd email address gets looked at before anything is sent to it.
+
+- Resend, house sender convention. Recipient is the owner's own address.
 - Same figures as the screen, from the same module. No new math, no new claims.
+- Written so it can be forwarded as-is: no internal notes, no fee arithmetic
+  the prospect has not already seen on the phone.
 - This is the follow-up currently written from memory, and the reason the visit
   is worth saving at all.
 
@@ -105,6 +111,9 @@ client ever logged in?" needs a SQL query to answer.
 
 ## Needs a decision before it starts
 
+**DECIDED 2026-08-21 — build it this window, with tesseract kept as the offline
+fallback. Needs a new D# recording the change to D20 before the PR merges.**
+
 **Vision-model card reading** re-opens **D20** (local tesseract OCR: $0, nothing
 leaves the device before a human confirms). A vision call reads the cards that
 currently fail and, more importantly, reads *handwritten* job sheets — which the
@@ -112,7 +121,9 @@ card pitch lists as a service Ridgeline sells and the present stack cannot demo
 at all. The confirm screen stays either way; tesseract stays as the offline
 fallback for a lobby with no signal.
 
-Cost and privacy are the tradeoff. Not started until Brian calls it.
+Cost and privacy were the tradeoff; Brian called it on 2026-08-21. Scheduled
+after Stage 1 — the chain comes first, because a better card reader feeding a
+broken chain still loses the data at promotion.
 
 ---
 

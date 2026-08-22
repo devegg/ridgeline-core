@@ -1626,6 +1626,40 @@ details:not([open]) > *:not(summary) { display: none; }
 .field-total__row--fee strong { font-size: 18px; color: var(--amber-deep); }
 .field-total__note { font-size: 11.5px; color: var(--ink-soft); margin: 9px 0 0; line-height: 1.5; }
 
+/* What this business was priced at last time. Collapsed by default: the
+   estimator screen is already tight, and last visit's number must never be
+   mistaken for the one being built now. */
+.field-prior {
+  /* padding:0 is load-bearing. The global `section` rule sets a marketing
+     padding of clamp(72px, 11vw, 140px) on every <section> in the app, so a
+     field section that does not opt out renders as a 212px-tall box holding
+     one line of text. `.field-task` opts out the same way. */
+  margin: 0 0 20px; padding: 0;
+  border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--bg-deep); overflow: hidden;
+}
+.field-prior__head {
+  display: flex; width: 100%; align-items: baseline; justify-content: space-between;
+  gap: 12px; padding: 12px 14px; font: inherit; text-align: left;
+  background: none; border: none; color: inherit; cursor: pointer;
+}
+.field-prior__when { font-size: 13px; color: var(--ink-muted); }
+.field-prior__sum { display: flex; align-items: baseline; gap: 8px; flex: none; }
+.field-prior__sum strong { font-family: var(--mono); font-size: 15px; color: var(--ink); }
+.field-prior__hint {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--blue);
+}
+.field-prior__list { list-style: none; margin: 0; padding: 0 14px 12px; }
+.field-prior__list li { padding: 9px 0; border-top: 1px solid var(--rule-soft); }
+.field-prior__task { display: block; font-size: 14px; line-height: 1.35; }
+.field-prior__task em { color: var(--ink-soft); font-style: normal; }
+.field-prior__detail {
+  display: block; margin-top: 2px; font-family: var(--mono);
+  font-size: 11.5px; color: var(--ink-soft);
+}
+.field-prior__foot { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; }
+
 /* Field home — the phone list and card capture. */
 .field-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
 
