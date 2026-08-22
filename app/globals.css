@@ -1630,7 +1630,12 @@ details:not([open]) > *:not(summary) { display: none; }
    estimator screen is already tight, and last visit's number must never be
    mistaken for the one being built now. */
 .field-prior {
-  margin: 0 0 20px; border: 1px solid var(--rule); border-radius: 6px;
+  /* padding:0 is load-bearing. The global `section` rule sets a marketing
+     padding of clamp(72px, 11vw, 140px) on every <section> in the app, so a
+     field section that does not opt out renders as a 212px-tall box holding
+     one line of text. `.field-task` opts out the same way. */
+  margin: 0 0 20px; padding: 0;
+  border: 1px solid var(--rule); border-radius: 6px;
   background: var(--bg-deep); overflow: hidden;
 }
 .field-prior__head {
