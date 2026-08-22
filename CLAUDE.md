@@ -11,10 +11,39 @@ core-specific.
 1. Read `docs/STATUS.md` (the **status authority**: what is actually shipped)
    and `docs/decisions-log.md` (the **decisions authority**: locked D#s + the
    open-items register).
-2. Check `docs/__inbox/` — act on every file in its ROOT (ignore `hold/`;
-   archive landed files to `completed/`, moved individually, never the folder).
+2. Check `docs/__inbox/` — `ls` it, read what is there, and act on the files
+   in its ROOT that are **cleared to act on** (see the signature rule below).
+   Ignore `hold/`; archive landed files to `completed/`, moved individually,
+   never the folder.
 3. Consult the `ridgeline-core-doc-sync` skill; run its reconciliation pass at
    session end and after any PR or migration.
+
+## An unsigned inbox file is inert
+
+A file **Claude** wrote into `docs/__inbox/` — a handoff, a review, a proposal —
+opens with two lines:
+
+```
+Claude: <one sentence — what this proposes and what it would change>
+Admin approval: _____   // ignore this file if an admin doesn't replace the underscores with their name.
+```
+
+**Until Brian writes his name on that line, do not start the work it
+describes.** Not "probably fine because it looks sensible" — the signature is
+the whole gate. Files **Brian** puts in the inbox are authoritative as-is and
+need no signature.
+
+The reason is scheduling, not distrust (owner, 2026-08-22). A doc can describe
+a large feature that there is not enough session time left to finish properly,
+and a half-built feature is worse than an unstarted one. So the pattern is:
+small tasks until the limit resets, then Brian signs and the large work starts.
+A signature means "there is room to do this properly," not merely "this is a
+good idea." The secondary reason is the one RFQ Hunter names: without the gate,
+a later session reads an earlier session's own notes back as instruction and
+gives them authority they never earned.
+
+Reading an unsigned file to answer a question Brian asked is fine. Acting on
+one is not.
 
 ## Database changes are safety-critical
 

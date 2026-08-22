@@ -42,6 +42,12 @@ newest file in `supabase/migrations/` on disk.
 Run at session end, after any PR or migration, and before declaring anything
 done:
 
+0. **Regenerate the PR log.** `npm run pr-notes` (needs an authed `gh`)
+   rewrites `docs/PR-NOTES.md` from the merged-PR history on GitHub. It reads
+   the source of truth, so it cannot drift — never hand-edit it, just re-run
+   it. Doing this first also gives you an accurate list of what merged since
+   the last pass, which is what the rest of these steps reconcile against.
+
 1. **Code → STATUS.** Every surface/behavior that shipped since the last pass
    has a STATUS entry; every new migration is reflected wherever schema is
    described. Keep STATUS durable: shipped state and standing rules, not
