@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
-import { saveVisitEstimateAction } from '@/app/actions/prospects'
+import { saveVisitEstimateAction, sendVisitRecapAction } from '@/app/actions/prospects'
 import { annualCost, annualRecovered, visitTotals, type EstimateInput } from '@/lib/field/estimate'
 import { formatDollars } from '@/lib/portal/value'
 import { noAutofill } from '@/lib/field/no-autofill'
@@ -58,6 +58,7 @@ export function VisitEstimator({
   const [showCard, setShowCard] = useState(false)
   const [showMath, setShowMath] = useState(false)
   const [showPrior, setShowPrior] = useState(false)
+  const [recap, recapAction, recapPending] = useActionState<ActionState, FormData>(sendVisitRecapAction, null)
 
   const set = (key: number, patch: Partial<Draft>) =>
     setDrafts(ds => ds.map(d => (d.key === key ? { ...d, ...patch } : d)))
@@ -141,6 +142,20 @@ export function VisitEstimator({
                 it does not overwrite this one.
               </li>
             </ul>
+          )}
+
+          {showPrior && lastTasks[0]?.visit_id && (
+            <form action={recapAction} className="field-prior__send">
+              <input type="hidden" name="visit_id" value={lastTasks[0].visit_id} />
+              <button type="submit" className="field-prior__sendbtn" disabled={recapPending}>
+                {recapPending ? 'Sending…' : 'Email me this recap'}
+              </button>
+              <p className="field-prior__sendnote">
+                Comes to you, written so you can forward it to them.
+              </p>
+              {recap?.message && <p className="field-ok">{recap.message}</p>}
+              {recap?.errors?._root && <p className="field-error">{recap.errors._root}</p>}
+            </form>
           )}
         </section>
       )}

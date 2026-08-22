@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { parseKml } from '@/lib/kml'
 import { toHttpUrl } from '@/lib/safe-url'
+import { sendNotification } from '@/lib/email'
+import { recapHtml, recapSubject, type RecapTask } from '@/lib/field/recap'
 import type { ActionState } from '@/lib/types'
 
 /** Field kit actions — owner-only (RLS enforces it; we also gate here). */
@@ -201,7 +203,66 @@ export async function saveVisitEstimateAction(_prev: ActionState, formData: Form
     .in('status', ['untouched', 'visited'])
 
   revalidatePath('/prospects')
+  // The visit screen leads with the last priced visit, so the page that just
+  // saved one has to refresh or the panel shows the visit before this one.
+  revalidatePath(`/visit/${prospect_id}`)
   return { message: `Saved — ${rows.length} task${rows.length === 1 ? '' : 's'} on this visit.` }
+}
+
+/**
+ * Email the owner the recap for a saved visit, written so he can forward it
+ * to the business as-is (owner decision 2026-08-21: it goes to Brian, never
+ * straight to the prospect — a human looks at an OCR'd address before anything
+ * is sent to it, and he gets to add a line).
+ *
+ * Sends to the signed-in owner's own address, so there is no recipient field
+ * to get wrong and no way to aim this at a third party by editing a form.
+ */
+export async function sendVisitRecapAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user || user.app_metadata?.role !== 'owner') return { errors: { _root: 'Owner only.' } }
+  if (!user.email) return { errors: { _root: 'Your account has no email address to send to.' } }
+
+  const visit_id = String(formData.get('visit_id') ?? '')
+  if (!visit_id) return { errors: { _root: 'Missing visit.' } }
+
+  const [visitRes, tasksRes] = await Promise.all([
+    supabase.from('prospect_visits').select('id, visited_on, prospect_id').eq('id', visit_id).single(),
+    supabase.from('visit_tasks').select('*').eq('visit_id', visit_id).order('sort_order'),
+  ])
+  if (visitRes.error || !visitRes.data) return { errors: { _root: 'That visit is gone — refresh and try again.' } }
+
+  const tasks = (tasksRes.data ?? []) as RecapTask[]
+  if (tasks.length === 0) return { errors: { _root: 'Nothing was priced on that visit, so there is no recap to send.' } }
+
+  const { data: prospect } = await supabase
+    .from('prospects')
+    .select('business_name, contact_name')
+    .eq('id', visitRes.data.prospect_id)
+    .single()
+  if (!prospect) return { errors: { _root: 'That business is gone — refresh and try again.' } }
+
+  const input = {
+    businessName: prospect.business_name as string,
+    contactName: (prospect.contact_name as string | null) ?? null,
+    visitedOn: visitRes.data.visited_on as string,
+    tasks,
+  }
+
+  const sent = await sendNotification({
+    to: user.email,
+    subject: recapSubject(input),
+    html: recapHtml(input),
+    from: 'Ridgeline Knows <notify@ridgelineknows.com>',
+  })
+
+  // sendNotification soft-fails by design, so a false here is a real failure
+  // worth surfacing — unlike the notifications it decorates, this send IS the
+  // whole action.
+  return sent
+    ? { message: `Recap sent to ${user.email} — forward it when you have added anything you want to say.` }
+    : { errors: { _root: 'The send failed. Check RESEND_API_KEY, then try again.' } }
 }
 
 export async function setProspectStatusAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
