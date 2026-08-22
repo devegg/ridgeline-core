@@ -10,7 +10,8 @@
     "migrate": "node scripts/run-migration.mjs",
     "test:portal": "node scripts/test-portal.mjs",
     "test:estimate": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-estimate.mjs",
-    "test:recap": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-recap.mjs"
+    "test:recap": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/test-recap.mjs",
+    "pr-notes": "node scripts/gen-pr-notes.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.0",

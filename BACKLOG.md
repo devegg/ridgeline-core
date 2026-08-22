@@ -13,6 +13,17 @@ pages; only the content-drafts sweep remained and moved below).
 
 ## Next up — from the field kit (2026-08-21)
 
+- **[owner] Deny camera permission once, on the real phone.** `CardCamera` falls
+  back to the plain file input when `getUserMedia` is refused or unavailable.
+  Nobody has ever refused it on a handset, so the fallback is untested on the
+  one device class that matters. Thirty seconds in Settings, and the answer is
+  either "fine" or "you cannot scan a card at all today".
+- **[owner] Field-check PRs #49 and #50.** Both landed *after* the 2026-08-21
+  field run: re-attaching a card to an already-promoted business (#49), and the
+  dark-mode ink fix (#50). Driven end to end against production by Claude with
+  a throwaway owner account, but never used in a lobby. Carried here from
+  `docs/__inbox/handoff-2026-08-21.md` when that handoff was archived.
+
 - **[solo] Collapse `.dash-sidebar` under ~820px.** `app/(dashboard)/layout.tsx`
   has a fixed 220px sidebar with no mobile collapse — ~170px of usable content
   at 390px. Much less urgent now that `/visit` gives the field work its own
