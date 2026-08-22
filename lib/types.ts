@@ -329,6 +329,7 @@ export interface Prospect {
   contact_name: string | null
   email: string | null
   card_photo_path: string | null
+  follow_up_date: string | null
 }
 
 export interface ProspectVisit {
