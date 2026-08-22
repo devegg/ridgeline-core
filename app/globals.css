@@ -1659,6 +1659,14 @@ details:not([open]) > *:not(summary) { display: none; }
   font-size: 11.5px; color: var(--ink-soft);
 }
 .field-prior__foot { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; }
+.field-prior__send { padding: 0 14px 14px; }
+.field-prior__sendbtn {
+  width: 100%; padding: 12px; font: inherit; font-size: 14px; font-weight: 500;
+  color: var(--blue); background: none; border: 1px solid var(--blue);
+  border-radius: 6px; cursor: pointer;
+}
+.field-prior__sendbtn:disabled { opacity: 0.5; cursor: default; }
+.field-prior__sendnote { font-size: 11.5px; color: var(--ink-soft); margin: 7px 0 0; line-height: 1.5; }
 
 /* Field home — the phone list and card capture. */
 .field-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
