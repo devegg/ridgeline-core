@@ -10,7 +10,7 @@
 > `gh`); re-run after merging a PR, as part of the doc-sync pass. Reading GitHub directly means it
 > can never silently drift from what actually shipped.
 
-_Generated 2026-08-22 from 56 merged PRs (#1–#57)._
+_Generated 2026-08-22 from 57 merged PRs (#1–#57)._
 
 ---
 ## #57 — feat: converting a lead carries the visit onto the client
@@ -165,6 +165,44 @@ Local worktree dev server, 375px viewport, against a real prospect:
 - `npx tsc --noEmit` clean; `npm run lint` 0 errors
 
 Rendering was verified with a temporary local stub, reverted before commit — production has zero `visit_tasks`, and creating real ones would have left test data in the 88-prospect working list with no in-app way to delete it. The query itself is typechecked but has not run against real rows; the first real saved estimate exercises it.
+
+---
+
+## #53 — chore: port RFQ Hunter's process discipline — push guard, signature gate, generated PR log
+merged 2026-08-22 · `3fec197`
+
+Brian's note: the RFQ Hunter process port has been asked for across several sessions and only ever happened piecemeal. This is the systematic pass for the mechanical parts.
+
+## What RFQ Hunter does that core didn't
+
+**1. The push guard was never ported.** core gates *commits* to the default branch (`warn-main-commit.mjs`); nothing gated the *push*. `PORT-push-guard-to-other-projects.md` (2026-08-19) named core as a target and it never happened. The guard handles `main` and `master` both, so only the denial message changed.
+
+**2. Guard hooks ship with tests.** RFQ Hunter's `block-db-sql.mjs` has `block-db-sql.test.mjs`; core's five hooks had no tests at all. `block-main-push.test.mjs` adds 15 cases, all passing.
+
+The PORT note flagged one specific risk — core is worked from git worktrees, so does the guard fight that flow? Tested rather than assumed:
+
+| Case | Verdict |
+|---|---|
+| `git push -u origin feature/x` from a worktree | allow |
+| bare `git push` on a feature branch | allow |
+| `ALLOW_MAIN_PUSH=1 git push origin master` | allow |
+| `git -C <checkout-on-master> push` | **deny** |
+| `cd <checkout-on-master> && git push` | **deny** |
+| `git push origin HEAD:master` / `:master` / `feature/x:master` | **deny** |
+
+Worth recording: **the hook always exits 0 and signals denial as JSON on stdout.** Reading the exit code reports every case as allowed — a first pass at this test concluded the guard was dead for exactly that reason.
+
+**3. The signature gate.** core's CLAUDE.md said "act on every file in `docs/__inbox/` ROOT" with no mention of the approval line — the direct opposite of the workspace rule that an unsigned file is inert. Now written out with the owner's actual reason: it's a **scheduling** gate. A signature means "there's session time to do this properly," not just "this is a good idea."
+
+**4. A PR log that regenerates itself.** `scripts/gen-pr-notes.mjs` → `docs/PR-NOTES.md` (`npm run pr-notes`), ported from RFQ Hunter's D97. The workspace's `snapshot.sh` **already looks for this exact filename** and runs it when present — core never had it, so every claude.ai Project snapshot shipped with no PR history. It warned and continued, which is why nobody noticed. 51 PRs captured. Step 0 of the doc-sync pass now regenerates it.
+
+## The principle worth keeping
+
+Anything that can silently drift gets a generator, a gate, or a scheduled pass — never prose someone has to remember to update. PR-NOTES can't drift because it's rebuilt from GitHub. SQL can't bypass the runner because a hook blocks it. And every rule there names the incident that caused it, which is why they survive.
+
+## Also
+
+BACKLOG picks up the two verification items from the 2026-08-21 handoff before it was archived to `docs/__inbox/completed/`.
 
 ---
 

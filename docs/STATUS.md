@@ -1,6 +1,6 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-08-21. Code is ground truth; this reconciles to it.
+Last updated: 2026-08-22. Code is ground truth; this reconciles to it.
 
 ## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
 
@@ -88,6 +88,86 @@ inside the portal's How-I-count panel (blended hourly rate + minutes-per-task
 per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
+
+## Shipped 2026-08-22 — the field-to-client chain, and RFQ Hunter's process (PRs #52–#57)
+
+A 2026-08-21 review read the code against the production database and found the
+app was ahead of the business: 4 client records (2 demos, 1 Ridgeline itself),
+6 automations all belonging to demos, **one client-role account that signed in
+once on 2026-07-11 and never returned**, 88 prospects all `untouched`, and zero
+`visit_tasks`. Twelve portal pages, no real user inside them.
+
+The failures were not inside features. They were at every handoff between them,
+so a business card walked in the front door and arrived at the portal with every
+measured fact dropped on the floor. Stage 1 closes all four breaks
+(`docs/plans/BUILD-PLAN-field-to-client-chain.md`; the window ends 2026-09-07
+because field days start the 8th).
+
+- **The card survives promotion** (#52). `promoteToLeadAction` copied five
+  fields and silently dropped `contact_name`, `email` and `website` — the three
+  the card scan exists to capture. `toHttpUrl` in `lib/safe-url.ts` normalizes
+  on the way across: `prospects.website` takes a bare domain, `leads.website`
+  carries an http(s) CHECK, and copied raw a perfectly good website failed the
+  entire promotion.
+- **A business shows what it was priced at last time** (#54). `visit_tasks` had
+  one writer and no readers. `/visit/[id]` now opens on a collapsed line — when
+  it was priced, how many tasks, the annual cost — expanding to the per-task
+  figures, all through `visitTotals`/`annualCost` so a June quote and a
+  September re-read cannot disagree. It reads the most recent visit that
+  actually PRICED something, not the most recent visit, so a bare touchpoint
+  cannot hide a real estimate. Caught a live cascade bug: the global
+  `section { padding: clamp(72px, 11vw, 140px) }` from the marketing site
+  applies to every `<section>` in the app, so the new panel first rendered as a
+  212px box holding one line of text.
+- **The recap email** (#55). One button sends the owner a forwardable write-up
+  of what was worked out on site. It goes to Brian, never to the prospect
+  (owner decision) — a human looks at an OCR'd address first. It quotes only
+  the two figures D21 puts on the phone by default; `npm run test:recap`
+  asserts the recovered figure never appears and that no internal word leaks.
+- **Follow-up dates on prospects** (#56, migration `20260822000000` applied).
+  `leads` had `follow_up_date` since January; prospects had nothing, so a good
+  drop-in not promoted the same day had nothing chasing it. Three chips (a
+  week / two weeks / a month), not a date picker, because this is tapped
+  one-handed in a parking lot. The Overview panel merges both sources, tagged
+  Lead or Card drop.
+- **Conversion carries the visit** (#57). Lead → client set the default $45/hr
+  and nothing else. It now sets `blended_labor_rate` from the visit — weighted
+  by annual minutes, so one rare $34/hr task cannot drag up a shop whose real
+  cost of labour is $28 — and seeds the roadmap with the priced tasks.
+  **Deliberately roadmap items, not automations:** `automations.status` is
+  running/issue/paused with no "planned", so a row written at conversion would
+  show a client work as live that has not been built. Nothing is overwritten,
+  and a failure never fails the conversion.
+
+**Process ported from RFQ Hunter** (#53), after the owner pointed out that
+several sessions of asking had only produced piecemeal copying:
+
+- `block-main-push.sh` — core gated COMMITS to the default branch and nothing
+  gated the PUSH. Named as a target on 2026-08-19 and never done. It handles
+  main and master unchanged; only the denial message needed rewording.
+- `block-main-push.test.mjs` — 15 cases. RFQ Hunter's hooks ship with tests;
+  core's five had none. It proves the worktree cases specifically:
+  `git -C <path> push` and `cd <path> && git push` at a checkout on master are
+  denied, feature-branch pushes are not. **The hook always exits 0 and signals
+  denial as JSON on stdout** — reading the exit code reports every case as
+  allowed, which is how a first pass wrongly concluded the guard was dead.
+- **The signature gate.** CLAUDE.md said "act on every file in `docs/__inbox/`
+  ROOT", the direct opposite of the workspace rule. Now written out with the
+  owner's reason: it is a SCHEDULING gate. A doc can describe work there is not
+  enough session time to finish properly, so a signature means "there is room
+  to do this right", not merely "this is a good idea".
+- **`docs/PR-NOTES.md` + `scripts/gen-pr-notes.mjs`** (`npm run pr-notes`). The
+  workspace's `snapshot.sh` already looked for this exact filename; core never
+  had it, so every claude.ai snapshot shipped with no PR history — it warned
+  and carried on, which is why nobody noticed. Step 0 of the doc-sync pass now
+  regenerates it. It reads GitHub, so it cannot drift.
+- **D24** — Claude applies additive migrations; anything that drops, alters a
+  type or backfills is written by Claude, reviewed and signed off by Brian, and
+  then run by Claude. The gate is his review, not his typing.
+
+Merge note: #54–#57 landed as merge commits rather than squashes. Each branch
+in the stack carried the previous ones, and squashing the first made every
+follower conflict against a master that held the same changes under a new SHA.
 
 ## Shipped 2026-08-21 — field kit, hardened by a real field run (PRs #41–#50)
 
