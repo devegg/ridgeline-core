@@ -90,7 +90,7 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
-## Shipped 2026-08-22 — client self-service password (PR pending, feature/client-password)
+## Shipped 2026-08-22 — client self-service password (PR #64, feature/client-password)
 
 `/portal/account`, BUILD-PLAN §2.4 — the last item in Stage 2. The client's
 sign-in address plus a password they can set or change themselves.
@@ -114,7 +114,7 @@ template edit landed the same day. Sign-in links are self-serve on `/login` and
 work from any device now, so nobody is stranded. What remained was a client who
 WANTS a password having no way to set one.
 
-## Shipped 2026-08-22 — client-facing notification emails (PR pending, feature/client-notifications)
+## Shipped 2026-08-22 — client-facing notification emails (PR #63, feature/client-notifications)
 
 BUILD-PLAN §2.2. Four emails with portal deep links — proposal sent,
 deliverable delivered, document shared, invoice issued. Before this the app
