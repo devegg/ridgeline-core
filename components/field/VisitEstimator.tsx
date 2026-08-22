@@ -6,7 +6,7 @@ import { saveVisitEstimateAction } from '@/app/actions/prospects'
 import { annualCost, annualRecovered, visitTotals, type EstimateInput } from '@/lib/field/estimate'
 import { formatDollars } from '@/lib/portal/value'
 import { noAutofill } from '@/lib/field/no-autofill'
-import type { ActionState, Prospect } from '@/lib/types'
+import type { ActionState, Prospect, VisitTask } from '@/lib/types'
 
 /** One task in progress. Strings, not numbers — an in-progress field is "" or
     "1." and coercing early fights the keyboard. Parsed at the edges. */
@@ -32,11 +32,22 @@ function priced(d: Draft, visitRate: string): EstimateInput | null {
   return { minutes_each, times_per_week, hourly_rate }
 }
 
+/** A date column is 'YYYY-MM-DD'. `new Date(that)` parses as UTC midnight and
+    shows the day before west of Greenwich, so build it from the parts. Only
+    month and day are formatted, which makes the output timezone-independent
+    and safe to render on both sides of hydration. */
+function shortDate(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
 export function VisitEstimator({
-  prospect, lastCardWord, photoUrl,
+  prospect, lastCardWord, lastVisitOn, lastTasks, photoUrl,
 }: {
   prospect: Prospect
   lastCardWord: string | null
+  lastVisitOn: string | null
+  lastTasks: VisitTask[]
   photoUrl: string | null
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(saveVisitEstimateAction, null)
@@ -46,9 +57,14 @@ export function VisitEstimator({
   const [contact, setContact] = useState(prospect.contact_name ?? '')
   const [showCard, setShowCard] = useState(false)
   const [showMath, setShowMath] = useState(false)
+  const [showPrior, setShowPrior] = useState(false)
 
   const set = (key: number, patch: Partial<Draft>) =>
     setDrafts(ds => ds.map(d => (d.key === key ? { ...d, ...patch } : d)))
+
+  // Last visit's numbers run through the same functions as the live ones, so
+  // a figure quoted in June and re-read in September cannot disagree.
+  const priorTotals = visitTotals(lastTasks)
 
   const pricedTasks = drafts
     .map(d => priced(d, visitRate))
@@ -87,6 +103,47 @@ export function VisitEstimator({
           </div>
         )}
       </header>
+
+      {lastTasks.length > 0 && (
+        <section className="field-prior">
+          <button
+            type="button"
+            className="field-prior__head"
+            onClick={() => setShowPrior(v => !v)}
+            aria-expanded={showPrior}
+          >
+            <span className="field-prior__when">
+              Priced here {lastVisitOn ? `on ${shortDate(lastVisitOn)}` : 'before'} &middot;{' '}
+              {lastTasks.length} task{lastTasks.length === 1 ? '' : 's'}
+            </span>
+            <span className="field-prior__sum">
+              <strong>{formatDollars(priorTotals.cost)}/yr</strong>
+              <span className="field-prior__hint">{showPrior ? 'hide' : 'see it'}</span>
+            </span>
+          </button>
+
+          {showPrior && (
+            <ul className="field-prior__list">
+              {lastTasks.map(t => (
+                <li key={t.id}>
+                  <span className="field-prior__task">
+                    {t.label}
+                    {t.who && <em> &mdash; {t.who}</em>}
+                  </span>
+                  <span className="field-prior__detail">
+                    {t.minutes_each} min &times; {t.times_per_week}/wk &middot;{' '}
+                    {formatDollars(annualCost(t.minutes_each, t.times_per_week, t.hourly_rate))}/yr
+                  </span>
+                </li>
+              ))}
+              <li className="field-prior__foot">
+                Last time&rsquo;s numbers. Anything you enter below is a new visit &mdash;
+                it does not overwrite this one.
+              </li>
+            </ul>
+          )}
+        </section>
+      )}
 
       <label className="field-label">
         What does an hour of their time cost? (loaded)
