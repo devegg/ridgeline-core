@@ -10,9 +10,191 @@
 > `gh`); re-run after merging a PR, as part of the doc-sync pass. Reading GitHub directly means it
 > can never silently drift from what actually shipped.
 
-_Generated 2026-08-22 from 51 merged PRs (#1–#51)._
+_Generated 2026-08-22 from 56 merged PRs (#1–#57)._
 
 ---
+## #57 — feat: converting a lead carries the visit onto the client
+merged 2026-08-22 · `cfbc2e3`
+
+**Stacks on #56.** Merge order: #52 → #54 → #55 → #56 → this. (#53 is independent.)
+
+Build plan item 1.5 — the last of the four breaks. Lead → client created the record at the default **$45/hr with nothing else**, so the rate and task list measured in the owner's own office had to be retyped from a table nothing read.
+
+## I changed the approach from the plan, deliberately
+
+The plan said "visit tasks become **draft automations**." The schema disagrees, and the schema is right.
+
+`automations.status` is `running | issue | paused` — there is no `planned`. A row written at conversion would show a client work as **live that has not been built**, which is exactly what the honesty rails exist to prevent. Widening that CHECK would also ripple into the health banner, the value query and the pre-launch empty state.
+
+So the tasks land on **`roadmap_items`** instead — which is literally what "What's next" means, needs no migration, and is already rendered in the portal. The real automation gets created when the build ships, on the portal-data screen, where the baseline can be read off the same visit.
+
+Net effect is what the review wanted: a first portal login shows the client their own tasks in their own words, with their real rate behind the math, and an honest "nothing running yet" state above it.
+
+## blendedRate weights by annual minutes
+
+A straight mean of task rates lets one rare $90/hr task drag up a client whose real cost of labour is $28. Weighting by `minutes × frequency` gives the task that eats the hours the weight it deserves.
+
+Worked example — 4min × 60/wk @ $28 and 12min × 9/wk @ $34:
+
+- weighted: **$29.86**
+- naive average: $31.00
+
+A weighted mean cannot leave the range of its inputs, and every input is already inside the $5–$500 the form and the CHECK constraints enforce.
+
+## Nothing is overwritten
+
+The rate is set only if a visit measured one. Roadmap items are added only when the client has none — so re-running a conversion, or attaching a second lead to an existing client, cannot duplicate the list or reset a rate the client has since corrected through the portal (**D18**: those inputs are theirs).
+
+The whole carry-across is wrapped. A failure logs and the conversion stands — the client record is what matters; a missing roadmap row is a thirty-second fix on the portal-data screen.
+
+## Verification
+
+- `blendedRate` checked against five cases including the weighted-vs-naive distinction and zero-weight rows
+- `npm run test:estimate` 19/19, `npm run test:recap` 22/22
+- `npx tsc --noEmit` clean, `npm run lint` 0 errors
+
+**Not exercised end to end.** That needs a real lead converted to a real client in production, and I would rather not create a client record to prove a code path. The first genuine conversion is the test; the carry-across fails soft if anything is off.
+
+---
+
+## #56 — feat: follow-up dates on prospects, in the panel that already exists
+merged 2026-08-22 · `161dced`
+
+**Stacks on #55.** Merge order: #52 → #54 → #55 → this.
+
+Build plan item 1.4. `leads` has had `follow_up_date` since January and the Overview already surfaces "Follow-ups due" from it. `prospects` had nothing — so a drop-in that went well but wasn't promoted to a Lead the same day had nothing chasing it. The warmest moment in the pipeline was the one with no reminder.
+
+## Migration — applied
+
+`20260822000000_prospect_follow_up.sql`, **already applied** under D24 (additive, so I run it). One nullable column plus a partial index covering exactly the Overview predicate: a date set, and a status still in the funnel.
+
+Verified in the database: column `date`/nullable, index `prospects_follow_up_idx` present.
+
+## The control
+
+Three chips — **In a week / Two weeks / A month** — not a date picker. This gets tapped one-handed in a parking lot. Set one and the screen names the date back to you; clearing is explicit, and saving another visit never silently drops a date you set earlier.
+
+`inDays()` builds the date from local parts. `toISOString()` is UTC and returns *yesterday* after 8pm on the east coast — precisely when a field day gets written up.
+
+## The panel
+
+Both sources merge into one list sorted by date, each row tagged `Lead` or `Card drop` and linking where you'd act on it (`/leads/[id]` or `/visit/[id]`). A follow-up is a follow-up; the table it came from only decides the destination.
+
+## Verification
+
+On the running worktree with an owner session:
+
+- chips produce `2026-09-05` for "Two weeks" from today — no timezone slip; hidden input, on-state and the confirmation line all agree
+- merged panel sorts overdue-first, paints overdue `rgb(177,75,60)` and shows `today` for today's date
+- lead rows link to `/leads/…`, card-drop rows to `/visit/…`
+- `npx tsc --noEmit` clean, `npm run lint` 0 errors
+
+Overview data was a temporary local stub, reverted before commit. Production has **0** prospects with a follow-up date and I'd rather not invent some. The throwaway owner account used for verification was deleted.
+
+---
+
+## #55 — feat: email the visit recap, written to be forwarded
+merged 2026-08-22 · `441e8f8`
+
+**Stacks on #54** (which stacks on #52). Merge order: #52 → #54 → this.
+
+Build plan item 1.3. The follow-up after a drop-in was written from memory — which is why it often wasn't written at all.
+
+## Where it lives
+
+Inside the prior-estimate panel from #54, so it works both on the walk back to the truck and three weeks later against the same saved visit.
+
+It sends to **the signed-in owner's own address**. There is no recipient field, so there's nothing to aim at a third party by editing a form.
+
+## The decision it implements
+
+Owner call, 2026-08-21: the recap goes to Brian, who forwards it — not straight to the prospect. A human looks at an OCR'd email address before anything is sent to it, and you get to add a line first.
+
+## Which numbers it may quote
+
+Not a style choice. D21 puts cost and the one-time fee on the phone by default and keeps the recovered figure behind a tap. The email shows those same two and the same disclaimer, word for word. **A figure the owner never saw on screen would be a new claim, made in writing** — exactly what D21 exists to prevent.
+
+The test asserts it: the recovered figure must not appear, the fee must not carry `/yr`, and no internal word (prospect, lead, pipeline, card drop, status) may leak into something meant to be forwarded out of context.
+
+## Verification
+
+`npm run test:recap` — 22 checks, importing the real `.ts` modules through node's type stripper so the figures under test are the ones the email sends.
+
+It caught a real bug: **the business name appeared only in the subject, never in the body.** Wrong for an email that gets forwarded away from its subject line. Now a header line, escaped like every other interpolated value.
+
+Rendered and read end to end in the browser at the real numbers — ~$5,800 + ~$3,200 → ~$9,000/yr cost, ~$1,600 one-time fee.
+
+`npx tsc --noEmit` clean, `npm run lint` 0 errors.
+
+## One fix carried along
+
+`saveVisitEstimateAction` now revalidates `/visit/[id]` as well as `/prospects`. Without it, the page that just saved a visit still showed the *previous* one in the panel.
+
+---
+
+## #54 — feat: a business shows what it was priced at last time
+merged 2026-08-22 · `573b51e`
+
+**Stacks on #52** — based on `feature/field-to-client-chain` so the diff shows only 1.2. GitHub retargets to `master` when #52 merges.
+
+Build plan item 1.2. Closes Break 1 from the review: `visit_tasks` had one writer and no readers, so an on-site estimate was unrecoverable the moment you walked out — including when you walked back into the same office three weeks later.
+
+## What it does
+
+`/visit/[id]` opens with a collapsed line: when it was priced, how many tasks, the annual cost. Tapping it lists each task with its minutes, frequency and yearly figure.
+
+The numbers run through `visitTotals` and `annualCost` — the same functions the live panel uses — so a figure quoted in June and re-read in September cannot disagree. Nothing is stored (D21).
+
+## Two things worth knowing
+
+**It reads the most recent visit that actually priced something**, not simply the most recent visit. A plain touchpoint logged from the dashboard creates a `prospect_visits` row with no tasks; reading only the newest one would hide a real estimate behind a two-second door knock.
+
+**Dates are built from the `YYYY-MM-DD` parts, not parsed.** `new Date('2026-08-21')` is UTC midnight and renders as the 20th in Myrtle Beach.
+
+## The bug this caught
+
+`globals.css` has a global `section { padding: clamp(72px, 11vw, 140px) }` for the marketing site, and it applies to **every** `<section>` in the app. The new panel is a `<section>` that didn't opt out, so it first rendered as a 212px box holding one line of text at 375px. `.field-task` opts out the same way; the rule is now written down next to the fix.
+
+## Verification
+
+Local worktree dev server, 375px viewport, against a real prospect:
+
+- panel 130px collapsed, 268px expanded
+- both tasks listed with their own annual figures — ~$5,800 + ~$3,200 — summing to the ~$9,000 header
+- `aria-expanded` toggles correctly
+- `npx tsc --noEmit` clean; `npm run lint` 0 errors
+
+Rendering was verified with a temporary local stub, reverted before commit — production has zero `visit_tasks`, and creating real ones would have left test data in the 88-prospect working list with no in-app way to delete it. The query itself is typechecked but has not run against real rows; the first real saved estimate exercises it.
+
+---
+
+## #52 — fix: the card scan's fields survive promotion to a lead
+merged 2026-08-22 · `7657729`
+
+## The bug
+
+`promoteToLeadAction` inserted `business_name`, `industry`, `location`, `phone`, `source`, `stage`, `notes` — and silently omitted `contact_name`, `email` and `website`. All three exist on both `prospects` and `leads`; the card-capture migration (`20260712020000`) added `contact_name` and `email` to `prospects` specifically so OCR had somewhere to land.
+
+So the card was scanned, the fields were confirmed by hand, and then discarded at the exact moment the record starts to matter. Found during the 2026-08-21 review.
+
+## The trap in the fix
+
+`prospects.website` has no constraint and holds whatever OCR guessed — usually a bare domain like `acmeplumbing.com`. `leads.website` carries `leads_website_http` from the security hardening pass (`20260711100000`), which requires `^https?://`.
+
+Copied straight across, a good website would have failed the **entire promotion** with "Creating the lead failed". `toHttpUrl` in `lib/safe-url.ts` adds the scheme when it's missing and returns `null` on anything that still won't parse, so a bad guess costs the URL and never the promotion. It reuses `safeHttpUrl`, so `javascript:` and `mailto:` still resolve to `null`.
+
+## Verification
+
+- `npx tsc --noEmit` — clean.
+- `toHttpUrl` checked against the cases card OCR actually produces: bare domain, `www.` prefix, full URL, uppercase scheme, surrounding whitespace, `javascript:`, `mailto:`, empty, null. 9/9 as expected.
+- End-to-end promotion not exercised against a real prospect — that needs the dev server and an owner session.
+
+## Also in here
+
+`docs/plans/BUILD-PLAN-field-to-client-chain.md` — the two-week plan this came out of. The window closes 2026-09-07 because field days start the 8th.
+
+---
+
 ## #51 — docs: session reconciliation — PRs #41–#50, D21–D23
 merged 2026-08-21 · `77a99a4`
 
