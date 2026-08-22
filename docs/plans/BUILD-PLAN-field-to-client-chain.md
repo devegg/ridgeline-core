@@ -87,7 +87,9 @@ through as a draft automation with a real `baseline_minutes_per_item`.
 
 ---
 
-## Stage 2 — ready for a yes (target: 2026-09-05)
+## Stage 2 — ready for a yes — **COMPLETE 2026-08-22** (target was 2026-09-05)
+
+Landed fourteen days early. 2.1 was cut, 2.2/2.3/2.4 shipped.
 
 ### 2.1 Route order for the field list — ~~CUT~~ (owner, 2026-08-22)
 **Not building this.** The pins are already on Brian's Google Map, and he knows
@@ -128,8 +130,12 @@ migration was needed; the auth user object already carries every field.
   was already done**: verified 2026-08-22, present in Vercel Production and
   Preview for 42 days and authenticating against Supabase Auth. Carried here
   as an owner step it never actually needed.
-- **Client self-service password change** — `/settings` is owner-only, so a
-  client's only recovery path is a magic link somebody has to tell them about.
+- ~~**Client self-service password change**~~ — **DONE 2026-08-22**,
+  `/portal/account`. The framing above expired the same day it was acted on:
+  the Magic Link template edit made sign-in links self-serve on `/login` and
+  usable from any device, so a client was no longer stranded. What was left was
+  a client who WANTS a password having nowhere to set one — plus an email that
+  promised exactly that screen. Owner preview is disabled on it (D3).
 
 ---
 

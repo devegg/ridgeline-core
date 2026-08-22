@@ -15,6 +15,7 @@ const LINKS = [
   { href: '/portal/requests', label: 'Requests' },
   { href: '/portal/billing', label: 'Billing' },
   { href: '/portal/documents', label: 'Documents' },
+  { href: '/portal/account', label: 'Account' },
 ]
 
 export function PortalNav({ isOwner = false }: { isOwner?: boolean }) {

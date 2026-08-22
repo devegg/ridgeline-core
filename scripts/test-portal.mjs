@@ -329,6 +329,29 @@ console.log("G. Client notifications (\u00a72.2)");
 }
 
 // ============================================================
+console.log("H. Client account / password (\u00a72.4)");
+{
+  ok("portal account page gated when signed out", (await status("/portal/account")) === 307);
+
+  if (!signInErr) {
+    // The client changes their OWN password on their OWN session — no admin key
+    // anywhere in the path, so it cannot be aimed at another account.
+    const strong = `rk-suite-${randomBytes(9).toString("base64url")}`;
+    const { error: pwErr } = await client.auth.updateUser({ password: strong });
+    ok("signed-in client can set their own password", !pwErr, pwErr?.message);
+
+    // ...and it actually works as a credential.
+    const fresh = createClient(URL_, PUB, { auth: { persistSession: false } });
+    const { error: reErr } = await fresh.auth.signInWithPassword({ email: testEmail, password: strong });
+    ok("the new password signs in", !reErr, reErr?.message);
+
+    // The client session must not reach owner surfaces from this screen.
+    ok("client still sees only its own client row after the change",
+       (await client.from("clients").select("id")).data?.length === 1);
+  }
+}
+
+// ============================================================
 if (testUserId) {
   await admin.auth.admin.deleteUser(testUserId);
   console.log("cleanup: ephemeral user deleted");

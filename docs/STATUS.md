@@ -90,6 +90,30 @@ per automation), through the bounded `set_value_inputs` RPC (D18). Migration
 20260712000000 must be applied (`npm run migrate`) before/with the merge;
 the suite's new checks skip-with-notice until then.
 
+## Shipped 2026-08-22 — client self-service password (PR pending, feature/client-password)
+
+`/portal/account`, BUILD-PLAN §2.4 — the last item in Stage 2. The client's
+sign-in address plus a password they can set or change themselves.
+
+- Built the same way as the owner's `SettingsPanel`, not as a new pattern:
+  `auth.updateUser` on the browser client, 8-character minimum, repeat to
+  confirm. That call acts on whoever is signed in, so it cannot be aimed at
+  another account — no admin key, no `client_id` to get wrong (D8 intact).
+- **Owner preview is switched off here.** An owner in the portal is previewing
+  (D3); the password this would change is theirs, not the client's. The form is
+  disabled with a note pointing at the Accounts screen.
+- Fixes copy that was ahead of the code: the login-email-change email told
+  clients to "set one from your account" and no such screen existed. It links
+  to the real page now.
+- Suite at **63 checks, green** (4 new, section H) — including an ephemeral
+  client setting a password on its own session and signing in with it.
+
+**The urgency this item carried is gone.** The plan called a magic link "the
+only recovery path, and somebody has to tell them about it" — true until the
+template edit landed the same day. Sign-in links are self-serve on `/login` and
+work from any device now, so nobody is stranded. What remained was a client who
+WANTS a password having no way to set one.
+
 ## Shipped 2026-08-22 — client-facing notification emails (PR pending, feature/client-notifications)
 
 BUILD-PLAN §2.2. Four emails with portal deep links — proposal sent,
