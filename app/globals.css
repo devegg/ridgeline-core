@@ -1956,3 +1956,33 @@ details:not([open]) > *:not(summary) { display: none; }
   .service, .story { transition: none; }
   .service:hover, .story:hover { transform: none; }
 }
+/* ── Field note (structured visit write-up) ───────────────────────────── */
+/* The template in docs/business-dev/field-notes/TEMPLATE.md, as a form. */
+
+.fieldnote-sec {
+  /* padding:0 is load-bearing — see .field-prior. The global `section` rule
+     puts clamp(72px, 11vw, 140px) of marketing padding on every <section>,
+     which turns each note section into a screen-tall box on a phone. */
+  margin: 26px 0 0; padding: 0;
+  border-top: 1px dashed var(--rule); padding-top: 18px;
+}
+.fieldnote-sec__title {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink-soft);
+  margin: 0 0 6px; font-weight: 500;
+}
+.fieldnote-sec__hint {
+  font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+  margin: 0 0 14px; max-width: 52ch;
+}
+.fieldnote-hint {
+  display: block; font-size: 11.5px; color: var(--ink-soft);
+  margin-top: 2px; line-height: 1.45;
+}
+/* The two questions seven rounds of desk research could not answer. Marked so
+   they do not read as just two more boxes. */
+.fieldnote-star {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--amber-deep);
+}
+.fieldnote-area { line-height: 1.5; resize: vertical; min-height: 44px; }

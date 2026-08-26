@@ -99,6 +99,12 @@ export function VisitEstimator({
         <Link href="/visit" className="field-back">&larr; Card drops</Link>
         <h1 className="field-title">{prospect.business_name}</h1>
         {lastCardWord && <p className="field-sub">Card word: {lastCardWord}</p>}
+        {/* The estimator prices what they told you. The note records what you
+            saw and heard, which is the half no amount of desk research can
+            reach — so it gets a door from here, not a buried menu. */}
+        <Link href={`/visit/${prospect.id}/notes`} className="field-linkbtn">
+          Write the field note
+        </Link>
         <label className="field-label">
           Who are you talking to?
           <input
