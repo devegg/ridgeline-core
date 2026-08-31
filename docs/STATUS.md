@@ -51,11 +51,28 @@ this order of weight:
   which is what makes the card around it read as lifted. Radius stays at 2px:
   the site is editorial, and rounding would soften it the wrong way.
 
-Verified by computed style against the running dev server (band backgrounds,
-card shadows, dark-band text colors, zero `/work` or `/papers` links in
-`<main>`). The Browser pane's screenshot capture was returning blank frames
-this session — a 0×0 viewport in the tool, not a page fault — so the visual
-sign-off is the owner's.
+Three things the verification pass caught and fixed:
+
+- **Bands were lighter than the cards on them.** The first cut put services on
+  a near-white band with near-white cards — a ~1% fill difference, separated
+  only by a border, which was the original problem in a new coat of paint.
+  Card-bearing bands now sit *deeper* than their cards. Measured ladder, top
+  to bottom: 245,239,227 → **239,232,217** → **230,221,201** → 245,239,227 →
+  **23,21,18** → 245,239,227, with cards at 254,251,243 throughout.
+- **Deleting the Problems CSS broke `/[industry]`.** `IndustryLanding.tsx`
+  still uses `.problems` / `.problem*`; those rules are restored and now
+  carry a comment saying who owns them. `.client-card` / `.clients-grid` are
+  genuinely unused and stay deleted.
+- **The contact form never stacked on phones.** The field kit declares a bare
+  `.field-row` further down `globals.css` that won on source order and killed
+  the `max-width: 560px` stack rule. Pre-existing on main; fixed by scoping
+  the marketing rule to `.contact .field-row`.
+
+Verified by reading the DOM and computed styles at 1440, 748, and 500 wide:
+no horizontal overflow and nothing clipped at any width, contrast on the dark
+band 6.87–16.3 against #171512 (AA needs 4.5), grids collapsing at the right
+breakpoints, zero failing resource loads, and `/work`, `/papers`, `/trades`,
+`/vrm`, `/pm`, `/real`, `/login` all still 200 and styled.
 
 ## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
 
