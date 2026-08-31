@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-31. Code is ground truth; this reconciles to it.
 
-## Shipped 2026-08-31 — the five service lines, and the container pass (PR #TBD, feature/service-lines-and-containers)
+## Shipped 2026-08-31 — the five service lines, and the container pass (PR #67, feat/service-lines-and-containers)
 
 The marketing home page stops arguing from portfolio and starts arguing from
 capability, and the whole public site gets a depth system.
