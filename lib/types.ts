@@ -341,6 +341,45 @@ export interface ProspectVisit {
   note: string | null
 }
 
+/** The five service lines in the databank's catalogue. */
+export type ServiceLine = 'L1' | 'L2' | 'L3' | 'L4' | 'L5'
+
+/**
+ * A structured write-up of one visit — the shape of
+ * docs/business-dev/field-notes/TEMPLATE.md, promoted out of markdown so it
+ * can actually be filled in on a phone and queried afterwards.
+ *
+ * Every field is optional on purpose: a note written in a truck is partial by
+ * nature, and a form that refuses to save half an answer gets abandoned.
+ */
+export interface VisitNote {
+  id: string
+  created_at: string
+  updated_at: string
+  prospect_id: string
+  visit_id: string
+  card_slug: string | null
+  spoke_with_role: string | null
+  duration_minutes: number | null
+  stack_observed: string | null
+  how_things_arrive: string | null
+  who_moves_it: string | null
+  sheet_what: string | null
+  sheet_columns: string | null
+  sheet_owner_role: string | null
+  sheet_owner_out: string | null
+  sheet_document_home: string | null
+  exception_handling: string | null
+  transaction_asked: string | null
+  transaction_observed: string | null
+  owner_words: string | null
+  card_got_wrong: string | null
+  service_line: ServiceLine | null
+  disqualified: boolean | null
+  disqualify_map_entry: string | null
+  follow_up_owed: string | null
+}
+
 export interface VisitTask {
   id: string
   created_at: string
