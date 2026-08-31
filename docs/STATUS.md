@@ -1,6 +1,101 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-08-22. Code is ground truth; this reconciles to it.
+Last updated: 2026-08-31. Code is ground truth; this reconciles to it.
+
+## Shipped 2026-08-31 — the five service lines, and the container pass (PR #67, feat/service-lines-and-containers)
+
+The marketing home page stops arguing from portfolio and starts arguing from
+capability, and the whole public site gets a depth system.
+
+**Front of the page rebuilt around the five service lines.** `components/home/ServiceLines.tsx`
+replaces `Problems.tsx` and `ClientsSection.tsx` (both deleted). The five lines
+are the ones in `docs/business-dev/reviews/fable-service-catalogue.md` in the
+workspace repo — Intake, Reconciliation, the unbilled-work sweep, deadline &
+document chains, the encoding audit. Ordered for owner recognition, not by the
+catalogue's own defensibility ranking. Each card carries the one-sentence
+definition, three "what it looks like" examples drawn from the databank cards,
+and the trades the line spans. The catalogue's do-not-sell list is not
+published, but the section closes by saying such a list exists — which is the
+honest version of the same thing.
+
+**Proof demoted from 03 to 02 and cut.** `Stories.tsx` keeps the four client
+stories plus RFQ Hunter and GridStrain. Movie Slot Machine and The Right
+Business First came off the home page — a movie picker undercuts the
+operations-counsel pitch. Both still live at `/work`.
+
+**`/work` and `/papers` unlinked from the home page and the nav** (owner
+decision, 2026-08-31): they stay as standalone routes, reachable by URL and
+still in `sitemap.ts`, until the owner revises them against consistent work.
+The nav is now four home-page anchors (`#services`, `#proof`, `#how`,
+`#contact`) plus Client Login. Section numbering shifted: 01 What I do,
+02 Proof, 03 The name, 04 How it works, 05 Let's talk.
+
+**The container / depth pass** (`app/globals.css`, new "Bands & elevation"
+block). The page used to be one cream value top to bottom with hairline rules
+and no elevation anywhere, so nothing sat *on* anything. Two mechanisms, in
+this order of weight:
+
+- **Full-bleed alternating bands** with visible value steps, each separated by
+  a hairline plus an inset white highlight: hero (bare) → services
+  (`--paper`, 3px amber accent top) → proof (`--bg-deep`) → the name (bare) →
+  how it works (**the one dark slab**, `--ink-deep` #171512 with a warm amber
+  wash at its top edge) → contact (bare) → footer (deep). Band backgrounds are
+  deliberately translucent so the fixed contour + grain layer behind
+  `.site-root` still shows through; the dark band is the exception and carries
+  its own gradient instead.
+- **Cards that are a different value than their band and cast a real shadow.**
+  New tokens: `--card` (#FEFBF3), `--shadow-sm/md/lg`, `--edge-top`. Shadows
+  are ink-tinted (rgba(46,40,28,…)), never black — black on cream goes grey
+  and muddy. Service cards, story cards, and the contact form are raised;
+  the "what it looks like" list inside each service card is an inset well,
+  which is what makes the card around it read as lifted. Radius stays at 2px:
+  the site is editorial, and rounding would soften it the wrong way.
+
+**Owner revisions, same day:**
+
+- **Tagline replaced with the business-card line** — "I eliminate work that
+  doesn't make you money, so you can do more work that does." The old line
+  ("hours lost to tasks that can run automatically") was cut because
+  *automatically* can be read as headcount, which is the opposite of the
+  pitch. Changed in the hero, the page metadata, the OG/Twitter cards, and the
+  JSON-LD. One incidental "automatically" survives inside service line 01,
+  where it describes data moving rather than people.
+- **GridStrain off the home page** (owner: it isn't awe-inspiring).
+- **RFQ Hunter reframed from product to portfolio piece.** The owner is
+  confident it will not launch as SaaS — it may become his sister's platform —
+  so every launch signal is gone: no "SaaS", no "private beta", no domain
+  link, no PR count. It is now story 05 in the same list as the client work,
+  described as a build. The `PRODUCTS` array is gone entirely; Proof is five
+  entries described identically, and the section is "The work, plainly
+  described."
+- **`/work` and `/papers` removed from `sitemap.ts`**, along with their child
+  routes — an unlinked page in a sitemap still gets indexed. The Supabase
+  lookup for public paper pages went with them, which also drops a DB call
+  from sitemap generation. A comment says to put them back when they return
+  to the nav.
+
+Three things the verification pass caught and fixed:
+
+- **Bands were lighter than the cards on them.** The first cut put services on
+  a near-white band with near-white cards — a ~1% fill difference, separated
+  only by a border, which was the original problem in a new coat of paint.
+  Card-bearing bands now sit *deeper* than their cards. Measured ladder, top
+  to bottom: 245,239,227 → **239,232,217** → **230,221,201** → 245,239,227 →
+  **23,21,18** → 245,239,227, with cards at 254,251,243 throughout.
+- **Deleting the Problems CSS broke `/[industry]`.** `IndustryLanding.tsx`
+  still uses `.problems` / `.problem*`; those rules are restored and now
+  carry a comment saying who owns them. `.client-card` / `.clients-grid` are
+  genuinely unused and stay deleted.
+- **The contact form never stacked on phones.** The field kit declares a bare
+  `.field-row` further down `globals.css` that won on source order and killed
+  the `max-width: 560px` stack rule. Pre-existing on main; fixed by scoping
+  the marketing rule to `.contact .field-row`.
+
+Verified by reading the DOM and computed styles at 1440, 748, and 500 wide:
+no horizontal overflow and nothing clipped at any width, contrast on the dark
+band 6.87–16.3 against #171512 (AA needs 4.5), grids collapsing at the right
+breakpoints, zero failing resource loads, and `/work`, `/papers`, `/trades`,
+`/vrm`, `/pm`, `/real`, `/login` all still 200 and styled.
 
 ## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
 

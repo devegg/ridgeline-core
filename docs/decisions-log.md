@@ -94,3 +94,64 @@
       as the fallback/reference.
 - Pilots (movie-slot-machine, gridstrain): boredom builds, not important
       (owner, 2026-07-11). No backfill owed; nobody re-flags their stub docs.
+
+- Marketing home page argues from capability, not portfolio (owner,
+  2026-08-31). The five service lines from the workspace service catalogue
+  replace the generic "what I fix" pains and the "who I work with" industry
+  grid. Reason: the portfolio is uneven — client stories are on-message, the
+  owner's own products are a mix — and an industry cut invites "do you have a
+  case study in *my* industry?" A capability cut does not.
+- `/work` and `/papers` are unlinked, not retired (owner, 2026-08-31). Off the
+  nav and off the home page; still routable and still in the sitemap. They come
+  back once the owner has consistent work to revise them against. OPEN: whether
+  they should also come out of `sitemap.ts` in the meantime — unlinked pages in
+  a sitemap still get indexed.
+- RFQ Hunter is not launching as SaaS (owner, 2026-08-31). It may become his
+  sister's platform. On the marketing site it is a portfolio piece, not a
+  product: no launch language, no link. This does not change the ~/0/rfqhunter
+  repo or its hands-off status.
+- "Automatically" is off the tagline (owner, 2026-08-31). It can be read as
+  headcount reduction. The business-card line replaces it site-wide. The word
+  is still fine when it describes data moving on its own.
+- Two doors, sorted by one rule (owner, 2026-08-31). `04 — How it works`
+      (free call → paid assessment → proposal → build) stays as-is and is the
+      website path. The business card sells a contingency deal. Which one a
+      job gets is decided by whether the saving can be named as a number
+      before the work starts — countable (encoding audit, unbilled-work sweep,
+      most intake, named reconciliation exceptions) goes contingency;
+      structural/Salem-shaped goes assessment. They are presented as a menu of
+      job shapes, never as a menu of prices.
+- The contingency floor is a QUALIFYING FIND, not a minimum fee (owner,
+      2026-08-31). Brian only takes the job if the find clears $2,000/year —
+      25% of which is his $500 target. Below that he says so and there is no
+      bill. Chosen over a $500 minimum fee because a minimum fee contradicts
+      "no savings, no fee" and would read as bait.
+- The number is agreed by both parties in writing before any build (owner,
+      2026-08-31). Non-negotiable; it is what makes a performance fee
+      defensible when Brian's own code is doing the counting.
+- Code is not handed over until paid in full (owner, 2026-08-31).
+- Billing is monthly, on measured actuals (owner, 2026-08-31). 25% of what
+      the system actually saved that month, for twelve months. Seasonality
+      stops mattering because nothing is extrapolated.
+- Year two replaces the percentage with a FLAT monthly maintenance fee per
+      running automation (owner delegated the call, 2026-08-31). Not a lower
+      percentage: after year one what is sold is hosting and upkeep, whose
+      cost is fixed per system, and the owner's own test was that he would not
+      want to pay a share of labour nobody is performing. Work added later
+      starts its own twelve months at 25%. Amount still TBD.
+- Ownership: the client is licensed during the term; ownership transfers on
+      buyout or on cessation (owner, 2026-08-31). "Paid in full" therefore
+      means the buyout price.
+- Recurring replaces the one-time fee (owner, 2026-08-31). The printed
+      business card needs NO reprint — it states only "no savings, no fee"
+      (truer under monthly billing) and a 25% ratio. The word "once" lives
+      only in card-pitch-and-talking-points.md and
+      `components/field/VisitEstimator.tsx` (the "My fee — one time" row and
+      its note), both of which get rewritten.
+- [ ] OPEN — the year-two maintenance amount. Blocks the VisitEstimator
+      rewrite: the screen cannot show a fee structure with a hole in it in
+      front of a customer. Compute bottom-up from real hosting/support cost.
+- [ ] OPEN — the upfront build portion (at what job size, what share) and the
+      buyout formula. Both must be stateable in one sentence.
+- Full model: ridgeline-workspace `docs/business-dev/SAVINGS-SHARE-MODEL.md`.
+

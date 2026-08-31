@@ -1,7 +1,6 @@
 import { SiteHeader } from '@/components/home/SiteHeader'
 import { Hero } from '@/components/home/Hero'
-import { Problems } from '@/components/home/Problems'
-import { ClientsSection } from '@/components/home/ClientsSection'
+import { ServiceLines } from '@/components/home/ServiceLines'
 import { Stories } from '@/components/home/Stories'
 import { Origin } from '@/components/home/Origin'
 import { Engagement } from '@/components/home/Engagement'
@@ -15,8 +14,7 @@ export default function Home() {
         <SiteHeader />
         <main>
           <Hero />
-          <Problems />
-          <ClientsSection />
+          <ServiceLines />
           <Stories />
           <Origin />
           <Engagement />
@@ -34,7 +32,7 @@ export default function Home() {
               email: 'hello@ridgelineknows.com',
               telephone: '+1-843-425-7030',
               description:
-                'Operations counsel for small business owners. I help businesses eliminate hours lost to tasks that can run automatically.',
+                "Operations counsel for small business owners. I eliminate work that doesn't make you money, so you can do more work that does.",
               address: { '@type': 'PostalAddress', addressLocality: 'Myrtle Beach', addressRegion: 'SC', addressCountry: 'US' },
               areaServed: 'The Lowcountry to Myrtle Beach and beyond — clients nationwide',
               founder: { '@type': 'Person', name: 'Brian Boyd' },
