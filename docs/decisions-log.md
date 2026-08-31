@@ -106,3 +106,19 @@
   back once the owner has consistent work to revise them against. OPEN: whether
   they should also come out of `sitemap.ts` in the meantime — unlinked pages in
   a sitemap still get indexed.
+- RFQ Hunter is not launching as SaaS (owner, 2026-08-31). It may become his
+  sister's platform. On the marketing site it is a portfolio piece, not a
+  product: no launch language, no link. This does not change the ~/0/rfqhunter
+  repo or its hands-off status.
+- "Automatically" is off the tagline (owner, 2026-08-31). It can be read as
+  headcount reduction. The business-card line replaces it site-wide. The word
+  is still fine when it describes data moving on its own.
+- [ ] OPEN — two doors, one price sheet. `04 — How it works` (free call →
+      paid assessment → proposal → build) is the website path and the owner is
+      happy with it. The business card sells a different deal: "No savings, no
+      fee. If I save you $10,000, I keep $2,500." Both need to exist, they
+      need a stated rule for which applies, and the contingency deal needs a
+      floor — the owner's instinct is $500, tied to his target minimum daily
+      revenue. Not built pending his decision; see the session discussion
+      2026-08-31.
+

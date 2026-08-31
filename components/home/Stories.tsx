@@ -1,26 +1,5 @@
 import { Reveal } from './Reveal'
 
-const PRODUCTS = [
-  {
-    sector: 'Federal contracting · SaaS',
-    size: 'Private beta · rfqhunter.com',
-    title: 'Small suppliers were bidding blind on government contracts.',
-    body: 'DLA suppliers pick through thousands of solicitations by hand, with no view of award history or the competition. RFQ Hunter is a federal-contract intelligence platform I built from the ground up: solicitation matching, award and pricing history, competitor intelligence, and demand forecasting — built on the government’s own published data.',
-    outcome: 'Live in private beta. Four hundred merged pull requests and climbing.',
-    href: 'https://www.rfqhunter.com',
-    linkLabel: 'rfqhunter.com',
-  },
-  {
-    sector: 'Data & infrastructure',
-    size: 'Live · gridstrain.com',
-    title: 'Watching the American power grid strain, in near real time.',
-    body: 'GridStrain tracks stress on the U.S. power grid — regional demand, state-by-state electricity rates, and the gap between them. The data pipeline refreshes itself every hour, unattended. Built end-to-end: ingestion, database, and the site you can open right now.',
-    outcome: 'Live. The data updates itself, hourly, whether anyone is watching or not.',
-    href: 'https://gridstrain.com',
-    linkLabel: 'gridstrain.com',
-  },
-]
-
 const STORIES = [
   {
     sector: 'Real estate brokerage',
@@ -50,6 +29,13 @@ const STORIES = [
     body: 'A content creator needed to work with their audience in bulk, not scroll comments one screen at a time. I built a custom app that pulls every comment and reply from any public video through YouTube’s official Data API, then lets them search, sort, and export the whole set to CSV or JSON.',
     outcome: 'From a buried comment thread to a working spreadsheet in one step.',
   },
+  {
+    sector: 'Federal contracting',
+    size: 'Solo build · Data pipeline to finished application',
+    title: 'Small suppliers were bidding blind on government contracts.',
+    body: 'Suppliers to the Defense Logistics Agency pick through thousands of published solicitations by hand, with no view of what similar parts have sold for or who they are bidding against. I built a platform that reads the government’s own published data and turns it into something usable: solicitations matched to what a supplier actually makes, award and pricing history, a view of the competition, and a forecast of what is likely to come up for bid.',
+    outcome: 'Built and running. It is the biggest thing on this list, and it is the same work as everything above it — pull the data in, reconcile it, report what matters — at the largest scale I have built it.',
+  },
 ]
 
 export function Stories() {
@@ -57,19 +43,18 @@ export function Stories() {
     <section className="stories band band--deep" id="proof">
       <div className="container">
         <Reveal>
-          <div className="eyebrow">02 — Proof</div>
+          <div className="eyebrow">02 &mdash; Proof</div>
         </Reveal>
         <Reveal delay={1}>
           <h2 className="section-title">
-            Client work and my own products,<br />
+            The work,<br />
             <em>plainly</em> described.
           </h2>
         </Reveal>
         <Reveal delay={2}>
           <p className="lede">
-            Client names are withheld; outcomes are not. My own products are named — click
-            through and see them running. If a serious conversation is underway, references are
-            available on request.
+            Client names are withheld; outcomes are not. If a serious conversation is underway,
+            references are available on request.
           </p>
         </Reveal>
 
@@ -93,44 +78,6 @@ export function Stories() {
             </article>
           </Reveal>
         ))}
-
-        <Reveal delay={1}>
-          <p className="lede" style={{ marginTop: 56 }}>
-            And two products of my own — built end to end, shipped, and running today. Click
-            through and see them working:
-          </p>
-        </Reveal>
-
-        {PRODUCTS.map((p, i) => (
-          <Reveal key={p.href} delay={1}>
-            <article className="story">
-              <div>
-                <div className="story__num">{String(STORIES.length + i + 1).padStart(2, '0')}</div>
-                <div className="story__meta">
-                  <span>{p.sector}</span>
-                  {p.size}
-                </div>
-              </div>
-              <div>
-                <h3 className="story__title">
-                  <a href={p.href} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
-                    {p.title}
-                  </a>
-                </h3>
-                <p className="story__body">{p.body}</p>
-              </div>
-              <div>
-                <p className="story__outcome">
-                  {p.outcome}{' '}
-                  <a href={p.href} target="_blank" rel="noopener noreferrer">
-                    {p.linkLabel} →
-                  </a>
-                </p>
-              </div>
-            </article>
-          </Reveal>
-        ))}
-
       </div>
     </section>
   )

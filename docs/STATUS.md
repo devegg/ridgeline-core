@@ -51,6 +51,29 @@ this order of weight:
   which is what makes the card around it read as lifted. Radius stays at 2px:
   the site is editorial, and rounding would soften it the wrong way.
 
+**Owner revisions, same day:**
+
+- **Tagline replaced with the business-card line** — "I eliminate work that
+  doesn't make you money, so you can do more work that does." The old line
+  ("hours lost to tasks that can run automatically") was cut because
+  *automatically* can be read as headcount, which is the opposite of the
+  pitch. Changed in the hero, the page metadata, the OG/Twitter cards, and the
+  JSON-LD. One incidental "automatically" survives inside service line 01,
+  where it describes data moving rather than people.
+- **GridStrain off the home page** (owner: it isn't awe-inspiring).
+- **RFQ Hunter reframed from product to portfolio piece.** The owner is
+  confident it will not launch as SaaS — it may become his sister's platform —
+  so every launch signal is gone: no "SaaS", no "private beta", no domain
+  link, no PR count. It is now story 05 in the same list as the client work,
+  described as a build. The `PRODUCTS` array is gone entirely; Proof is five
+  entries described identically, and the section is "The work, plainly
+  described."
+- **`/work` and `/papers` removed from `sitemap.ts`**, along with their child
+  routes — an unlinked page in a sitemap still gets indexed. The Supabase
+  lookup for public paper pages went with them, which also drops a DB call
+  from sitemap generation. A comment says to put them back when they return
+  to the nav.
+
 Three things the verification pass caught and fixed:
 
 - **Bands were lighter than the cards on them.** The first cut put services on

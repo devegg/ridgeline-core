@@ -20,7 +20,7 @@ export function Hero() {
 
         <Reveal delay={2}>
           <p className="hero__pitch">
-            I help businesses eliminate hours lost to tasks that can run automatically.
+            I eliminate work that doesn&rsquo;t make you money, so you can do more work that does.
           </p>
         </Reveal>
 
