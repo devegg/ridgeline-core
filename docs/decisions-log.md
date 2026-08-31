@@ -113,12 +113,30 @@
 - "Automatically" is off the tagline (owner, 2026-08-31). It can be read as
   headcount reduction. The business-card line replaces it site-wide. The word
   is still fine when it describes data moving on its own.
-- [ ] OPEN — two doors, one price sheet. `04 — How it works` (free call →
-      paid assessment → proposal → build) is the website path and the owner is
-      happy with it. The business card sells a different deal: "No savings, no
-      fee. If I save you $10,000, I keep $2,500." Both need to exist, they
-      need a stated rule for which applies, and the contingency deal needs a
-      floor — the owner's instinct is $500, tied to his target minimum daily
-      revenue. Not built pending his decision; see the session discussion
-      2026-08-31.
+- Two doors, sorted by one rule (owner, 2026-08-31). `04 — How it works`
+      (free call → paid assessment → proposal → build) stays as-is and is the
+      website path. The business card sells a contingency deal. Which one a
+      job gets is decided by whether the saving can be named as a number
+      before the work starts — countable (encoding audit, unbilled-work sweep,
+      most intake, named reconciliation exceptions) goes contingency;
+      structural/Salem-shaped goes assessment. They are presented as a menu of
+      job shapes, never as a menu of prices.
+- The contingency floor is a QUALIFYING FIND, not a minimum fee (owner,
+      2026-08-31). Brian only takes the job if the find clears $2,000/year —
+      25% of which is his $500 target. Below that he says so and there is no
+      bill. Chosen over a $500 minimum fee because a minimum fee contradicts
+      "no savings, no fee" and would read as bait.
+- The number is agreed by both parties in writing before any build (owner,
+      2026-08-31). Non-negotiable; it is what makes a performance fee
+      defensible when Brian's own code is doing the counting.
+- Code is not handed over until paid in full (owner, 2026-08-31).
+- [ ] OPEN — the billing mechanics. Owner wants more discussion before
+      deciding. Live on the table as of 2026-08-31: measuring the real task
+      volume rather than trusting self-report (run the system on Brian's
+      instance and let it count); seasonality breaking any single-window
+      extrapolation; a monthly-payment + Ridgeline-hosted model with the code
+      turned over at 12 months unless the client prefers to keep him hosting;
+      and a split fee (part upfront, part over time) scaled to the total.
+      Nothing about this goes on the site until it is settled — see the
+      session discussion 2026-08-31.
 
