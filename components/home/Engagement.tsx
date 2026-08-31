@@ -25,10 +25,10 @@ const STEPS = [
 
 export function Engagement() {
   return (
-    <section className="engagement" id="how">
+    <section className="engagement band band--dark band--accent" id="how">
       <div className="container">
         <Reveal>
-          <div className="eyebrow">05 — How it works</div>
+          <div className="eyebrow">04 — How it works</div>
         </Reveal>
         <Reveal delay={1}>
           <h2 className="section-title">

@@ -145,9 +145,9 @@ function ContactForm({ situations = SITUATIONS, source }: { situations?: string[
   )
 }
 
-export function Contact({ situations, source, eyebrow = '06 — Let’s talk' }: { situations?: string[]; source?: string; eyebrow?: string } = {}) {
+export function Contact({ situations, source, eyebrow = '05 — Let’s talk' }: { situations?: string[]; source?: string; eyebrow?: string } = {}) {
   return (
-    <section className="contact" id="contact">
+    <section className="contact band" id="contact">
       <div className="container">
         <Reveal>
           <div className="eyebrow">{eyebrow}</div>

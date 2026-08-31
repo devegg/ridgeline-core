@@ -2,12 +2,12 @@ import { Reveal } from './Reveal'
 
 export function Origin() {
   return (
-    <section className="origin" id="name">
+    <section className="origin band" id="name">
       <div className="container">
         <div className="two-col">
           <div>
             <Reveal>
-              <div className="eyebrow">04 — The name</div>
+              <div className="eyebrow">03 — The name</div>
             </Reveal>
             <Reveal delay={1}>
               <h2 className="section-title">

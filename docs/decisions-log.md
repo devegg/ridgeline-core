@@ -94,3 +94,15 @@
       as the fallback/reference.
 - Pilots (movie-slot-machine, gridstrain): boredom builds, not important
       (owner, 2026-07-11). No backfill owed; nobody re-flags their stub docs.
+
+- Marketing home page argues from capability, not portfolio (owner,
+  2026-08-31). The five service lines from the workspace service catalogue
+  replace the generic "what I fix" pains and the "who I work with" industry
+  grid. Reason: the portfolio is uneven — client stories are on-message, the
+  owner's own products are a mix — and an industry cut invites "do you have a
+  case study in *my* industry?" A capability cut does not.
+- `/work` and `/papers` are unlinked, not retired (owner, 2026-08-31). Off the
+  nav and off the home page; still routable and still in the sitemap. They come
+  back once the owner has consistent work to revise them against. OPEN: whether
+  they should also come out of `sitemap.ts` in the meantime — unlinked pages in
+  a sitemap still get indexed.

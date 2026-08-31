@@ -1,6 +1,61 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-08-22. Code is ground truth; this reconciles to it.
+Last updated: 2026-08-31. Code is ground truth; this reconciles to it.
+
+## Shipped 2026-08-31 — the five service lines, and the container pass (PR #TBD, feature/service-lines-and-containers)
+
+The marketing home page stops arguing from portfolio and starts arguing from
+capability, and the whole public site gets a depth system.
+
+**Front of the page rebuilt around the five service lines.** `components/home/ServiceLines.tsx`
+replaces `Problems.tsx` and `ClientsSection.tsx` (both deleted). The five lines
+are the ones in `docs/business-dev/reviews/fable-service-catalogue.md` in the
+workspace repo — Intake, Reconciliation, the unbilled-work sweep, deadline &
+document chains, the encoding audit. Ordered for owner recognition, not by the
+catalogue's own defensibility ranking. Each card carries the one-sentence
+definition, three "what it looks like" examples drawn from the databank cards,
+and the trades the line spans. The catalogue's do-not-sell list is not
+published, but the section closes by saying such a list exists — which is the
+honest version of the same thing.
+
+**Proof demoted from 03 to 02 and cut.** `Stories.tsx` keeps the four client
+stories plus RFQ Hunter and GridStrain. Movie Slot Machine and The Right
+Business First came off the home page — a movie picker undercuts the
+operations-counsel pitch. Both still live at `/work`.
+
+**`/work` and `/papers` unlinked from the home page and the nav** (owner
+decision, 2026-08-31): they stay as standalone routes, reachable by URL and
+still in `sitemap.ts`, until the owner revises them against consistent work.
+The nav is now four home-page anchors (`#services`, `#proof`, `#how`,
+`#contact`) plus Client Login. Section numbering shifted: 01 What I do,
+02 Proof, 03 The name, 04 How it works, 05 Let's talk.
+
+**The container / depth pass** (`app/globals.css`, new "Bands & elevation"
+block). The page used to be one cream value top to bottom with hairline rules
+and no elevation anywhere, so nothing sat *on* anything. Two mechanisms, in
+this order of weight:
+
+- **Full-bleed alternating bands** with visible value steps, each separated by
+  a hairline plus an inset white highlight: hero (bare) → services
+  (`--paper`, 3px amber accent top) → proof (`--bg-deep`) → the name (bare) →
+  how it works (**the one dark slab**, `--ink-deep` #171512 with a warm amber
+  wash at its top edge) → contact (bare) → footer (deep). Band backgrounds are
+  deliberately translucent so the fixed contour + grain layer behind
+  `.site-root` still shows through; the dark band is the exception and carries
+  its own gradient instead.
+- **Cards that are a different value than their band and cast a real shadow.**
+  New tokens: `--card` (#FEFBF3), `--shadow-sm/md/lg`, `--edge-top`. Shadows
+  are ink-tinted (rgba(46,40,28,…)), never black — black on cream goes grey
+  and muddy. Service cards, story cards, and the contact form are raised;
+  the "what it looks like" list inside each service card is an inset well,
+  which is what makes the card around it read as lifted. Radius stays at 2px:
+  the site is editorial, and rounding would soften it the wrong way.
+
+Verified by computed style against the running dev server (band backgrounds,
+card shadows, dark-band text colors, zero `/work` or `/papers` links in
+`<main>`). The Browser pane's screenshot capture was returning blank frames
+this session — a 0×0 viewport in the tool, not a page fault — so the visual
+sign-off is the owner's.
 
 ## Shipped 2026-07-11 — portal home dashboard (PR #2, feature/portal-home)
 

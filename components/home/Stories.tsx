@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { Reveal } from './Reveal'
 
 const PRODUCTS = [
@@ -19,24 +18,6 @@ const PRODUCTS = [
     outcome: 'Live. The data updates itself, hourly, whether anyone is watching or not.',
     href: 'https://gridstrain.com',
     linkLabel: 'gridstrain.com',
-  },
-  {
-    sector: 'Consumer web',
-    size: 'Live · movieslotmachine.com',
-    title: 'Thirty minutes deciding what to watch. Pull the lever instead.',
-    body: 'Movie Slot Machine ends the endless scroll: set a genre, pull the lever, get a film. A small, finished thing — designed, built, and shipped to production. Not every build has to be an operations platform.',
-    outcome: 'Live. Deciding what to watch now takes eleven seconds.',
-    href: 'https://movieslotmachine.com',
-    linkLabel: 'movieslotmachine.com',
-  },
-  {
-    sector: 'Decision framework · Publication',
-    size: 'Live · therightbusinessfirst.com',
-    title: 'A framework that rules out the wrong business before you fund it.',
-    body: 'The Right Business First is a free, constraint-aware system: it starts from the operator’s real limits — hours, energy, temperament — and filters out the business models that will never fit, before any money goes in. Published as a complete, self-serve system with worksheets, prompt templates, and a full case study.',
-    outcome: 'Complete and live — free, no account, fully self-service.',
-    href: 'https://therightbusinessfirst.com',
-    linkLabel: 'therightbusinessfirst.com',
   },
 ]
 
@@ -73,10 +54,10 @@ const STORIES = [
 
 export function Stories() {
   return (
-    <section className="stories" id="proof">
+    <section className="stories band band--deep" id="proof">
       <div className="container">
         <Reveal>
-          <div className="eyebrow">03 — Proof</div>
+          <div className="eyebrow">02 — Proof</div>
         </Reveal>
         <Reveal delay={1}>
           <h2 className="section-title">
@@ -115,8 +96,8 @@ export function Stories() {
 
         <Reveal delay={1}>
           <p className="lede" style={{ marginTop: 56 }}>
-            And four products of my own — built, shipped, and running today. The full
-            portfolio, with the stories behind each build, lives at <Link href="/work">/work</Link>:
+            And two products of my own — built end to end, shipped, and running today. Click
+            through and see them working:
           </p>
         </Reveal>
 
@@ -150,12 +131,6 @@ export function Stories() {
           </Reveal>
         ))}
 
-        <Reveal delay={1}>
-          <p className="lede" style={{ marginTop: 56 }}>
-            The full write-ups — what was actually wrong, what I built, and what changed —
-            live in the <Link href="/papers">papers</Link>.
-          </p>
-        </Reveal>
       </div>
     </section>
   )
