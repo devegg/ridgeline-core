@@ -130,13 +130,28 @@
       2026-08-31). Non-negotiable; it is what makes a performance fee
       defensible when Brian's own code is doing the counting.
 - Code is not handed over until paid in full (owner, 2026-08-31).
-- [ ] OPEN — the billing mechanics. Owner wants more discussion before
-      deciding. Live on the table as of 2026-08-31: measuring the real task
-      volume rather than trusting self-report (run the system on Brian's
-      instance and let it count); seasonality breaking any single-window
-      extrapolation; a monthly-payment + Ridgeline-hosted model with the code
-      turned over at 12 months unless the client prefers to keep him hosting;
-      and a split fee (part upfront, part over time) scaled to the total.
-      Nothing about this goes on the site until it is settled — see the
-      session discussion 2026-08-31.
+- Billing is monthly, on measured actuals (owner, 2026-08-31). 25% of what
+      the system actually saved that month, for twelve months. Seasonality
+      stops mattering because nothing is extrapolated.
+- Year two replaces the percentage with a FLAT monthly maintenance fee per
+      running automation (owner delegated the call, 2026-08-31). Not a lower
+      percentage: after year one what is sold is hosting and upkeep, whose
+      cost is fixed per system, and the owner's own test was that he would not
+      want to pay a share of labour nobody is performing. Work added later
+      starts its own twelve months at 25%. Amount still TBD.
+- Ownership: the client is licensed during the term; ownership transfers on
+      buyout or on cessation (owner, 2026-08-31). "Paid in full" therefore
+      means the buyout price.
+- Recurring replaces the one-time fee (owner, 2026-08-31). The printed
+      business card needs NO reprint — it states only "no savings, no fee"
+      (truer under monthly billing) and a 25% ratio. The word "once" lives
+      only in card-pitch-and-talking-points.md and
+      `components/field/VisitEstimator.tsx` (the "My fee — one time" row and
+      its note), both of which get rewritten.
+- [ ] OPEN — the year-two maintenance amount. Blocks the VisitEstimator
+      rewrite: the screen cannot show a fee structure with a hole in it in
+      front of a customer. Compute bottom-up from real hosting/support cost.
+- [ ] OPEN — the upfront build portion (at what job size, what share) and the
+      buyout formula. Both must be stateable in one sentence.
+- Full model: ridgeline-workspace `docs/business-dev/SAVINGS-SHARE-MODEL.md`.
 
