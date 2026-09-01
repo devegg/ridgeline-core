@@ -487,6 +487,34 @@ rate + content sweep · meeting notes on client detail. Lead-funnel finish
 found already built. Migrations 20260712020000 + 20260712030000 applied;
 suite at 47 checks, green against production.
 
+## Shipped 2026-08-31 — structured field notes (PR #66, feature/structured-field-notes)
+
+`prospect_visits.note` was a single free-text column, so everything learned in
+a room landed as one paragraph — readable for one visit, unqueryable across
+twenty. The shape actually wanted already existed as
+`docs/business-dev/field-notes/TEMPLATE.md` in the workspace repo, but a
+markdown template is not something anyone fills in standing in a shop, so the
+structure was unreachable and the app caught prose.
+
+- Migration `20260826000000_visit_field_notes.sql`: new `visit_notes` table,
+  one row per visit (unique on `visit_id`), owner-only RLS, 6 indexes,
+  `updated_at` trigger. **Applied to prod 2026-08-31 and verified** — 25
+  columns, RLS on, policy `visit_notes_owner_all` present.
+- `/visit/[id]/notes`, linked from the estimator header. Upsert on `visit_id`
+  so a note started in the lobby and finished in the truck replaces itself.
+- Two columns are starred in schema and UI — `exception_handling` (refunds,
+  voids, chargebacks, card fees) and `sheet_owner_out` (what breaks when the
+  spreadsheet owner is away). Seven rounds of desk research could not answer
+  either; they are the reason to walk in.
+- `card_got_wrong` feeds corrections back into the trade cards — the databank's
+  first source that can say CONFIRMED-in-a-room.
+- localStorage draft so a phone call mid-note doesn't cost the note.
+- `disqualified` is three-state (walked / live / never got that far): an
+  unanswered question must not read as "this one is fine".
+
+**Not yet exercised by a real visit** — the form has never been filled in
+against a live prospect. First card drop is the test.
+
 ## Shipped (live in production)
 
 - **Domain**: https://www.ridgelineknows.com (apex 308→www; DNS at
