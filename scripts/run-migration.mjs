@@ -13,8 +13,13 @@
  * existed; the first run records those as applied and treats anything
  * after as pending.
  *
- * Owner-run: applying to prod is gated to a human on purpose. This script
- * just makes "what do I type" a non-question.
+ * Claude runs this (workspace CLAUDE.md, owner decision 2026-08-31) and
+ * verifies the result — a feature is not done while its migration is
+ * unapplied. DESTRUCTIVE migrations are the exception: say plainly what the
+ * SQL will do, get an explicit yes, then run it. Destructive means DROP,
+ * TRUNCATE, DELETE/UPDATE against existing rows, a type change that cannot
+ * round-trip, RENAME, adding NOT NULL/UNIQUE to a populated table, or a
+ * backfill. Additive work just gets applied.
  */
 import pg from "pg";
 import fs from "node:fs";
