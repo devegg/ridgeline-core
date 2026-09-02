@@ -1,6 +1,45 @@
 # ridgeline-core — STATUS
 
-Last updated: 2026-08-31. Code is ground truth; this reconciles to it.
+Last updated: 2026-09-02. Code is ground truth; this reconciles to it.
+
+## Shipped 2026-09-02 — the second offer, on the page (PR #TBD, feat/how-it-works-panel)
+
+`04 — How it works` now shows both ways Brian works. The four steps (free
+call → paid assessment → proposal → build) are unchanged and still the spine.
+Underneath them sits a bounded panel, "The other way in", describing the
+savings-share deal that the business card sells.
+
+**Deliberately a panel, not a second section.** Two sections side by side read
+as a price comparison, and a visitor then picks the cheaper risk regardless of
+which one fits their job. As a panel it reads as what happens when the
+assessment is the wrong instrument — and someone arriving from the card goes
+to `#how` from the nav and finds their promise in the first place they look.
+
+What the panel says: the first hour is free · no savings, no fee — 25% of what
+the system actually saves, month by month, for twelve months · after twelve
+months the percentage stops and becomes a flat monthly fee to keep it running ·
+you can buy it outright any time, and if Brian stops it transfers
+automatically. It closes on the sorting rule stated as shape rather than price:
+*which of the two applies is not about what you would rather pay.*
+
+**What it deliberately does NOT say.** The $2,000/year qualifying gate is an
+internal rule about which jobs Brian accepts and is never published — that is
+the threshold trap in
+`ridgeline-workspace docs/business-dev/card-pitch-and-talking-points.md`, and
+every banned phrasing from that section was checked against the rendered copy.
+No dollar figures appear at all, which is why this panel was never blocked on
+the three open numbers (deposit, buyout, maintenance base). Those block the
+field estimator, which shows real figures to a real customer — not a marketing
+page describing how a deal works.
+
+Styling follows the container system: a raised panel on the dark band with an
+amber left rule, the four points in a two-column grid collapsing at 820px.
+Verified by computed style at 1280 and 500 wide — contrast 6.87–16.3 against
+`#171512`, no overflow, nothing clipped.
+
+**Still open, and still only blocking `VisitEstimator.tsx`:** the maintenance
+base. The estimator continues to say "My fee — one time", which contradicts the
+model. See `ridgeline-workspace docs/business-dev/SAVINGS-SHARE-MODEL.md` §8.
 
 ## Shipped 2026-08-31 — the five service lines, and the container pass (PR #67, feat/service-lines-and-containers)
 

@@ -154,4 +154,13 @@
 - [ ] OPEN — the upfront build portion (at what job size, what share) and the
       buyout formula. Both must be stateable in one sentence.
 - Full model: ridgeline-workspace `docs/business-dev/SAVINGS-SHARE-MODEL.md`.
+- The savings-share offer goes on the site as a PANEL inside `04 — How it
+      works`, not as its own section (owner, 2026-08-31; built 2026-09-02).
+      Two sections side by side turn the page into a price comparison and the
+      visitor picks the cheaper risk regardless of fit.
+- The website panel never states a dollar figure (2026-09-02). The
+      $2,000/yr qualifying gate stays internal — publishing it recreates the
+      threshold trap. This is also why the panel was not blocked on the three
+      open numbers: they block the field estimator, which quotes real figures
+      to a real customer, not a page describing how a deal works.
 
