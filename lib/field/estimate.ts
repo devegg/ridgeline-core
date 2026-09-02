@@ -36,6 +36,27 @@ export function commission(minutesEach: number, timesPerWeek: number, hourlyRate
   return annualRecovered(minutesEach, timesPerWeek, hourlyRate) * COMMISSION_RATE
 }
 
+/**
+ * Year one is billed MONTHLY, against what the system actually saved that
+ * month — so the estimator leads with a monthly figure, because that is the
+ * number the owner will actually see on an invoice. The twelve-month total is
+ * still `commission()` above, and is still the card's "$10,000 → $2,500".
+ */
+export function monthlyShare(firstYearFee: number): number {
+  return firstYearFee / 12
+}
+
+/**
+ * After twelve months the 25% share stops and this replaces it: a flat base
+ * per client, plus a per-automation amount priced at build time from that
+ * automation's own footprint.
+ *
+ * Only the base is a fixed number, which is why anything showing it to a
+ * client must say "from". Owner-set 2026-09-02; see
+ * ridgeline-workspace docs/business-dev/SAVINGS-SHARE-MODEL.md §2.7.
+ */
+export const MAINTENANCE_BASE_MONTHLY = 40
+
 /** A visit is the sum of its tasks. The owner watches THIS number build. */
 export function visitTotals(tasks: EstimateInput[]): { cost: number; recovered: number; fee: number } {
   const cost = tasks.reduce(

@@ -19,7 +19,14 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { HAIRCUT, formatDollars } from "../lib/portal/value.ts";
-import { annualCost, annualRecovered, commission, visitTotals } from "../lib/field/estimate.ts";
+import {
+  annualCost,
+  annualRecovered,
+  commission,
+  monthlyShare,
+  visitTotals,
+  MAINTENANCE_BASE_MONTHLY,
+} from "../lib/field/estimate.ts";
 
 let pass = 0, fail = 0;
 const ok = (name, cond, detail = "") => {
@@ -56,6 +63,24 @@ const fee = commission(4, 60, 28);
 ok("commission is 25% of recovered", fee === recovered * 0.25, `got ${fee}`);
 ok("fee displays as ~$1,000", formatDollars(fee) === "~$1,000", `got ${formatDollars(fee)}`);
 ok("visitTotals fee matches", totals.fee === totals.recovered * 0.25, `got ${totals.fee}`);
+
+// Year one is billed monthly, so the estimator leads with a monthly figure —
+// but the twelve-month total must still be the card's number, or the screen
+// and the business card are telling an owner two different things.
+ok("monthly share is a twelfth of the first-year fee", monthlyShare(fee) === fee / 12, `got ${monthlyShare(fee)}`);
+ok(
+  "twelve monthly shares rebuild the card's number",
+  // Tolerance, not equality: x/12*12 is not exactly x in binary floating point.
+  // formatDollars rounds well below this, so the screen never shows the drift.
+  Math.abs(monthlyShare(fee) * 12 - fee) < 1e-9,
+  `got ${monthlyShare(fee) * 12} vs ${fee}`
+);
+ok("monthly share of nothing is nothing", monthlyShare(0) === 0);
+ok(
+  "maintenance base is a positive number the screen can print",
+  MAINTENANCE_BASE_MONTHLY > 0 && Number.isFinite(MAINTENANCE_BASE_MONTHLY),
+  `got ${MAINTENANCE_BASE_MONTHLY}`
+);
 
 console.log("\nPart 2 — the database\n");
 

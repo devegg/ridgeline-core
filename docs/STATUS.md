@@ -2,6 +2,35 @@
 
 Last updated: 2026-09-02. Code is ground truth; this reconciles to it.
 
+## Shipped 2026-09-02 — the estimator tells the truth again (PR #70, feat/estimator-recurring-fee)
+
+The field estimator said **"My fee — one time"** on a screen shown to an owner
+at their own counter. The savings-share model is recurring, so the screen was
+wrong. The owner set the maintenance base at **$40/month** on 2026-09-02,
+which was the last thing blocking this.
+
+- `lib/field/estimate.ts` gains `monthlyShare()` and
+  `MAINTENANCE_BASE_MONTHLY = 40`. `commission()` is untouched — the
+  twelve-month total is still the card's "$10,000 → $2,500", and a test now
+  asserts that twelve monthly shares rebuild it, so the screen and the printed
+  card can never tell an owner two different things.
+- `VisitEstimator.tsx` fee row is now **"My share — first 12 months"** as a
+  monthly figure, because monthly is how it is actually billed.
+- **A second visible row: "Then, to keep it running — from $40/mo".** Not
+  behind the tap-for-the-math fold. The old "one time" wording existed
+  precisely so an owner could not think they were signing up to pay forever;
+  now they are, so the ongoing number has to be as visible as the share.
+  Hiding it would be the same mistake with the sign reversed. "from", because
+  the per-automation part is priced at build time.
+- The math note rewritten: monthly billing against a checkable count, the
+  twelve-month total, *a month it saves nothing costs you nothing*, and what
+  happens at month thirteen.
+
+Tests: `scripts/test-estimate.mjs` 23 passed / 0 failed, four of them new.
+The twelve-shares assertion uses a tolerance rather than equality —
+`x/12*12 !== x` in binary floating point, and `formatDollars` rounds far above
+the drift.
+
 ## Shipped 2026-09-02 — the second offer, on the page (PR #69, feat/how-it-works-panel)
 
 `04 — How it works` now shows both ways Brian works. The four steps (free
