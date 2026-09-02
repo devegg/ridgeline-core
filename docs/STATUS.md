@@ -2,7 +2,7 @@
 
 Last updated: 2026-09-02. Code is ground truth; this reconciles to it.
 
-## Shipped 2026-09-02 — the second offer, on the page (PR #TBD, feat/how-it-works-panel)
+## Shipped 2026-09-02 — the second offer, on the page (PR #69, feat/how-it-works-panel)
 
 `04 — How it works` now shows both ways Brian works. The four steps (free
 call → paid assessment → proposal → build) are unchanged and still the spine.
