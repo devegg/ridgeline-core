@@ -2,7 +2,7 @@
 
 Last updated: 2026-09-02. Code is ground truth; this reconciles to it.
 
-## Shipped 2026-09-02 — the estimator tells the truth again (PR #TBD, feat/estimator-recurring-fee)
+## Shipped 2026-09-02 — the estimator tells the truth again (PR #70, feat/estimator-recurring-fee)
 
 The field estimator said **"My fee — one time"** on a screen shown to an owner
 at their own counter. The savings-share model is recurring, so the screen was
