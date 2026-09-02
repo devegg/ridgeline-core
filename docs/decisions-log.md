@@ -163,4 +163,14 @@
       threshold trap. This is also why the panel was not blocked on the three
       open numbers: they block the field estimator, which quotes real figures
       to a real customer, not a page describing how a deal works.
+- Maintenance base is $40/month (owner, 2026-09-02). Per client, plus a
+      per-automation amount priced at build time. This unblocked the estimator
+      rewrite — anything client-facing says "from $40" because only the base
+      is fixed.
+- Deposit tiers (owner, 2026-09-02): nothing under two days of build, $500
+      from two days to about a week, and above that it is the wrong door and
+      gets quoted as assessment work.
+- Buyout formula (owner, 2026-09-02): twelve months of the current
+      maintenance fee, plus the unpaid remainder of the first-year share.
+      Doubles as the early-termination figure, so one formula covers both.
 

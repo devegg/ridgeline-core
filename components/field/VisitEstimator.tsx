@@ -3,7 +3,14 @@
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { saveVisitEstimateAction, sendVisitRecapAction } from '@/app/actions/prospects'
-import { annualCost, annualRecovered, visitTotals, type EstimateInput } from '@/lib/field/estimate'
+import {
+  annualCost,
+  annualRecovered,
+  monthlyShare,
+  visitTotals,
+  MAINTENANCE_BASE_MONTHLY,
+  type EstimateInput,
+} from '@/lib/field/estimate'
 import { formatDollars } from '@/lib/portal/value'
 import { noAutofill } from '@/lib/field/no-autofill'
 import type { ActionState, Prospect, VisitTask } from '@/lib/types'
@@ -341,16 +348,31 @@ export function VisitEstimator({
         )}
 
         <div className="field-total__row field-total__row--fee">
-          <span>My fee &mdash; one time</span><strong>{formatDollars(totals.fee)}</strong>
+          <span>My share &mdash; first 12 months</span>
+          <strong>{formatDollars(monthlyShare(totals.fee))}/mo</strong>
+        </div>
+
+        {/* The maintenance row is NOT behind the tap. The old copy said "one
+            time" precisely so an owner could not think they were signing up to
+            pay forever; now they are, so the ongoing number has to be as
+            visible as the share. Hiding it would be the same mistake with the
+            sign flipped. */}
+        <div className="field-total__row field-total__row--fee">
+          <span>Then, to keep it running</span>
+          <strong>from {formatDollars(MAINTENANCE_BASE_MONTHLY)}/mo</strong>
         </div>
 
         {showMath && (
           <p className="field-total__note">
             30% held back — I&rsquo;d rather beat the number than miss it. The yearly
-            numbers are estimates until we count the real thing. My fee is 25% of the
-            first year&rsquo;s savings, charged once, not every year — and that rate is
-            firm as long as these counts hold up. New work later is a change order we
-            price together.
+            numbers are estimates until we count the real thing. For the first twelve
+            months my share is 25% of what the system actually saves you, billed monthly
+            against a count you can check — about {formatDollars(totals.fee)} across the
+            year if these numbers hold up. A month it saves nothing costs you nothing.
+            After twelve months the share stops for good: it becomes{' '}
+            {formatDollars(MAINTENANCE_BASE_MONTHLY)} a month plus a small amount per
+            automation, to keep it hosted and running. New work later starts its own
+            twelve months, priced together.
           </p>
         )}
       </button>
